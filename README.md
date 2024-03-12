@@ -18,6 +18,10 @@ Es conveniente realizar el siguiente codelab para familiarizarse con el entorno 
 
 https://codelabs.developers.google.com/codelabs/flutter-codelab-first?hl=es-419#0
 
+Utilizaremos el IDE de desarrollo IntelliJ IDEA (En su versión Community Edition)
+
+https://www.jetbrains.com/es-es/idea/download/?section=linux
+
 ## Arquitectura de la Aplicación:
 
 Utilizaremos el patrón Clean Architecture para estructurar nuestra aplicación. Esto implica separarla en capas bien
