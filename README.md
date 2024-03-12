@@ -118,7 +118,7 @@ través de un botón de guardado también alojado en la AppBar.
 Los usuarios podrán eliminar leads existentes desde la AppBar de la pantalla del detalle.
 
 
-## Diseño
+## Diseño
 
 Puedes basarte en este ejemplo, o crear el tuyo propio:
 
