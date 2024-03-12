@@ -41,6 +41,7 @@ característica representará una pantalla o funcionalidad de la aplicación. Se
 para manejar el estado de la aplicación de forma eficiente y reactiva.
 
 https://pub.dev/packages/flutter_bloc
+
 https://medium.com/@kadriyemacit/login-screen-with-bloc-pattern-9b667a1cbcad
 
 ## flutter_bloc
@@ -106,15 +107,24 @@ través de un botón de guardado también alojado en la AppBar.
 
 ## Datos de acceso:
 
--URL: https://demos15.aurestic.com
--DB: demos_demos15
--USERNAME: admin
--PASSWORD: admin
+---------------------------------------
+
+URL: https://demos15.aurestic.com
+
+DB: demos_demos15
+
+USERNAME: admin
+
+PASSWORD: admin
+
+---------------------------------------
 
 -Url para listar los leads:
+
 https://demos15.aurestic.com/web?debug=1#cids=1&menu_id=381&action=558&model=crm.lead&view_type=kanban
 
 -Modelo del lead (crm.lead):
+
 https://demos15.aurestic.com/web?debug=1#id=804&cids=1&menu_id=4&action=18&model=ir.model&view_type=form
 
 ## Flujo de trabajo:
