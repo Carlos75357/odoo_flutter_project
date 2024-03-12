@@ -7,7 +7,7 @@ realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre registros de
 permitirá autenticar usuarios, listar los leads disponibles, crear nuevos leads, ver detalles de un lead específico,
 editarlo y eliminar leads existentes.
 
-## Instalación del Entorno:
+## Instalación del Entorno
 
 Para comenzar, asegúrate de tener instalado Flutter en tu sistema operativo Linux. Aquí tienes un ejemplo de cómo
 hacerlo:
@@ -22,7 +22,7 @@ Utilizaremos el IDE de desarrollo IntelliJ IDEA (En su versión Community Editio
 
 https://www.jetbrains.com/es-es/idea/download/?section=linux
 
-## Arquitectura de la Aplicación:
+## Arquitectura de la Aplicación
 
 Utilizaremos el patrón Clean Architecture para estructurar nuestra aplicación. Esto implica separarla en capas bien
 definidas: Data, Domain y UI.
@@ -74,7 +74,7 @@ Los eventos representan las acciones que el usuario realiza en la interfaz de us
 estado del BLoC. Por ejemplo, un evento de "Inicio de Sesión" se desencadena cuando el usuario presiona el botón de
 inicio de sesión después de ingresar sus credenciales.
 
-## API de Odoo:
+## API de Odoo
 
 https://www.odoo.com/documentation/15.0/es/developer/howtos/web_services.html#json-rpc-library
 
@@ -91,7 +91,7 @@ Ejemplo de petición a Odoo en flutter (Concretamente el método de autenticaci�
 
 https://pastelink.net/nvy7tufa
 
-## Implementación de Funcionalidades:
+## Implementación de Funcionalidades
 
 -Autenticación: La aplicación permitirá al usuario iniciar sesión en el servidor de Odoo utilizando su nombre de usuario
 y contraseña.
@@ -105,7 +105,7 @@ editar, que habilitará los campos de edición y podrá realizar cambios para po
 través de un botón de guardado también alojado en la AppBar.
 -Eliminación de Leads: Los usuarios podrán eliminar leads existentes desde la AppBar de la pantalla del detalle.
 
-## Datos de acceso:
+## Datos de acceso
 
 ---------------------------------------
 
@@ -127,7 +127,7 @@ https://demos15.aurestic.com/web?debug=1#cids=1&menu_id=381&action=558&model=crm
 
 https://demos15.aurestic.com/web?debug=1#id=804&cids=1&menu_id=4&action=18&model=ir.model&view_type=form
 
-## Flujo de trabajo:
+## Flujo de trabajo
 
 El flujo de trabajo con pull requests es una práctica común en el desarrollo colaborativo de software que permite una
 revisión y colaboración efectiva entre los miembros del equipo. Aquí te explico cómo podríamos organizar el trabajo
@@ -167,7 +167,7 @@ continuará hasta que la pull request sea aprobada por todos los revisores.
 Una vez que la pull request haya sido aprobada y todos los problemas hayan sido resueltos, se procederá a fusionar (
 merge) los cambios en la rama principal del repositorio.
 
-## Buenas Prácticas en Flutter:
+## Buenas Prácticas en Flutter
 
 -Codificación en Inglés:
 Es una buena práctica escribir el código y los comentarios en inglés para mantener la consistencia y facilitar la
