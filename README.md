@@ -94,7 +94,8 @@ emplearán son:
 
 Ejemplo de petición a Odoo en flutter (Concretamente el método de autenticación):
 
-https://pastelink.net/nvy7tufa
+![image](https://github.com/aurestic/flutter_crm_prove/assets/32957956/849cd292-4e38-4b17-9361-17896b3d80ae)
+
 
 ## Implementación de Funcionalidades
 
