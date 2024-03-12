@@ -104,7 +104,7 @@ editar, que habilitará los campos de edición y podrá realizar cambios para po
 través de un botón de guardado también alojado en la AppBar.
 -Eliminación de Leads: Los usuarios podrán eliminar leads existentes desde la AppBar de la pantalla del detalle.
 
-## Datos de acceso
+## Datos de acceso:
 
 -URL: https://demos15.aurestic.com
 -DB: demos_demos15
