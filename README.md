@@ -98,17 +98,36 @@ https://pastelink.net/nvy7tufa
 
 ## Implementación de Funcionalidades
 
--Autenticación: La aplicación permitirá al usuario iniciar sesión en el servidor de Odoo utilizando su nombre de usuario
+-Autenticación:
+La aplicación permitirá al usuario iniciar sesión en el servidor de Odoo utilizando su nombre de usuario
 y contraseña.
--Listado de Leads: Al hacer login se redirigirá a una pantalla que mostrará una lista de todos los leads disponibles en
-el servidor.
--Creación de Leads: Los usuarios podrán crear nuevos leads proporcionando los detalles necesarios, a través de un fab en
-la parte inferior derecha del listado anterior.
--Detalle de Lead: Al seleccionar un lead de la lista, se mostrarán sus detalles, como nombre de la oportunidad, correo
+
+-Listado de Leads:
+Al hacer login se redirigirá a una pantalla que mostrará una lista de todos los leads disponibles en el servidor.
+
+-Creación de Leads:
+Los usuarios podrán crear nuevos leads proporcionando los detalles necesarios, a través de un fab en la parte inferior derecha del listado anterior.
+
+-Detalle de Lead: 
+Al seleccionar un lead de la lista, se mostrarán sus detalles, como nombre de la oportunidad, correo
 electrónico, ingreso esperado, prioridad, etc. A su vez, dentro del modo detalle, en el la AppBar, habrá un botón de
 editar, que habilitará los campos de edición y podrá realizar cambios para posteriormente almacenarlos en el backend, a
 través de un botón de guardado también alojado en la AppBar.
--Eliminación de Leads: Los usuarios podrán eliminar leads existentes desde la AppBar de la pantalla del detalle.
+
+-Eliminación de Leads: 
+Los usuarios podrán eliminar leads existentes desde la AppBar de la pantalla del detalle.
+
+
+## Diseño
+
+Puedes basarte en este ejemplo, o crear el tuyo propio:
+
+<img width="366" alt="login" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/ee821f17-f9a6-43b8-aad5-f5effa141da8">
+
+<img width="366" alt="lista_oportunidades" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/9b02ef77-345e-41f9-ad1d-7bb4980dfe0c">
+
+<img width="366" alt="crear_oportunidad" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/6e17ed85-61cd-4263-890d-d111f128b97c">
+
 
 ## Datos de acceso
 
