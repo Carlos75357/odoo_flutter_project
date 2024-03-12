@@ -44,6 +44,11 @@ https://pub.dev/packages/flutter_bloc
 
 https://medium.com/@kadriyemacit/login-screen-with-bloc-pattern-9b667a1cbcad
 
+Ejemplo de la estructura en una app de Aures:
+
+<img width="402" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/e5d22705-b15e-42b0-8f5c-a4b1e5193114">
+
+
 ## flutter_bloc
 
 Gestión de Estado con flutter_bloc:
