@@ -128,6 +128,11 @@ Los usuarios podrán eliminar leads existentes desde la AppBar de la pantalla de
 
 <img width="1509" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/1af208bf-e54f-4a4d-93ea-87621e2fe586">
 
+*Puedes apoyarte en el inspector de elementos del navegador, ya que te indicará en todo momento que petición se está haciendo, para así replicarla en tu código Flutter.
+
+![image](https://github.com/aurestic/flutter_crm_prove/assets/32957956/0b02f367-7438-4959-b5cd-7af4e626e62f)
+
+
 
 ## Diseño
 
