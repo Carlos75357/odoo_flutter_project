@@ -103,11 +103,17 @@ Ejemplo de petición a Odoo en flutter (Concretamente el método de autenticaci�
 La aplicación permitirá al usuario iniciar sesión en el servidor de Odoo utilizando su nombre de usuario
 y contraseña.
 
+<img width="1509" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/a37291c0-2fc5-4bf5-90c9-9f529a7a4f0e">
+
 -Listado de Leads:
 Al hacer login se redirigirá a una pantalla que mostrará una lista de todos los leads disponibles en el servidor.
 
+<img width="784" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/7dd83d57-f96b-4e0a-8c33-1c0cedecb63f">
+
 -Creación de Leads:
 Los usuarios podrán crear nuevos leads proporcionando los detalles necesarios, a través de un fab en la parte inferior derecha del listado anterior.
+
+<img width="849" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/eca02d43-ac28-4517-81da-c7df12e0755e">
 
 -Detalle de Lead: 
 Al seleccionar un lead de la lista, se mostrarán sus detalles, como nombre de la oportunidad, correo
@@ -115,8 +121,12 @@ electrónico, ingreso esperado, prioridad, etc. A su vez, dentro del modo detall
 editar, que habilitará los campos de edición y podrá realizar cambios para posteriormente almacenarlos en el backend, a
 través de un botón de guardado también alojado en la AppBar.
 
+<img width="1509" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/8030f13d-9e1f-4fe3-a5e1-643f2378fdcb">
+
 -Eliminación de Leads: 
 Los usuarios podrán eliminar leads existentes desde la AppBar de la pantalla del detalle.
+
+<img width="1509" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/1af208bf-e54f-4a4d-93ea-87621e2fe586">
 
 
 ## Diseño
