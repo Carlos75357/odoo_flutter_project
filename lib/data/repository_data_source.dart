@@ -1,8 +1,8 @@
 abstract class RepositoryDataSource {
   // TODO DECLARAR AUTHENTICATE, SEARCH_READ, READ, WRITE, UNLINK
   Future<LoginResponse> authenticate(String url, String db, String username, String password);
-  Future<SearchResponse> searchRead(String? sessionId, String model, List<dynamic> domain);
-  Future<ReadResponse> read(String model, List<int> ids);
+  Future<SearchResponse> searchRead(String model, List<dynamic> domain);
+  Future<ReadResponse> read(String model, List<int> id);
   // Future<WriteResponse> write(String model, List<int> ids, Map<String, dynamic> values);
   // Future<UnlinkResponse> unlink(String model, List<int> ids);
 }

@@ -40,7 +40,7 @@ class Repository extends RepositoryDataSource {
   }
 
   @override
-  Future<SearchResponse> searchRead(String? sessionId, String model, List<dynamic> domain) async {
+  Future<SearchResponse> searchRead(String model, List<dynamic> domain) async {
 
     final response = await http.post(
       Uri.parse('$url/web/dataset/search_read'),
@@ -68,31 +68,44 @@ class Repository extends RepositoryDataSource {
   }
 
 
+  @override
+  Future<ReadResponse> read(String model, List<int> id) async {
+    final response = await http.post(
+      Uri.parse('$url/web/dataset/call_kw/crm/read'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionId ?? '',
+      },
+      body: jsonEncode({
+        'jsonrpc': '2.0',
+        'method': 'call',
+        'params': {
+          'model': model,
+          'method': 'read',
+          'args': [id],
+          'kwargs': {'fields': [], 'context': []},
+        }
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      dynamic result = responseBody['result'];
+
+      if (result != null) {
+        return ReadResponse.fromJson(result);
+      } else {
+        throw Exception('No records found in the response');
+      }
+    } else {
+      throw Exception('Failed to read records');
+    }
+  }
+
+
+
 // @override
-  // Future<ReadResponse> read(String model, List<int> ids) async {
-  //   final url = Uri.parse('https://your-odoo-instance.com/api/$model');
-  //
-  //   final body = jsonEncode({
-  //     'ids': ids,
-  //   });
-  //
-  //   final response = await http.post(
-  //     url,
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': 'Bearer your-session-token',
-  //     },
-  //     body: body,
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     return ReadResponse.fromJson(jsonDecode(response.body));
-  //   } else {
-  //     throw Exception('Failed to read records');
-  //   }
-  // }
-  //
-  // @override
   // Future<UnlinkResponse> unlink(String model, List<int> ids) {
   //   // TODO: implement unlink
   //   throw UnimplementedError();
