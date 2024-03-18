@@ -3,8 +3,8 @@ abstract class RepositoryDataSource {
   Future<LoginResponse> authenticate(String url, String db, String username, String password);
   Future<SearchResponse> searchRead(String model, List<dynamic> domain);
   Future<ReadResponse> read(String model, List<int> id);
-  // Future<WriteResponse> write(String model, List<int> ids, Map<String, dynamic> values);
-  // Future<UnlinkResponse> unlink(String model, List<int> ids);
+  Future<UnlinkResponse> unlink(String model, List<int> ids);
+  Future<WriteResponse> write(String model, List<int> ids, Map<String, dynamic> values);
 }
 
 class LoginResponse {
@@ -51,20 +51,20 @@ class ReadResponse {
   }
 }
 
-class WriteResponse {
-  final List<dynamic> records;
-  WriteResponse(this.records);
-
-  factory WriteResponse.fromJson(List<dynamic> json) {
-    return WriteResponse(json);
-  }
-}
-
 class UnlinkResponse {
   final List<dynamic> records;
   UnlinkResponse(this.records);
 
   factory UnlinkResponse.fromJson(List<dynamic> json) {
     return UnlinkResponse(json);
+  }
+}
+
+class WriteResponse {
+  final List<dynamic> records;
+  WriteResponse(this.records);
+
+  factory WriteResponse.fromJson(List<dynamic> json) {
+    return WriteResponse(json);
   }
 }

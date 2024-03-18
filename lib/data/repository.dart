@@ -89,7 +89,6 @@ class Repository extends RepositoryDataSource {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       Map<String, dynamic> responseBody = jsonDecode(response.body);
       dynamic result = responseBody['result'];
 
@@ -105,15 +104,71 @@ class Repository extends RepositoryDataSource {
 
 
 
-// @override
-  // Future<UnlinkResponse> unlink(String model, List<int> ids) {
-  //   // TODO: implement unlink
-  //   throw UnimplementedError();
-  // }
-  //
-  // @override
-  // Future<WriteResponse> write(String model, List<int> ids, Map<String, dynamic> values) {
-  //   // TODO: implement write
-  //   throw UnimplementedError();
-  // }
+  @override
+  Future<UnlinkResponse> unlink(String model, List<int> ids) async {
+    final response = await http.post(
+      Uri.parse('$url/web/dataset/call_kw/crm/unlink'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionId ?? '',
+      },
+      body: jsonEncode({
+        'jsonrpc': '2.0',
+        'method': 'call',
+        'params': {
+          'model': model,
+          'method': 'unlink',
+          'args': [ids],
+          'kwargs': {'context': []},
+        }
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      dynamic result = responseBody['result'];
+
+      if (result != null) {
+        return UnlinkResponse([result]);
+      } else {
+        throw Exception('No se pudo eliminar el registro.');
+      }
+    } else {
+      throw Exception('Error al intentar eliminar el registro.');
+    }
+  }
+
+  @override
+  Future<WriteResponse> write(String model, List<int> ids, Map<String, dynamic> values) async {
+    final response = await http.post(
+      Uri.parse('$url/web/dataset/call_kw/crm/write'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionId ?? '',
+      },
+      body: jsonEncode({
+        'jsonrpc': '2.0',
+        'method': 'call',
+        'params': {
+          'model': model,
+          'method': 'write',
+          'args': [ids, values],
+          'kwargs': {'context': []},
+        }
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      dynamic result = responseBody['result'];
+
+      if (result != null) {
+        return WriteResponse(result);
+      } else {
+        throw Exception('No se pudo actualizar el registro.');
+      }
+    } else {
+      throw Exception('Error al intentar actualizar el registro.');
+    }
+  }
 }
