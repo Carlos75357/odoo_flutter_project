@@ -102,8 +102,8 @@ class Repository extends RepositoryDataSource {
     }
   }
 
-
-
+  /// Unlink the records with the given ids from the given model
+  ///
   @override
   Future<UnlinkResponse> unlink(String model, List<int> ids) async {
     final response = await http.post(
@@ -163,12 +163,40 @@ class Repository extends RepositoryDataSource {
       dynamic result = responseBody['result'];
 
       if (result != null) {
-        return WriteResponse(result);
+        return WriteResponse(result, true);
       } else {
         throw Exception('No se pudo actualizar el registro.');
       }
     } else {
       throw Exception('Error al intentar actualizar el registro.');
+    }
+  }
+
+  @override
+  Future<CreateResponse> create(String model, Map<String, dynamic> values) async {
+    final response = await http.post(
+      Uri.parse('$url/web/dataset/call_kw/crm/create'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionId ?? '',
+      },
+      body: jsonEncode({
+        'jsonrpc': '2.0',
+        'method': 'call',
+        'params': {
+          'model': model,
+          'method': 'create',
+          'args': [values],
+          'kwargs': {'context': []},
+        },
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      return CreateResponse.fromJson(responseBody);
+    } else {
+      throw Exception('Failed to create record');
     }
   }
 }

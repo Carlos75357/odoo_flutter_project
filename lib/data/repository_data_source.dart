@@ -5,6 +5,7 @@ abstract class RepositoryDataSource {
   Future<ReadResponse> read(String model, List<int> id);
   Future<UnlinkResponse> unlink(String model, List<int> ids);
   Future<WriteResponse> write(String model, List<int> ids, Map<String, dynamic> values);
+  Future<CreateResponse> create(String model, Map<String, dynamic> values);
 }
 
 class LoginResponse {
@@ -62,9 +63,28 @@ class UnlinkResponse {
 
 class WriteResponse {
   final List<dynamic> records;
-  WriteResponse(this.records);
+  final bool success;
+  WriteResponse(this.records, this.success);
 
   factory WriteResponse.fromJson(List<dynamic> json) {
-    return WriteResponse(json);
+    if (json.isEmpty) {
+      return WriteResponse(json, false);
+    }
+    return WriteResponse(json, true);
+  }
+}
+
+class CreateResponse {
+  final bool success;
+  final int id;
+
+  CreateResponse({required this.success, required this.id});
+
+  factory CreateResponse.fromJson(Map<String, dynamic> json) {
+    int id = json['result'];
+    return CreateResponse(
+      success: id > 0,
+      id: id,
+    );
   }
 }
