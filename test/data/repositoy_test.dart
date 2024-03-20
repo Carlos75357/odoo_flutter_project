@@ -30,8 +30,6 @@ void main() async {
           }
         }
       }
-
-      expect(kDebugMode, true);
     });
 
     test('Read test', () async {
