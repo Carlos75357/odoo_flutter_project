@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/widgets/text_fields.dart';
 import '../crm_list/crm_list_page.dart';
 import 'login_bloc.dart';
 import 'login_events.dart';
@@ -14,6 +15,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  /// Controllers for the different text fields.
   final TextEditingController urlController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -23,16 +25,53 @@ class _LoginPageState extends State<LoginPage> {
     urlController.text = "https://";
 
     return Scaffold(
+      /// The bloc listener is used to navigate to the next page when the login
+      /// is successful and check for errors if there are any in the login process
+      /// check if the message contains 'obligatorios' in case of an error.
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoginSuccess) {
-            print('NOS MOVEMOS DE PAGINA :DDDD');
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => CrmListPage()),
             );
+          } else if (state is LoginError) {
+            String errorMessage = state.error;
+            if (errorMessage.contains('obligatorios')) {
+              if (urlController.text.isEmpty || urlController.text.trim() == 'https://'  && usernameController.text.isEmpty && passwordController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Todos los campos son obligatorios")),
+                );
+              }else if (urlController.text.isEmpty || urlController.text.trim() == 'https://') {
+                urlController.text = "https://";
+                usernameController.clear();
+                passwordController.clear();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("El campo URL es obligatorio")),
+                );
+              } else if (usernameController.text.isEmpty) {
+                urlController.text = "https://";
+                usernameController.clear();
+                passwordController.clear();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("El campo usuario es obligatorio")),
+                );
+              }else if (passwordController.text.isEmpty) {
+                urlController.text = "https://";
+                usernameController.clear();
+                passwordController.clear();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("El campo contraseña es obligatorio")),
+                );
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(errorMessage)),
+              );
+            }
           }
         },
+        /// The bloc builder is used to render the login page.
         child: BlocBuilder<LoginBloc, LoginState>(
           builder: (context, state) {
             return Container(
@@ -89,62 +128,11 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               child: Column(
                                 children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: Colors.grey.shade200,
-                                        ),
-                                      ),
-                                    ),
-                                    child: TextField(
-                                      controller: urlController,
-                                      decoration: InputDecoration(
-                                        icon: Icon(Icons.web),
-                                        labelText: "URL del servidor",
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  ),
+                                  textFields(urlController, 'URL del servidor', Icon(Icons.web)),
                                   SizedBox(height: 20),
-                                  Container(
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: Colors.grey.shade200,
-                                        ),
-                                      ),
-                                    ),
-                                    child: TextField(
-                                      controller: usernameController,
-                                      decoration: InputDecoration(
-                                        icon: Icon(Icons.person),
-                                        labelText: "Nombre de usuario",
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  ),
+                                  textFields(usernameController, 'Nombre de usuario', Icon(Icons.person)),
                                   SizedBox(height: 20),
-                                  Container(
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: Colors.grey.shade200,
-                                        ),
-                                      ),
-                                    ),
-                                    child: TextField(
-                                      controller: passwordController,
-                                      decoration: InputDecoration(
-                                        icon: Icon(Icons.password_outlined),
-                                        labelText: "Contraseña",
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  ),
+                                  textFields(passwordController, 'Contraseña', Icon(Icons.password_outlined)),
                                 ],
                               ),
                             ),
@@ -158,7 +146,6 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               child: MaterialButton(
                                 onPressed: () {
-                                  // Enviar el evento de inicio de sesión al bloc
                                   BlocProvider.of<LoginBloc>(context).add(
                                     LoginButtonPressed(
                                       url: urlController.text,

@@ -1,12 +1,14 @@
 import 'package:flutter_crm_prove/data/repository_data_source.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+ /// Class api to interact with Odoo, based on http package have methods to authenticate, searchRead, read, unlink, write, create
 class Repository extends RepositoryDataSource {
   String? sessionId;
   String? url;
   String? db;
 
+  /// Authenticate method, send credentials to login in Odoo, if credentials
+  /// are correct saves sessionId in sessionId variable to be used in other methods.
   @override
   Future<LoginResponse> authenticate(String url, String db, String username, String password) async {
     var response = await http.post(
@@ -39,6 +41,8 @@ class Repository extends RepositoryDataSource {
     }
   }
 
+  /// SearchRead method, send domain to search in Odoo all records that match
+  /// with the domain
   @override
   Future<SearchResponse> searchRead(String model, List<dynamic> domain) async {
 
@@ -67,7 +71,9 @@ class Repository extends RepositoryDataSource {
     }
   }
 
-
+  /// Read method, read the records with the given ids from the given model,
+  /// in args must be the id and in kwargs the fields that you want to read
+  /// in this case is empty, which means taht it will read all the fields
   @override
   Future<ReadResponse> read(String model, List<int> id) async {
     final response = await http.post(
@@ -103,8 +109,7 @@ class Repository extends RepositoryDataSource {
     }
   }
 
-  /// Unlink the records with the given ids from the given model
-  ///
+  /// Unlink the record with the given id from the given model
   @override
   Future<UnlinkResponse> unlink(String model, List<int> ids) async {
     final response = await http.post(
@@ -139,6 +144,7 @@ class Repository extends RepositoryDataSource {
     }
   }
 
+  /// Write method, update the record with the given id.
   @override
   Future<WriteResponse> write(String model, List<int> ids, Map<String, dynamic> values) async {
     final response = await http.post(
@@ -173,6 +179,7 @@ class Repository extends RepositoryDataSource {
     }
   }
 
+  /// Create method, create a new record in the given model with the given values
   @override
   Future<CreateResponse> create(String model, Map<String, dynamic> values) async {
     final response = await http.post(

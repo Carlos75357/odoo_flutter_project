@@ -8,6 +8,8 @@ abstract class RepositoryDataSource {
   Future<CreateResponse> create(String model, Map<String, dynamic> values);
 }
 
+/// Class LoginResponse to handle response from authenticate, if there is an
+/// error, the bool success will be false.
 class LoginResponse {
   final bool success;
   final String? errorMessage;
@@ -32,7 +34,7 @@ class LoginResponse {
 }
 
 
-
+/// Class SearchResponse to handle response from searchRead
 class SearchResponse {
   final List<dynamic> records;
   SearchResponse(this.records);
@@ -42,6 +44,7 @@ class SearchResponse {
   }
 }
 
+/// Class ReadResponse to handle response from read
 class ReadResponse {
   final List<dynamic> records;
   ReadResponse(this.records);
@@ -51,6 +54,7 @@ class ReadResponse {
   }
 }
 
+/// Class UnlinkResponse to handle response from unlink
 class UnlinkResponse {
   final List<dynamic> records;
   UnlinkResponse(this.records);
@@ -60,6 +64,8 @@ class UnlinkResponse {
   }
 }
 
+/// Class WriteResponse to handle response from write, if there is an error,
+/// the bool success will be false and the int id will be null.
 class WriteResponse {
   final bool success;
   final bool? id;
@@ -67,25 +73,39 @@ class WriteResponse {
   WriteResponse({required this.success, this.id});
 
   factory WriteResponse.fromJson(Map<String, dynamic> json) {
-    return WriteResponse(
-      success: true,
-      id: json['result'],
-    );
+    if (json.containsKey('error')) {
+      return WriteResponse(
+        success: false,
+        id: null,
+      );
+    } else {
+      return WriteResponse(
+        success: true,
+        id: json['result'],
+      );
+    }
   }
 }
 
-
+/// Class CreateResponse to handle response from create, if there is an error,
+/// the bool success will be false and the int id will be null.
 class CreateResponse {
   final bool success;
-  final int id;
+  final int? id;
 
   CreateResponse({required this.success, required this.id});
 
   factory CreateResponse.fromJson(Map<String, dynamic> json) {
-    int id = json['result'];
-    return CreateResponse(
-      success: id > 0,
-      id: id,
-    );
+    if (json.containsKey('error')) {
+      return CreateResponse(
+        success: false,
+        id: null,
+      );
+    } else {
+      return CreateResponse(
+        success: true,
+        id: json['result'],
+      );
+    }
   }
 }
