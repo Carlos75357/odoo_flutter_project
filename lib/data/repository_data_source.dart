@@ -62,17 +62,19 @@ class UnlinkResponse {
 }
 
 class WriteResponse {
-  final List<dynamic> records;
   final bool success;
-  WriteResponse(this.records, this.success);
+  final bool? id;
 
-  factory WriteResponse.fromJson(List<dynamic> json) {
-    if (json.isEmpty) {
-      return WriteResponse(json, false);
-    }
-    return WriteResponse(json, true);
+  WriteResponse({required this.success, this.id});
+
+  factory WriteResponse.fromJson(Map<String, dynamic> json) {
+    return WriteResponse(
+      success: true,
+      id: json['result'],
+    );
   }
 }
+
 
 class CreateResponse {
   final bool success;

@@ -89,6 +89,7 @@ class Repository extends RepositoryDataSource {
     );
 
     if (response.statusCode == 200) {
+      print(response.body);
       Map<String, dynamic> responseBody = jsonDecode(response.body);
       dynamic result = responseBody['result'];
 
@@ -163,9 +164,9 @@ class Repository extends RepositoryDataSource {
       dynamic result = responseBody['result'];
 
       if (result != null) {
-        return WriteResponse(result, true);
+        return WriteResponse(success: true, id: result);
       } else {
-        throw Exception('No se pudo actualizar el registro.');
+        return WriteResponse(success: false);
       }
     } else {
       throw Exception('Error al intentar actualizar el registro.');
