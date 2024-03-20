@@ -9,30 +9,29 @@ abstract class RepositoryDataSource {
 }
 
 class LoginResponse {
-  final int uid;
-  final bool isAdmin;
-  final String db;
-  final String name;
-  final String username;
+  final bool success;
+  final String? errorMessage;
 
   LoginResponse({
-    required this.uid,
-    required this.isAdmin,
-    required this.db,
-    required this.name,
-    required this.username,
+    required this.success,
+    this.errorMessage,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
-    return LoginResponse(
-      uid: json['result']['uid'],
-      isAdmin: json['result']['is_admin'],
-      db: json['result']['db'],
-      name: json['result']['name'],
-      username: json['result']['username'],
-    );
+    if (json.containsKey('error')) {
+      return LoginResponse(
+        success: false,
+        errorMessage: json['error']['message'],
+      );
+    } else {
+      return LoginResponse(
+        success: true,
+      );
+    }
   }
 }
+
+
 
 class SearchResponse {
   final List<dynamic> records;

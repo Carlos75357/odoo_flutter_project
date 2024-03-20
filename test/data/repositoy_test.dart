@@ -12,7 +12,7 @@ void main() async {
 
     setUpAll(() async {
       repository = Repository();
-      await repository.authenticate('https://demos15.aurestic.com', 'demos_demos15', 'admin', 'admin');
+      await repository.authenticate('https://demos15.aurestic.com', 'demos_demos15', 'admin1', 'admin');
     });
 
     test('Authenticate test', () async {
