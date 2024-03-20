@@ -21,6 +21,7 @@ void main() async {
 
     test('SearchRead test', () async {
       SearchResponse searchResponse = await repository.searchRead('crm.lead', [['expected_revenue', '>', 1000]]);
+      expect(searchResponse.records.length, greaterThan(0));
       for (var i = 0; i < searchResponse.records.length; i++) {
         String name = searchResponse.records[i]['name'].toLowerCase();
         if (name.contains('prueba')) {
