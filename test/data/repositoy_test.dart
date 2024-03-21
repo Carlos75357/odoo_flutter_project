@@ -8,11 +8,11 @@ class RepositoryTest {
 void main() async {
   group('Repository test', () {
     late Repository repository;
-    int id = 64;
+    int id = 85;
 
     setUpAll(() async {
       repository = Repository();
-      await repository.authenticate('https://demos15.aurestic.com', 'demos_demos15', 'admin1', 'admin');
+      await repository.authenticate('https://demos15.aurestic.com', 'demos_demos15', 'admin', 'admin');
     });
 
     test('Authenticate test', () async {
@@ -20,24 +20,20 @@ void main() async {
     });
 
     test('SearchRead test', () async {
-      SearchResponse searchResponse = await repository.searchRead('crm.lead', [['expected_revenue', '>', 1000]]);
-      expect(searchResponse.records.length, greaterThan(0));
-      for (var i = 0; i < searchResponse.records.length; i++) {
-        String name = searchResponse.records[i]['name'].toLowerCase();
-        if (name.contains('prueba')) {
-          if (kDebugMode) {
-            print(searchResponse.records[i]);
-          }
+      List<CrmLead> leads = await repository.searchRead('crm.lead', [['expected_revenue', '>', 1000]]);
+      expect(leads.length, greaterThan(0));
+      for (var lead in leads) {
+        if (kDebugMode) {
+          print(lead.toString());
         }
       }
     });
 
     test('Read test', () async {
-      ReadResponse readResponse = await repository.read('crm.lead', [id]);
-      expect(readResponse.records[0], isNotNull);
-
+      CrmLead lead = await repository.read('crm.lead', id);
+      expect(lead, isNotNull);
       if (kDebugMode) {
-        print(readResponse.records[0]);
+        print(lead);
       }
     });
 
@@ -49,7 +45,9 @@ void main() async {
     });
 
     test('Write test', () async {
-      WriteResponse writeResponse = await repository.write('crm.lead', [id], {'name': 'Sobreescrito', 'description': 'Oportunidad sobreescrita.'});
+
+      CrmLead lead = CrmLead(id: id, name: 'sobreescrito');
+      WriteResponse writeResponse = await repository.write('crm.lead', id, lead);
 
       expect(writeResponse.success, isTrue);
 
@@ -62,10 +60,17 @@ void main() async {
     });
 
     test('Unlink test', () async {
-      UnlinkResponse unlinkResponse = await repository.unlink('crm.lead', [id]);
+      UnlinkResponse unlinkResponse = await repository.unlink('crm.lead', id);
       if (kDebugMode) {
         print(unlinkResponse.records[0]);
       }
+    });
+
+    test('tagName test', () async {
+      List<String> tagNames = await repository.tagNames([1,2,3]);
+      expect(tagNames[0], 'Product');
+      expect(tagNames[1], 'Software');
+      expect(tagNames[2], 'Services');
     });
 
   });

@@ -44,8 +44,7 @@ class Repository extends RepositoryDataSource {
   /// SearchRead method, send domain to search in Odoo all records that match
   /// with the domain
   @override
-  Future<SearchResponse> searchRead(String model, List<dynamic> domain) async {
-
+  Future<List<CrmLead>> searchRead(String model, List<dynamic> domain) async {
     final response = await http.post(
       Uri.parse('$url/web/dataset/search_read'),
       headers: {
@@ -65,17 +64,21 @@ class Repository extends RepositoryDataSource {
     if (response.statusCode == 200) {
       Map<String, dynamic> responseBody = jsonDecode(response.body);
       List<dynamic> records = responseBody['result']['records'];
-      return SearchResponse.fromJson(records);
+      if (records.isNotEmpty) {
+        return records.map((record) => CrmLead.fromJson(record)).toList();
+      } else {
+        throw Exception('No records found');
+      }
     } else {
-      throw Exception('Failed to perform search_read');
+      throw Exception('Failed to perform search_read with status code ${response.statusCode}');
     }
   }
 
   /// Read method, read the records with the given ids from the given model,
   /// in args must be the id and in kwargs the fields that you want to read
-  /// in this case is empty, which means taht it will read all the fields
+  /// in this case is empty, which means that it will read all the fields
   @override
-  Future<ReadResponse> read(String model, List<int> id) async {
+  Future<CrmLead> read(String model, int id) async {
     final response = await http.post(
       Uri.parse('$url/web/dataset/call_kw/crm/read'),
       headers: {
@@ -95,23 +98,22 @@ class Repository extends RepositoryDataSource {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       Map<String, dynamic> responseBody = jsonDecode(response.body);
-      dynamic result = responseBody['result'];
-
-      if (result != null) {
-        return ReadResponse.fromJson(result);
-      } else {
-        throw Exception('No records found in the response');
+      List<dynamic> records = responseBody['result'];
+      for (var record in records) {
+        if (record['id'] == id) {
+          return CrmLead.fromJson(record);
+        }
       }
+      throw Exception('No record found with id $id');
     } else {
-      throw Exception('Failed to read records');
+      throw Exception('Failed to read record with status code ${response.statusCode}');
     }
   }
 
   /// Unlink the record with the given id from the given model
   @override
-  Future<UnlinkResponse> unlink(String model, List<int> ids) async {
+  Future<UnlinkResponse> unlink(String model, int id) async {
     final response = await http.post(
       Uri.parse('$url/web/dataset/call_kw/crm/unlink'),
       headers: {
@@ -124,7 +126,7 @@ class Repository extends RepositoryDataSource {
         'params': {
           'model': model,
           'method': 'unlink',
-          'args': [ids],
+          'args': [[id]],
           'kwargs': {'context': []},
         }
       }),
@@ -146,7 +148,7 @@ class Repository extends RepositoryDataSource {
 
   /// Write method, update the record with the given id.
   @override
-  Future<WriteResponse> write(String model, List<int> ids, Map<String, dynamic> values) async {
+  Future<WriteResponse> write(String model, int id, CrmLead values) async {
     final response = await http.post(
       Uri.parse('$url/web/dataset/call_kw/crm/write'),
       headers: {
@@ -159,7 +161,7 @@ class Repository extends RepositoryDataSource {
         'params': {
           'model': model,
           'method': 'write',
-          'args': [ids, values],
+          'args': [id, values.toJson()],
           'kwargs': {'context': []},
         }
       }),
@@ -206,5 +208,39 @@ class Repository extends RepositoryDataSource {
     } else {
       throw Exception('Failed to create record');
     }
+  }
+
+  Future<List<String>> tagNames(List<dynamic>? tagIds) async {
+    List<String> tagNames = [];
+    if (tagIds != null && tagIds.isNotEmpty) {
+      for (var tagId in tagIds) {
+        final response = await http.post(
+          Uri.parse('$url/web/dataset/call_kw/tags/read'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Cookie': sessionId ?? '',
+          },
+          body: jsonEncode({
+            'jsonrpc': '2.0',
+            'method': 'call',
+            'params': {
+              'model': 'crm.tag',
+              'method': 'read',
+              'args': [tagId],
+              'kwargs': {'fields': ['name'], 'context': []},
+            }
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          Map<String, dynamic> responseBody = jsonDecode(response.body);
+          String tagName = responseBody['result'][0]['name'];
+          tagNames.add(tagName);
+        } else {
+          throw Exception('Failed to read tag with status code ${response.statusCode}');
+        }
+      }
+    }
+    return tagNames;
   }
 }
