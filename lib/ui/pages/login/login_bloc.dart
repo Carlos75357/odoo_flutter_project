@@ -31,7 +31,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(LoginError('Credenciales incorrectas'));
       }
     } catch (error) {
-      emit(LoginError('Algo falló'));
+      emit(LoginError('Algo falló durante la autenticación'));
     }
   }
 }

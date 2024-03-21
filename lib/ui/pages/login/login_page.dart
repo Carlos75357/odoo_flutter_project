@@ -19,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController urlController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool obscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -37,38 +38,9 @@ class _LoginPageState extends State<LoginPage> {
             );
           } else if (state is LoginError) {
             String errorMessage = state.error;
-            if (errorMessage.contains('obligatorios')) {
-              if (urlController.text.isEmpty || urlController.text.trim() == 'https://'  && usernameController.text.isEmpty && passwordController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Todos los campos son obligatorios")),
-                );
-              }else if (urlController.text.isEmpty || urlController.text.trim() == 'https://') {
-                urlController.text = "https://";
-                usernameController.clear();
-                passwordController.clear();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("El campo URL es obligatorio")),
-                );
-              } else if (usernameController.text.isEmpty) {
-                urlController.text = "https://";
-                usernameController.clear();
-                passwordController.clear();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("El campo usuario es obligatorio")),
-                );
-              }else if (passwordController.text.isEmpty) {
-                urlController.text = "https://";
-                usernameController.clear();
-                passwordController.clear();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("El campo contraseña es obligatorio")),
-                );
-              }
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(errorMessage)),
-              );
-            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(errorMessage)),
+            );
           }
         },
         /// The bloc builder is used to render the login page.
@@ -128,11 +100,11 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               child: Column(
                                 children: <Widget>[
-                                  textFields(urlController, 'URL del servidor', Icon(Icons.web)),
+                                  CustomTextField(controller: urlController, hintText: 'URL del servidor', icon: Icon(Icons.web)),
                                   SizedBox(height: 20),
-                                  textFields(usernameController, 'Nombre de usuario', Icon(Icons.person)),
+                                  CustomTextField(controller: usernameController, hintText:'Nombre de usuario', icon: Icon(Icons.person)),
                                   SizedBox(height: 20),
-                                  textFields(passwordController, 'Contraseña', Icon(Icons.password_outlined)),
+                                  CustomTextField(controller: passwordController, hintText: 'Contraseña', icon: Icon(Icons.password_outlined), isPassword: true),
                                 ],
                               ),
                             ),
