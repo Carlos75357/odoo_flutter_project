@@ -3,7 +3,6 @@ import 'package:flutter_crm_prove/ui/pages/login/login_states.dart';
 
 import '../../../data/repository.dart';
 import 'login_events.dart';
-import 'login_states.dart';
 
 /// LoginBloc class, for login events and states, using flutter_bloc package
 /// controll login events and states.

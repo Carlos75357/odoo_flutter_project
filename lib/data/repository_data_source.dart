@@ -44,7 +44,7 @@ class CrmLead {
   final String? date_limit;
   final String? sales_team;
   final String? expected_income;
-  final List<int>? tagIds; // Cambiado a List<int> en lugar de int
+  final List<int>? tagIds;
   final String? priority;
   final String? probability;
   final String? date_create;
@@ -61,7 +61,7 @@ class CrmLead {
     this.date_limit,
     this.sales_team,
     this.expected_income,
-    this.tagIds, // Cambiado a List<int>? en lugar de int?
+    this.tagIds,
     this.priority,
     this.probability,
     this.date_create,
