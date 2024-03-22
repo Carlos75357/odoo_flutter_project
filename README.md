@@ -177,7 +177,9 @@ Añadir firebase al proyecto.
 -https://pub.dev/packages/firebase_core
 
 
+
 Leer las preferencias al iniciar la aplicación del Firebase Remote Config, para establecer el límite de leads que se leeran en la app, si puede crear/eliminar leads.
+
 
 -https://console.firebase.google.com/project/flutter-crm-prove/config/env/firebase
 
@@ -186,13 +188,16 @@ Leer las preferencias al iniciar la aplicación del Firebase Remote Config, para
 <img width="1509" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/eb82dc8b-da98-400e-b586-2ce598bf3d86">
 
 
+
 Implementar el Crashlytics de Firebase en la aplicación, forzando un error y que se refleje el panel.
+
 
 -https://console.firebase.google.com/project/flutter-crm-prove/crashlytics
 
 -https://pub.dev/packages/firebase_crashlytics
 
 <img width="1509" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/ac7b64d4-019d-4af3-adcc-ac70643afdb7">
+
 
 
 ## Modo oscuro
