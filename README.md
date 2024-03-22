@@ -241,4 +241,22 @@ de cifrado y almacenamiento seguro para proteger la información del usuario.
 
 https://pub.dev/packages/flutter_secure_storage
 
+## Firebase
+
+https://console.firebase.google.com/project/flutter-crm-prove/config/env/firebase
+
+-Añadir firebase al proyecto.
+
+https://firebase.google.com/docs/flutter/setup?hl=es&platform=android
+
+-Leer las preferencias al iniciar la aplicación del Firebase Remote Config, para establecer el límite de leads que se leeran en la app, si puede crear/eliminar leads.
+
+<img width="1509" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/eb82dc8b-da98-400e-b586-2ce598bf3d86">
+
+
+## Modo Oscuro
+
+-Implementar mediante una preferencía switch, el modo claro/oscuro, en tiempo de ejecución.
+
+
 
