@@ -173,18 +173,23 @@ https://demos15.aurestic.com/web?debug=1#id=804&cids=1&menu_id=4&action=18&model
 Añadir firebase al proyecto.
 
 -https://firebase.google.com/docs/flutter/setup?hl=es&platform=android
+
 -https://pub.dev/packages/firebase_core
+
 
 Leer las preferencias al iniciar la aplicación del Firebase Remote Config, para establecer el límite de leads que se leeran en la app, si puede crear/eliminar leads.
 
 -https://console.firebase.google.com/project/flutter-crm-prove/config/env/firebase
+
 -https://pub.dev/packages/firebase_remote_config
 
 <img width="1509" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/eb82dc8b-da98-400e-b586-2ce598bf3d86">
 
+
 Implementar el Crashlytics de Firebase en la aplicación, forzando un error y que se refleje el panel.
 
 -https://console.firebase.google.com/project/flutter-crm-prove/crashlytics
+
 -https://pub.dev/packages/firebase_crashlytics
 
 <img width="1509" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/ac7b64d4-019d-4af3-adcc-ac70643afdb7">
