@@ -172,6 +172,9 @@ https://demos15.aurestic.com/web?debug=1#id=804&cids=1&menu_id=4&action=18&model
 
 https://console.firebase.google.com/project/flutter-crm-prove/config/env/firebase
 
+https://pub.dev/packages/firebase_core
+https://pub.dev/packages/firebase_remote_config
+
 -Añadir firebase al proyecto.
 
 https://firebase.google.com/docs/flutter/setup?hl=es&platform=android
