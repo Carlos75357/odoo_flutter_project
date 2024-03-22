@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_crm_prove/data/repository_data_source.dart';
 import 'package:flutter_crm_prove/data/repository.dart';
@@ -8,11 +10,11 @@ class RepositoryTest {
 void main() async {
   group('Repository test', () {
     late Repository repository;
-    int id = 85;
+    int id = 119;
 
     setUpAll(() async {
       repository = Repository();
-      await repository.authenticate('https://demos15.aurestic.com', 'demos_demos15', 'admin1', 'admin');
+      await repository.authenticate('https://demos15.aurestic.com', 'demos_demos15', 'admin', 'admin');
     });
 
     test('Authenticate test', () async {
@@ -39,17 +41,21 @@ void main() async {
 
     test('Create test', () async {
       CreateResponse createResponse = await repository.create('crm.lead', {'name': 'Prueba2', 'description': 'Prueba2', 'expected_revenue': 100000});
+      expect(createResponse.success, isTrue);
+      expect(createResponse.id, isNotNull);
+      expect(createResponse.id, greaterThan(0));
       if (kDebugMode) {
         print(createResponse.id);
       }
     });
 
     test('Write test', () async {
-
       CrmLead lead = CrmLead(id: id, name: 'sobreescrito');
       WriteResponse writeResponse = await repository.write('crm.lead', id, lead);
 
       expect(writeResponse.success, isTrue);
+      CrmLead updatedCrmLead = await repository.read('crm.lead', id);
+      expect(updatedCrmLead.name, 'sobreescrito');
 
       if (kDebugMode) {
         print('La operación de escritura fue exitosa: ${writeResponse.success}');
@@ -58,6 +64,7 @@ void main() async {
         }
       }
     });
+
 
     test('Unlink test', () async {
       UnlinkResponse unlinkResponse = await repository.unlink('crm.lead', id);
@@ -72,6 +79,5 @@ void main() async {
       expect(tagNames[1], 'Software');
       expect(tagNames[2], 'Services');
     });
-
   });
 }
