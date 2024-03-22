@@ -168,7 +168,7 @@ https://demos15.aurestic.com/web?debug=1#cids=1&menu_id=381&action=558&model=crm
 https://demos15.aurestic.com/web?debug=1#id=804&cids=1&menu_id=4&action=18&model=ir.model&view_type=form
 
 
-## Firebase
+## Firebase
 
 https://console.firebase.google.com/project/flutter-crm-prove/config/env/firebase
 
@@ -185,10 +185,9 @@ https://firebase.google.com/docs/flutter/setup?hl=es&platform=android
 <img width="1509" alt="image" src="https://github.com/aurestic/flutter_crm_prove/assets/32957956/ac7b64d4-019d-4af3-adcc-ac70643afdb7">
 
 
-## Modo Oscuro
+## Modo oscuro
 
 -Implementar mediante una preferencía switch, el modo claro/oscuro, en tiempo de ejecución.
-
 
 
 ## Flujo de trabajo
