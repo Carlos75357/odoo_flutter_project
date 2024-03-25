@@ -1,15 +1,3 @@
-abstract class RepositoryDataSource {
-  // TODO DECLARAR AUTHENTICATE, SEARCH_READ, READ, WRITE, UNLINK
-  Future<LoginResponse> authenticate(String url, String db, String username, String password);
-  Future<List<CrmLead>> searchRead(String model, List<dynamic> domain);
-  Future<CrmLead> read(String model, int id);
-  Future<UnlinkResponse> unlink(String model, int id);
-  Future<WriteResponse> write(String model, int id, CrmLead values);
-  Future<CreateResponse> create(String model, Map<String, dynamic> values);
-}
-
-/// Class LoginResponse to handle response from authenticate, if there is an
-/// error, the bool success will be false.
 class LoginResponse {
   final bool success;
   final String? errorMessage;
@@ -121,10 +109,10 @@ class CrmLead {
 
 /// Class UnlinkResponse to handle response from unlink
 class UnlinkResponse {
-  final List<dynamic> records;
+  final bool records;
   UnlinkResponse(this.records);
 
-  factory UnlinkResponse.fromJson(List<dynamic> json) {
+  factory UnlinkResponse.fromJson(bool json) {
     return UnlinkResponse(json);
   }
 }
@@ -158,7 +146,7 @@ class CreateResponse {
   final bool success;
   final int? id;
 
-  CreateResponse({required this.success, required this.id});
+  CreateResponse({required this.success, this.id});
 
   factory CreateResponse.fromJson(Map<String, dynamic> json) {
     if (json.containsKey('error')) {

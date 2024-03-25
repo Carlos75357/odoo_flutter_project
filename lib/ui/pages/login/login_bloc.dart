@@ -1,9 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/ui/pages/login/login_states.dart';
 
-import '../../../data/repository.dart';
 import 'login_events.dart';
-import 'login_states.dart';
 
 /// LoginBloc class, for login events and states, using flutter_bloc package
 /// controll login events and states.
@@ -11,7 +10,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInitial()) {
     on<LoginButtonPressed>(login);
   }
-  Repository repository = Repository();
+  OdooClient odooClient = OdooClient();
   /// login event, for login button check if all fields are not empty, if there
   /// is some empty field return a LoginError state.
   login(LoginButtonPressed event, Emitter<LoginState> emit) async {
@@ -23,9 +22,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     /// credentials are correct, return a LoginSuccess state, otherwise return a
     /// LoginError state.
     try {
-      final response = await repository.authenticate(event.url, 'demos_demos15', event.username, event.password);
+      final response = await odooClient.authenticate(event.url, event.username, event.password);
 
-      if (response.success) {
+      if (response['uid'] != null) {
         emit(LoginSuccess());
       } else {
         emit(LoginError('Credenciales incorrectas'));
