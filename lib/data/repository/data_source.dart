@@ -1,15 +1,19 @@
 import 'repository_response.dart';
 
 abstract class RepositoryDataSource {
-  // tagNames, deleteLead, changeName, updateEmail, updatePhone, {updateCompany, updateDateLimit,
-  // updateSalesTeam, updateExpectedIncome, updateTagIds, updatePriority, updateProbability, updateDateCreate, updateStage}, createLead, listLead, listAllLeads
-  // login
+  // changeName, updateEmail, updatePhone, updateCompany, updateDateLimit,
+  // updateSalesTeam, updateExpectedIncome, updateTagIds, updatePriority,
+  // updateProbability, updateDateCreate, updateStage.
   Future<LoginResponse> login(String url, String username, String password);
   Future<List<CrmLead>> listLeads(String model, List<dynamic> domain);
   Future<CrmLead> listLead(String model, int id);
   Future<CreateResponse> createLead(String model, Map<String, dynamic> values);
   Future<UnlinkResponse> unlinkLead(String model, int id);
   Future<List<String>> tagNames(List<dynamic>? tagIds);
+  Future<String> stageNameById(int stageIds);
+  Future<int> stageIdByName(String stageName);
+  Future<Map<String, int>> allStageNamesAndIds();
+  Future<List<String>> stageNames();
 }
 
 abstract class OdooDataSource {

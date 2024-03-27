@@ -23,7 +23,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    urlController.text = "https://";
+    urlController.text = "https://demos15.aurestic.com";
+    usernameController.text = "admin";
+    passwordController.text = "admin";
 
     return Scaffold(
       /// The bloc listener is used to navigate to the next page when the login

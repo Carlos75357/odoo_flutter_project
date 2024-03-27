@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter_crm_prove/data/odoo_config.dart';
+
 import 'json_rpc.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,6 +10,7 @@ class JsonRpcClient {
 
   Future<Map<String, dynamic>> call(String url, JsonRequest jsonRequest) async {
     try {
+
       var header = {
         'Content-Type': 'application/json',
       };
@@ -36,6 +39,8 @@ class JsonRpcClient {
         );
 
         sessionId = sessionIdPart.trim();
+
+        OdooConfig.setSessionId(sessionId);
 
         final responseToMap = jsonDecode(response.body);
         responseToMap['sessionId'] = sessionId;

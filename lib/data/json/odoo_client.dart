@@ -1,4 +1,5 @@
 import 'package:flutter_crm_prove/data/json/json_client.dart';
+import 'package:flutter_crm_prove/data/odoo_config.dart';
 import 'package:flutter_crm_prove/data/repository/data_source.dart';
 import 'package:flutter_crm_prove/data/repository/repository_response.dart';
 
@@ -19,6 +20,11 @@ class OdooClient extends OdooDataSource{
 
   }
 
+  void setSettings(String url, String sessionId) {
+    this.url = url;
+    jsonRpcClient.sessionId = sessionId;
+  }
+
   /// Authenticate method, send credentials to login in Odoo, if credentials
   /// are correct saves sessionId in sessionId variable to be used in other methods.
   @override
@@ -31,7 +37,12 @@ class OdooClient extends OdooDataSource{
 
     try {
       this.url = url;
+      OdooConfig.setBaseUrl(url);
       var response = await call('$url/web/session/authenticate', jsonRequest);
+
+      if (response.containsKey('error')) {
+        throw Exception('Failed to authenticate: ${response['error']}');
+      }
 
       return response;
 
