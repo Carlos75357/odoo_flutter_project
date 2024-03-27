@@ -205,6 +205,17 @@ Implementar el Crashlytics de Firebase en la aplicación, forzando un error y qu
 -Implementar mediante una preferencía switch, el modo claro/oscuro, en tiempo de ejecución. (Libre diseño)
 
 
+## Flutter Lints
+
+-Implementar la librería flutter_lints y que en la inspección del código fuente no aparezca ningún warning o error.
+
+https://pub.dev/packages/flutter_lints
+
+
+![image](https://github.com/aurestic/flutter_crm_prove/assets/32957956/ad0b9c6f-06db-4eec-9ae7-444ea0c39691)
+
+
+
 ## Flujo de trabajo
 
 El flujo de trabajo con pull requests es una práctica común en el desarrollo colaborativo de software que permite una
