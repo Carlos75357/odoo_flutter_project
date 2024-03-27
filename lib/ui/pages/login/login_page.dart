@@ -5,7 +5,6 @@ import '../crm_list/crm_list_page.dart';
 import 'login_bloc.dart';
 import 'login_events.dart';
 import 'login_states.dart';
-import '../crm_list/crm_list_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -23,7 +22,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    urlController.text = "https://";
+    urlController.text = "https://demos15.aurestic.com";
+    usernameController.text = "admin";
+    passwordController.text = "admin";
 
     return Scaffold(
       /// The bloc listener is used to navigate to the next page when the login
@@ -32,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoginSuccess) {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => CrmListPage()),
             );

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/repository/repository.dart';
 import 'package:flutter_crm_prove/data/repository/repository_response.dart';
+import 'package:flutter_crm_prove/domain/lead.dart';
 import 'package:test/test.dart';
 
 class OdooClientTest {
@@ -51,7 +52,7 @@ void main() async {
     });
 
     test('Write test', () async {
-      CrmLead lead = CrmLead(id: id, name: 'sobreescrito');
+      Lead lead = Lead(id: id, name: 'sobreescrito');
       bool writeResponse = await odooClient.write('crm.lead', id, lead);
 
       expect(writeResponse, isTrue);
