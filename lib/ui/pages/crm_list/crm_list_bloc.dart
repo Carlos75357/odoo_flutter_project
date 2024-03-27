@@ -25,7 +25,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
   listCrm(ChangeFilter event, Emitter<CrmListStates> emit) async {
     try {
-      CrmListLoading();
+      emit(CrmListLoading());
       String? filter = event.filter;
       int idStage = 0;
       idStage = await repository.stageIdByName(event.filter);
@@ -42,7 +42,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
   selectLead(LeadSelected event, Emitter<CrmListStates> emit) async {
     try {
-      CrmListLoading();
+      emit(CrmListLoading());
 
       final response = await repository.listLead('crm.lead', event.lead.id);
 
@@ -57,7 +57,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
   loadLeads(LoadAllLeads event, Emitter<CrmListStates> emit) async {
     try {
-      CrmListLoading();
+      emit(CrmListLoading());
       final response = await repository.listLeads('crm.lead', []);
       leads = response;
       Map<String, dynamic> data = {
@@ -72,7 +72,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
   reloadLeads(ReloadLeads event, Emitter<CrmListStates> emit) {
     try {
-      CrmListLoading();
+      emit(CrmListLoading());
 
       Map<String, dynamic> data = {
         'leads': leads
@@ -86,7 +86,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
   newLead(NewLeadButtonPressed event, Emitter<CrmListStates> emit) async {
     try {
-      CrmListLoading();
+      emit(CrmListLoading());
       emit(CrmNewLead());
     } catch (e) {
       emit(CrmListError('Hubo un error al cargar las oportunidades'));

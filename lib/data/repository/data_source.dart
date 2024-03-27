@@ -13,7 +13,6 @@ abstract class RepositoryDataSource {
   Future<List<String>> tagNames(List<dynamic>? tagIds);
   Future<String> stageNameById(int stageIds);
   Future<int> stageIdByName(String stageName);
-  Future<Map<String, int>> allStageNamesAndIds();
   Future<List<String>> stageNames();
 }
 

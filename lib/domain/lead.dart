@@ -34,7 +34,7 @@ class Lead {
   });
 
   static dynamic parseStringField(dynamic value) {
-    return (value is bool && !value) ? null : value as String?;
+    return (value is bool) ? null : value as String?;
   }
 
   static int? parseIntField(dynamic value) {
@@ -62,7 +62,7 @@ class Lead {
 
     return Lead(
       id: json['id'],
-      name: json['name'],
+      name: parseStringField(json['name']),
       contactName: parseStringField(json['contact_name']),
       phone: parseStringField(json['phone']),
       email: parseStringField(json['email_from']),
@@ -70,7 +70,7 @@ class Lead {
       userId: parseIntField(json['user_id']),
       dateDeadline: parseStringField(json['date_deadline']),
       teamId: parseIntField(json['team_id']),
-      expectedRevenue: (json['expected_revenue'] != null) ? parseIntField(json['expected_revenue']) : null,
+      expectedRevenue: parseIntField(json['expected_revenue']),
       tagIds: tagIds,
       priority: parseStringField(json['priority']),
       probability: double.parse(json['probability'].toString()).toStringAsFixed(2),

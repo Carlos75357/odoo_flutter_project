@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/repository/data_source.dart';
 import 'package:flutter_crm_prove/data/repository/repository_response.dart';
@@ -32,11 +34,9 @@ class Repository extends RepositoryDataSource {
   Future<List<Lead>> listLeads(String model, List<dynamic> domain) async {
     try {
       var response = await odooClient.searchRead(model, domain);
-      List<Lead> leads = [];
-      for (var record in response) {
-        leads.add(Lead.fromJson(record));
-      }
-      return leads;
+
+      return response.map((e) => Lead.fromJson(e)).toList();
+
     } catch (e) {
       throw Exception('Failed to get leads: $e');
     }
@@ -99,65 +99,28 @@ class Repository extends RepositoryDataSource {
   @override
   Future<int> stageIdByName(String stageName) async {
     try {
-      var response = await odooClient.searchRead(
-        'crm.stage',
-        [],
-      );
+        var response = await odooClient.searchRead(
+          'crm.stage',
+          [],
+        );
 
-      if (response.isNotEmpty) {
-        for (var stage in response) {
-          if (stage['name'] == stageName) {
-            return stage['id'] as int;
-          }
-        }
-        return 0;
-      } else {
-        throw Exception('Stage with name "$stageName" not found');
-      }
-    } catch (e) {
+        var stage = response.firstWhere((stage) => stage['name'] == stageName);
+        return stage['id'] as int;
+      } catch (e) {
       throw Exception('Failed to get stage ID: $e');
     }
   }
 
-  @override
-  Future<Map<String, int>> allStageNamesAndIds() async {
-    try {
-      var response = await odooClient.searchRead(
-        'crm.stage',
-        [[]],
-      );
-
-      Map<String, int> stageNamesAndIds = {};
-
-      for (var stage in response) {
-        int stageId = stage['id'] as int;
-        String stageName = stage['name'] as String;
-        stageNamesAndIds[stageName] = stageId;
-      }
-
-      return stageNamesAndIds;
-    } catch (e) {
-      throw Exception('Failed to get all stage names and IDs: $e');
-    }
-  }
-
-
 
   @override
   Future<List<String>> stageNames() async {
-    List<String> stageNames = [];
-
     try {
       var response = await odooClient.searchRead('crm.stage', []);
 
-      for (var record in response) {
-        String? stageName = record['name'];
-        stageNames.add(stageName!);
-      }
-
-      return stageNames;
+      return response.map<String>((record) => record['name'] as String).toList();
     } catch (e) {
       throw Exception('Failed to get stage names: $e');
     }
   }
+
 }
