@@ -1,3 +1,5 @@
+import 'package:flutter_crm_prove/domain/lead.dart';
+
 abstract class CrmListEvents {}
 
 class LoadLeads extends CrmListEvents {}
@@ -9,11 +11,13 @@ class ChangeFilter extends CrmListEvents {
 }
 
 class LeadSelected extends CrmListEvents {
-  final int leadId;
+  final Lead lead;
 
-  LeadSelected({required this.leadId});
+  LeadSelected({required this.lead});
 }
 
 class LoadAllLeads extends CrmListEvents {}
 
 class ReloadLeads extends CrmListEvents {}
+
+class NewLeadButtonPressed extends CrmListEvents {}

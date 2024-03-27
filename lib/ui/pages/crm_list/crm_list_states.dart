@@ -1,4 +1,6 @@
-abstract class CrmListStates {}
+abstract class CrmListStates {
+  get data => null;
+}
 
 class CrmListInitial extends CrmListStates {}
 
@@ -12,7 +14,7 @@ class CrmListSuccess extends CrmListStates {
 
 class CrmListSort extends CrmListStates {
   final String sortBy;
-  Map<String, dynamic> data = {};
+  final Map<String, dynamic> data;
 
   CrmListSort(this.sortBy, this.data);
 }
@@ -29,3 +31,5 @@ class CrmListError extends CrmListStates {
   final String error;
   CrmListError(this.error);
 }
+
+class CrmNewLead extends CrmListStates {}

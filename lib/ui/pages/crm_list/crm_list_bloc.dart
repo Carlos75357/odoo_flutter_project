@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/odoo_config.dart';
-import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail.dart';
+import 'package:flutter_crm_prove/domain/lead.dart';
 
 import '../../../data/repository/repository.dart';
 import 'crm_list_events.dart';
@@ -16,27 +16,25 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     on<LeadSelected>(selectLead);
     on<LoadAllLeads>(loadLeads);
     on<ReloadLeads>(reloadLeads);
+    on<NewLeadButtonPressed>(newLead);
   }
 
   OdooClient odooClient = OdooClient();
   late Repository repository = Repository(odooClient: odooClient);
+  List<Lead> leads = [];
 
   listCrm(ChangeFilter event, Emitter<CrmListStates> emit) async {
     try {
       CrmListLoading();
       String? filter = event.filter;
-      if (event.filter == 'Ver todos') {
-        filter = null;
-      } else {
-        filter = 'stage_id = ${event.filter}';
-      }
-      final response = await repository.listLeads('crm.lead', [filter as List]);
+      int idStage = 0;
+      idStage = await repository.stageIdByName(event.filter);
+      filter = 'stage_id = ${event.filter}';
 
-      if (response.isEmpty) {
-        emit(CrmListEmpty());
-      }
+      List<Lead> filteredLeads = leads.where((lead) => lead.stageId == idStage).toList();
+      Map<String, dynamic> data = {'leads': filteredLeads};
 
-      emit(CrmListSort(filter!, response as Map<String, dynamic>));
+      emit(CrmListSort(filter, data));
     } catch (e) {
       emit(CrmListError('Hubo un error al cargar las oportunidades'));
     }
@@ -46,7 +44,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     try {
       CrmListLoading();
 
-      final response = await repository.listLead('crm.lead', event.leadId);
+      final response = await repository.listLead('crm.lead', event.lead.id);
 
       Map<String, dynamic> data = {
         'lead': response
@@ -61,6 +59,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     try {
       CrmListLoading();
       final response = await repository.listLeads('crm.lead', []);
+      leads = response;
       Map<String, dynamic> data = {
         'leads': response
       };
@@ -75,9 +74,20 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     try {
       CrmListLoading();
 
-      final response = repository.listLeads('crm.lead', []);
+      Map<String, dynamic> data = {
+        'leads': leads
+      };
 
-      emit(CrmListSuccess(response as Map<String, dynamic>));
+      emit(CrmListSuccess(data));
+    } catch (e) {
+      emit(CrmListError('Hubo un error al cargar las oportunidades'));
+    }
+  }
+
+  newLead(NewLeadButtonPressed event, Emitter<CrmListStates> emit) async {
+    try {
+      CrmListLoading();
+      emit(CrmNewLead());
     } catch (e) {
       emit(CrmListError('Hubo un error al cargar las oportunidades'));
     }
@@ -92,21 +102,21 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     }
   }
 
-  Stream<CrmListStates> mapEventToState(CrmListEvents event, Emitter<CrmListStates> emit) async* {
-    if (event is LoadAllLeads) {
-      CrmListLoading();
-
-      final response = await repository.listLeads('crm.lead', []);
-
-      if (response.isEmpty) {
-        emit(CrmListEmpty());
-      }
-
-      emit(CrmListSuccess(response as Map<String, dynamic>));
-    } else if (event is LoadLeads) {
-      CrmListLoading();
-
-      final response = await repository.listLeads('crm.lead', []);
-    }
-  }
+  // Stream<CrmListStates> mapEventToState(CrmListEvents event, Emitter<CrmListStates> emit) async* {
+  //   if (event is LoadAllLeads) {
+  //     CrmListLoading();
+  //
+  //     final response = await repository.listLeads('crm.lead', []);
+  //
+  //     if (response.isEmpty) {
+  //       emit(CrmListEmpty());
+  //     }
+  //
+  //     emit(CrmListSuccess(response as Map<String, dynamic>));
+  //   } else if (event is LoadLeads) {
+  //     CrmListLoading();
+  //
+  //     final response = await repository.listLeads('crm.lead', []);
+  //   }
+  // }
 }

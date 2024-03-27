@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail.dart';
 
-import '../../../widgets/lead_widget.dart';
+import '../../../widgets/crm_list_page/button_new_lead.dart';
+import '../../../widgets/crm_list_page/lead_widget.dart';
+import '../../../widgets/crm_list_page/menu_crm.dart';
 import 'crm_list_bloc.dart';
 import 'crm_list_events.dart';
 import 'crm_list_states.dart';
@@ -33,50 +35,18 @@ class _CrmListPageState extends State<CrmListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CRM', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Roboto')),
+        title: const Text(
+          'CRM',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
+        ),
         backgroundColor: Colors.purpleAccent.shade400,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(50.0),
+          preferredSize: const Size.fromHeight(60.0),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: 50,
-              child: leadStatuses != null
-                  ? Container(
-                decoration: BoxDecoration(
-                  color: Colors.purpleAccent.shade400,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: <Widget>[
-                    for (int index = 0; index < leadStatuses!.length; index++)
-                      GestureDetector(
-                        onTap: () {
-                          // Emitir la señal para ordenar aquí, utilizando el índice o el valor correspondiente
-                          // Ejemplo: emit(SortByStatus(leadStatus: leadStatuses![index]));
-                          BlocProvider.of<CrmListBloc>(context).add(ChangeFilter(filter: leadStatuses![index]));
-                        },
-                        child: Expanded(
-                          child: Center(
-                            child: Text(
-                              leadStatuses![index],
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-                    for (int i = 0; i < leadStatuses!.length - 1; i++)
-                      Container(
-                        width: 1,
-                        color: Colors.white,
-                        height: 20,
-                      )
-                  ],
-                ),
-
-              )
-                  : Center(child: CircularProgressIndicator()),
-            ),
+            child: leadStatuses != null
+                ? buildMenu(context, leadStatuses)
+                : const Center(child: CircularProgressIndicator()),
           ),
         ),
         actions: [
@@ -101,28 +71,32 @@ class _CrmListPageState extends State<CrmListPage> {
               context,
               MaterialPageRoute(builder: (context) => CrmDetail(leadId: state.id)),
             );
-
+          } else if (state is CrmListSort) {
+            leadWidgets.clear();
+            leadWidgets = _buildLeadWidgets(state);
+          } else if (state is CrmNewLead) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Placeholder()),
+            );
           }
         },
         child: BlocBuilder<CrmListBloc, CrmListStates>(
           builder: (context, state) {
-            return Container(
-              color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: leadWidgets,
-                      ),
+            return Stack(
+              children: [
+                Container(
+                  color: Colors.white,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: leadWidgets,
                     ),
                   ),
-                ],
-              ),
+                ),
+                buildButton(context),
+              ],
             );
           },
         ),
@@ -131,17 +105,13 @@ class _CrmListPageState extends State<CrmListPage> {
   }
 }
 
-List<Widget> _buildLeadWidgets(CrmListSuccess state) {
+List<Widget> _buildLeadWidgets(CrmListStates state) {
   List<Widget> leadWidgets = [];
 
   for (var leadData in state.data['leads']) {
     leadWidgets.add(
       LeadItemWidget(
-        leadId: leadData.id,
-        opportunityName: leadData.name ?? 'N/A',
-        expectedRevenue: leadData.expectedRevenue ?? 0.0,
-        customerName: leadData.contactName ?? 'N/A',
-        priority: leadData.priority ?? 0.0,
+        lead: leadData,
       ),
     );
   }

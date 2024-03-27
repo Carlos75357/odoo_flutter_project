@@ -2,6 +2,8 @@ import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/repository/data_source.dart';
 import 'package:flutter_crm_prove/data/repository/repository_response.dart';
 
+import '../../domain/lead.dart';
+
 /// Class api to interact with Odoo, based on http package have methods to authenticate, searchRead, read, unlink, write, create
 class Repository extends RepositoryDataSource {
   OdooClient odooClient;
@@ -17,22 +19,22 @@ class Repository extends RepositoryDataSource {
   }
 
   @override
-  Future<CrmLead> listLead(String model, int id) async {
+  Future<Lead> listLead(String model, int id) async {
     try {
       var response = await odooClient.read(model, id);
-      return CrmLead.fromJson(response);
+      return Lead.fromJson(response);
     } catch (e) {
       throw Exception('Failed to get lead: $e');
     }
   }
 
   @override
-  Future<List<CrmLead>> listLeads(String model, List<dynamic> domain) async {
+  Future<List<Lead>> listLeads(String model, List<dynamic> domain) async {
     try {
       var response = await odooClient.searchRead(model, domain);
-      List<CrmLead> leads = [];
+      List<Lead> leads = [];
       for (var record in response) {
-        leads.add(CrmLead.fromJson(record));
+        leads.add(Lead.fromJson(record));
       }
       return leads;
     } catch (e) {
@@ -99,11 +101,16 @@ class Repository extends RepositoryDataSource {
     try {
       var response = await odooClient.searchRead(
         'crm.stage',
-        [['name', '=', stageName]],
+        [],
       );
 
       if (response.isNotEmpty) {
-        return response[0]['id'] as int;
+        for (var stage in response) {
+          if (stage['name'] == stageName) {
+            return stage['id'] as int;
+          }
+        }
+        return 0;
       } else {
         throw Exception('Stage with name "$stageName" not found');
       }
@@ -117,7 +124,7 @@ class Repository extends RepositoryDataSource {
     try {
       var response = await odooClient.searchRead(
         'crm.stage',
-        ['id', 'name'], // Obtener los IDs y los nombres de las etapas
+        [[]],
       );
 
       Map<String, int> stageNamesAndIds = {};
@@ -133,6 +140,7 @@ class Repository extends RepositoryDataSource {
       throw Exception('Failed to get all stage names and IDs: $e');
     }
   }
+
 
 
   @override
