@@ -32,7 +32,7 @@ void main() {
         id: 1,
         name: 'Lead Name',
         expectedRevenue: 1000,
-        contactName: 'John Doe',
+        clientId: 2,
         priority: '2',
       );
 

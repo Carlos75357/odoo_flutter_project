@@ -1,0 +1,540 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+
+import '../../../../domain/lead.dart';
+import '../../../../domain/lead_formated.dart';
+import 'crm_detail_bloc.dart';
+import 'crm_detail_events.dart';
+
+class CrmDetail extends StatefulWidget {
+  final Lead lead;
+
+  const CrmDetail({super.key, required this.lead});
+
+  @override
+  State<CrmDetail> createState() => _CrmDetailState();
+}
+
+class _CrmDetailState extends State<CrmDetail> {
+  bool isDataLoading = true;
+
+  Map<String, List<String>> fieldOptions = {
+    'stage': [],
+    'user': [],
+    'company': [],
+    'client': [],
+    'tags': [],
+  };
+  late Map <String, List<String>> selectedItems = {
+    'stage': [],
+    'user': [],
+    'company': [],
+    'client': [],
+    'tags': [],
+  };
+  Map<String, dynamic> changes = {};
+  late LeadFormated leadFormated;
+  late TextEditingController _nameController;
+  late TextEditingController _clientNameController;
+  late TextEditingController _phoneController;
+  late TextEditingController _emailController;
+  late TextEditingController _companyController;
+  late TextEditingController _userController;
+  late TextEditingController _dateDeadLineController;
+  late TextEditingController _teamController;
+  late TextEditingController _expectedRevenueController;
+  late TextEditingController _tagsController;
+  late TextEditingController _priorityController;
+  late TextEditingController _probabilityController;
+  late TextEditingController _createDateController;
+  late TextEditingController _stageController;
+  late Map<String, dynamic> initialData = {};
+
+  bool isEditEnabled = false;
+  bool isDataChanged = false;
+  int? selectedPriority;
+
+
+  @override
+  void initState() {
+    super.initState();
+    configData();
+  }
+
+  void configData() {
+    _setText();
+
+    BlocProvider.of<CrmDetailBloc>(context).getLeadFormated(widget.lead).then((lead) {
+      setState(() {
+        leadFormated = lead;
+        initialData = leadFormated.toJson();
+        selectedItems['tags'] = leadFormated.tags ?? [];
+        selectedItems['stage'] = [leadFormated.stage ?? ''];
+        selectedItems['user'] = [leadFormated.user ?? ''];
+        selectedItems['company'] = [leadFormated.company ?? ''];
+        selectedItems['client'] = [leadFormated.client ?? ''];
+      });
+    });
+
+    Map<String, List<int>> allIds = {
+      'stage': [],
+      'user': [],
+      'company': [],
+      'client': [],
+      'tags': widget.lead.tagIds ?? [],
+    };
+    if (widget.lead.stageId != null) {
+      allIds['stage']?.add(widget.lead.stageId!);
+    }
+    if (widget.lead.userId != null) {
+      allIds['user']?.add(widget.lead.userId!);
+    }
+    if (widget.lead.companyId != null) {
+      allIds['company']?.add(widget.lead.companyId!);
+    }
+    if (widget.lead.clientId != null) {
+      allIds['client']?.add(widget.lead.clientId!);
+    }
+    selectedPriority = int.parse(widget.lead.priority ?? '0');
+
+    BlocProvider.of<CrmDetailBloc>(context).getFieldsOptions().then((options) {
+      setState(() {
+        fieldOptions = options;
+        isDataLoading = false;
+      });
+    });
+  }
+
+  Future<void> _assignDataFromString(int id, String type, TextEditingController controller) async {
+    String data = await BlocProvider.of<CrmDetailBloc>(context).getDataString(id, type);
+    controller.text = data;
+  }
+
+  Future<void> _assignDataFromList(List<int> ids, String type, TextEditingController controller) async {
+    List<String> dataList = await BlocProvider.of<CrmDetailBloc>(context).getDataList(ids, type);
+    String dataString = dataList.join(', ');
+    controller.text = dataString;
+  }
+
+  Future<void> getDataStringForId() async {
+    await _assignDataFromString(widget.lead.companyId ?? 0, 'res.company', _companyController);
+    await _assignDataFromString(widget.lead.userId ?? 0, 'res.users', _userController);
+    await _assignDataFromString(widget.lead.teamId ?? 0, 'crm.team', _teamController);
+    await _assignDataFromList(widget.lead.tagIds ?? [0], 'crm.tag', _tagsController);
+    await _assignDataFromString(widget.lead.stageId ?? 0, 'crm.stage', _stageController);
+    await _assignDataFromString(widget.lead.clientId ?? 0, 'res.partner', _clientNameController);
+  }
+
+  Future<List<String>> getLeadSelectedItems() async {
+    List<int> tagIds = widget.lead.tagIds ?? [0];
+    List<String> selectedItems = await BlocProvider.of<CrmDetailBloc>(context).getDataList(tagIds, 'crm.tag');
+    return selectedItems;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _clientNameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _companyController.dispose();
+    _userController.dispose();
+    _dateDeadLineController.dispose();
+    _teamController.dispose();
+    _expectedRevenueController.dispose();
+    _tagsController.dispose();
+    _priorityController.dispose();
+    _probabilityController.dispose();
+    _createDateController.dispose();
+    _stageController.dispose();
+    super.dispose();
+  }
+
+  void _onFieldChanged() {
+    setState(() {
+      isDataChanged = true;
+    });
+  }
+
+  void _onUpdatePressed() {
+    changes['id'] = widget.lead.id;
+    BlocProvider.of<CrmDetailBloc>(context).add(SaveLeadButtonPressed(changes));
+    _onResetPressed();
+  }
+
+  void _onResetPressed() {
+    setState(() {
+      isDataChanged = false;
+      isEditEnabled = false;
+    });
+    configData();
+  }
+
+
+  void _setText() {
+    _nameController = TextEditingController(text: widget.lead.name);
+    _clientNameController = TextEditingController();
+    _phoneController = TextEditingController(text: widget.lead.phone);
+    _emailController = TextEditingController(text: widget.lead.email);
+    _companyController = TextEditingController();
+    _userController = TextEditingController();
+    _dateDeadLineController = TextEditingController(text: widget.lead.dateDeadline);
+    _teamController = TextEditingController(text: widget.lead.teamId.toString());
+    _expectedRevenueController = TextEditingController(text: widget.lead.expectedRevenue.toString());
+    _tagsController = TextEditingController();
+    _priorityController = TextEditingController(text: widget.lead.priority);
+    _probabilityController = TextEditingController(text: widget.lead.probability);
+    _createDateController = TextEditingController(text: widget.lead.createDate);
+    _stageController = TextEditingController();
+    getDataStringForId();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: !isEditEnabled,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Oportunidad',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
+          ),
+          backgroundColor: Colors.purpleAccent.shade400,
+          actions: [
+            if (isDataChanged)
+              IconButton(
+                onPressed: _onUpdatePressed,
+                icon: const Icon(Icons.upload),
+                tooltip: 'Guardar Cambios',
+              ),
+            IconButton(
+              onPressed: isDataChanged ? null : () {
+                setState(() {
+                  isEditEnabled = !isEditEnabled;
+                });
+              },
+              icon: Icon(isEditEnabled ? Icons.edit_off : Icons.edit),
+              tooltip: isEditEnabled ? 'Deshabilitar Edición' : 'Habilitar Edición',
+            ),
+          ],
+        ),
+        body: isDataLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildField("Nombre", _nameController, 'Text', 'name'),
+              _buildField("Cliente", _clientNameController, 'Client', 'client'),
+              _buildField("Teléfono", _phoneController, 'Text', 'phone'),
+              _buildField("Email", _emailController, 'Text', 'email'),
+              _buildField('Fecha límite', _dateDeadLineController, 'Date', 'date_deadline'),
+              _buildField('Compañía', _companyController, 'Company', 'company'),
+              _buildField('Usuario', _userController, 'User', 'user'),
+              _buildField('Equipo', _teamController, 'Text', 'team'),
+              _buildField('Ingreso esperado', _expectedRevenueController, 'Text', 'expected_revenue'),
+              _buildField('Tags', _tagsController, 'Tags', 'tags'),
+              _buildPriorityField('Prioridad', _priorityController, int.parse(widget.lead.priority as String)),
+              _buildField('Probabilidad', _probabilityController, 'Text', 'probability'),
+              _buildField('Fecha de creación', _createDateController, 'Text', 'create_date'),
+              _buildField('Etapa', _stageController, 'Stage', 'stage'),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: isDataChanged ? _onResetPressed : null,
+          backgroundColor: isDataChanged ? Colors.red : Colors.grey,
+          child: const Icon(Icons.undo)
+        ),
+      ),
+    );
+  }
+
+  Widget _buildField(String label, TextEditingController controller, String caseType, String type) {
+    Widget fieldWidget;
+
+    switch (caseType) {
+      case 'Text':
+        fieldWidget = _buildTextField(controller, label, type);
+        break;
+      case 'Date':
+        fieldWidget = _buildDateTextField(controller);
+        break;
+      case 'Tags' || 'Client' || 'Company' || 'User' || 'Stage':
+        fieldWidget = _buildComboBoxFields(controller, caseType.toLowerCase());
+        break;
+      default:
+        fieldWidget = _buildTextField(controller, label, type);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 8),
+        fieldWidget,
+      ],
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label, String type) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.grey[400]!,
+          width: 1.5,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: isEditEnabled
+            ? TextField(
+          controller: controller,
+          onChanged: (value) {
+            _onFieldChanged();
+            addChanges(type, value);
+          },
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+          ),
+        )
+            : Text(
+          controller.text,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateTextField(TextEditingController controller) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.grey[400]!,
+          width: 1.5,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: isEditEnabled
+            ? InkWell(
+          onTap: () {
+            showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+            ).then((selectedDate) {
+              if (selectedDate != null) {
+                setState(() {
+                  controller.text = selectedDate.toString();
+                  _onFieldChanged();
+                  addChanges('date_deadline', controller.text);
+                });
+              }
+            });
+          },
+          child: IgnorePointer(
+            child: TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+        )
+            : Text(
+          controller.text,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildComboBoxFields(TextEditingController editingController, String type) {
+    List<String> list = fieldOptions[type] ?? [];
+    if (selectedItems[type]?.isNotEmpty ?? false) {
+      list.add('Ninguno');
+    }
+
+    String? selectedValue;
+
+    if (selectedItems[type]?.isNotEmpty ?? false) {
+      if (selectedItems[type]?.first != '') {
+        selectedValue = selectedItems[type]?.first;
+      } else {
+        selectedValue = 'Ninguno';
+      }
+    } else {
+      selectedValue = 'Ninguno';
+    }
+
+    for (int i = 0; i < list.length; i++) {
+      if (list.lastIndexOf(list[i]) != i) {
+        list.removeAt(i);
+      }
+    }
+
+    if (type == 'tags') {
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Colors.grey[400]!,
+            width: 1.5,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: isEditEnabled
+              ? MultiSelectDialogField(
+            items: list.map((e) => MultiSelectItem(e, e)).toList(),
+            initialValue: selectedItems[type]?.map((e) => e.toString()).toList() ?? [],
+            title: Text('Select $type'),
+            buttonText: Text('Select $type'),
+            onConfirm: (results) {
+              setState(() {
+                selectedItems[type] = results.map((result) => result.toString()).toList();
+                _onFieldChanged();
+                addChanges(type.toLowerCase(), results.map((result) => result.toString()).toList());
+              });
+            },
+          )
+              : Text(
+            editingController.text,
+            style: const TextStyle(
+              fontSize: 16,
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Colors.grey[400]!,
+            width: 1.5,
+          ),
+        ),
+        child: isEditEnabled
+            ? Padding(
+          padding: const EdgeInsets.all(8),
+          child: DropdownButtonFormField<String>(
+            hint: const Text('Selecciona una opción'),
+            items: list.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            value: selectedValue,
+            onChanged: (String? value) {
+              setState(() {
+                selectedItems[type] = [value!];
+                _onFieldChanged();
+                addChanges(type.toLowerCase(), value);
+              });
+            },
+            decoration: InputDecoration(
+              labelText: 'Selecciona $type',
+              border: const OutlineInputBorder(),
+            ),
+          ),
+        )
+            : Text(
+          editingController.text,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildPriorityField(String label, TextEditingController controller, int initialPriority) {
+    List<Widget> stars = List.generate(
+      3,
+          (index) => IconButton(
+        onPressed: isEditEnabled ? () {
+          int newPriority = index + 1;
+          setState(() {
+            if (selectedPriority == newPriority) {
+              selectedPriority = 0;
+              controller.text = '';
+            } else {
+              selectedPriority = newPriority;
+              controller.text = '★' * selectedPriority!;
+            }
+            if (selectedPriority != initialPriority) {
+              _onFieldChanged();
+              addChanges('priority', selectedPriority);
+            }
+          });
+        } : null,
+        icon: Icon(
+          index < selectedPriority! ? Icons.star : Icons.star_border,
+          color: Colors.yellow,
+          size: 20,
+        ),
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: stars,
+        ),
+      ],
+    );
+  }
+
+  void addChanges(String key, dynamic value) {
+    if (initialData[key] is List) {
+      if (value is List && !listEquals(value, initialData[key])) {
+        changes[key] = value;
+      } else if (value is! List) {
+        print("Error: se esperaba una lista para la llave $key, pero se recibió un ${value.runtimeType}");
+      } else {
+        changes.remove(key);
+      }
+    } else {
+      print(value);
+      print(initialData[key]);
+      if (value != initialData[key]) {
+        changes[key] = value;
+      } else {
+        changes.remove(key);
+        setState(() {
+          isDataChanged = false;
+        });
+      }
+    }
+  }
+}

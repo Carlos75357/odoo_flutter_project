@@ -130,10 +130,11 @@ class OdooClient extends OdooDataSource{
   /// Write method, update the record with the given id.
   @override
   Future<bool> write(String model, int id, Lead values) async {
+    Map<String, dynamic> valuesMap = values.toJson();
     var jsonRequest = JsonRequest({
       'model': model,
       'method': 'write',
-      'args': [id, values.toJson()],
+      'args': [id, valuesMap],
       'kwargs': {'context': []},
     });
 
@@ -161,7 +162,6 @@ class OdooClient extends OdooDataSource{
 
     try {
       var response = await call('$url/web/dataset/call_kw/crm/create', jsonRequest);
-      print(response);
       return response;
     } catch (e) {
       throw Exception('Failed to create record: $e');

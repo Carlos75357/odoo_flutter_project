@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail.dart';
+import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_page.dart';
 
 import '../../../widgets/crm_list_page/button_new_lead.dart';
 import '../../../widgets/crm_list_page/lead_widget.dart';
@@ -10,7 +10,7 @@ import 'crm_list_events.dart';
 import 'crm_list_states.dart';
 
 class CrmListPage extends StatefulWidget {
-  const CrmListPage({Key? key}) : super(key: key);
+  const CrmListPage({super.key});
 
   @override
   State<CrmListPage> createState() => _CrmListPageState();
@@ -61,6 +61,7 @@ class _CrmListPageState extends State<CrmListPage> {
       body: BlocListener<CrmListBloc, CrmListStates>(
         listener: (context, state) {
           if (state is CrmListSuccess) {
+            leadWidgets.clear();
             leadWidgets = _buildLeadWidgets(state);
           } else if (state is CrmListError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -69,7 +70,7 @@ class _CrmListPageState extends State<CrmListPage> {
           } else if (state is CrmListDetail) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CrmDetail(leadId: state.id)),
+              MaterialPageRoute(builder: (context) => CrmDetail(lead: state.lead)),
             );
           } else if (state is CrmListSort) {
             leadWidgets.clear();

@@ -1,24 +1,24 @@
 class Lead {
-  final int id;
-  final String? name;
-  final String? contactName;
-  final String? phone;
-  final String? email;
-  final int? companyId;
-  final int? userId;
-  final String? dateDeadline;
-  final int? teamId;
-  final int? expectedRevenue;
-  final List<int>? tagIds;
-  final String? priority;
-  final String? probability;
-  final String? createDate;
-  final int? stageId;
+  int id;
+  String? name;
+  int? clientId;
+  String? phone;
+  String? email;
+  int? companyId;
+  int? userId;
+  String? dateDeadline;
+  int? teamId;
+  int? expectedRevenue;
+  List<int>? tagIds;
+  String? priority;
+  String? probability;
+  String? createDate;
+  int? stageId;
 
   Lead({
     required this.id,
     required this.name,
-    this.contactName,
+    this.clientId,
     this.phone,
     this.email,
     this.companyId,
@@ -63,7 +63,7 @@ class Lead {
     return Lead(
       id: json['id'],
       name: parseStringField(json['name']),
-      contactName: parseStringField(json['contact_name']),
+      clientId: parseIntField(json['partner_id']),
       phone: parseStringField(json['phone']),
       email: parseStringField(json['email_from']),
       companyId: parseIntField(json['company_id']),
@@ -82,14 +82,14 @@ class Lead {
 
   @override
   String toString() {
-    return 'Id: $id - Nombre: $name - Contacto: $contactName - Email: $email - Teléfono: $phone - Compañía: $companyId - Fecha límite: $dateDeadline - Sales Team: $teamId - Expected Income: $expectedRevenue - Tags: $tagIds - Priority: $priority - Probability: $probability - Fecha de Creación: $createDate - Etapa: $stageId';
+    return 'Id: $id - Nombre: $name - Contacto: $clientId - Email: $email - Teléfono: $phone - Compañía: $companyId - Usuario: $userId - Fecha límite: $dateDeadline - Sales Team: $teamId - Expected Income: $expectedRevenue - Tags: $tagIds - Priority: $priority - Probability: $probability - Fecha de Creación: $createDate - Etapa: $stageId';
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     if (name != null) data['name'] = name;
-    if (contactName != null) data['contact_name'] = contactName;
+    if (clientId != null) data['contact_name'] = clientId;
     if (phone != null) data['phone'] = phone;
     if (email != null) data['email'] = email;
     if (companyId != null) data['company_id'] = companyId;
