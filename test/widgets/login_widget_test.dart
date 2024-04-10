@@ -12,7 +12,7 @@ void main() {
               child: CustomTextField(
                 controller: TextEditingController(),
                 hintText: 'Password',
-                icon: Icon(Icons.lock),
+                icon: const Icon(Icons.lock),
                 isPassword: true,
               ),
             ),

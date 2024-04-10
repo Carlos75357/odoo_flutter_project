@@ -8,7 +8,7 @@ import '../../ui/pages/crm_list/crm_list_bloc.dart';
 class LeadItemWidget extends StatelessWidget {
   final Lead lead;
 
-  LeadItemWidget({
+  const LeadItemWidget({super.key,
     required this.lead,
   });
 
@@ -17,7 +17,7 @@ class LeadItemWidget extends StatelessWidget {
     List<Widget> stars = List.generate(
       3,
           (index) => Icon(
-        index < int.parse(lead.priority ?? '0') ? Icons.star : Icons.star_border,
+        index < int.parse((lead.priority ?? 0) as String) ? Icons.star : Icons.star_border,
         color: Colors.yellow,
         size: 20,
       ),
@@ -34,27 +34,34 @@ class LeadItemWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.purpleAccent,
             borderRadius: BorderRadius.circular(10.0),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 5.0,
+                offset: Offset(0, 5),
+              )
+            ]
           ),
           child: ListTile(
             title: Text(
               lead.name ?? 'Sin nombre',
-              style: TextStyle(color: Colors.white, fontSize: 12),
+              style: const TextStyle(color: Colors.white, fontSize: 12),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Ingreso esperado: ${lead.expectedRevenue?.toStringAsFixed(2)}',
-                  style: TextStyle(color: Colors.white, fontSize: 10),
+                  style: const TextStyle(color: Colors.white, fontSize: 10),
                 ),
                 Text(
-                  'Cliente: ${lead.contactName ?? 'Sin contacto'}',
-                  style: TextStyle(color: Colors.white, fontSize: 10),
+                  'Cliente: ${lead.clientId ?? 'Sin contacto'}',
+                  style: const TextStyle(color: Colors.white, fontSize: 10),
                 ),
                 Row(children: stars),
               ],
             ),
-            trailing: Icon(Icons.edit, color: Colors.white, size: 16),
+            trailing: const Icon(Icons.edit, color: Colors.white, size: 16),
           ),
         ),
       ),
