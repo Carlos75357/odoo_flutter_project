@@ -35,6 +35,8 @@ class LeadFormated {
       return value.toInt();
     } else if (value is bool) {
       return null;
+    } else if (value is int) {
+      return value;
     } else {
       return null;
     }
@@ -61,11 +63,11 @@ class LeadFormated {
     if (user != null) data['user'] = user;
     if (userId != null) data['user_id'] = userId;
     if (tags != null) data['tags'] = tags;
+    if (priority != null) data['priority'] = priority;
     if (tagsId != null) data['tags_id'] = tagsId;
     if (dateDeadline != null) data['date_deadline'] = dateDeadline;
     if (expectedRevenue != null) data['expected_revenue'] = expectedRevenue;
     if (probability != null) data['probability'] = probability;
-    if (priority != null) data['priority'] = priority;
 
     return data;
   }
@@ -83,6 +85,7 @@ class LeadFormated {
       dateDeadline: leadFormated.dateDeadline,
       expectedRevenue: leadFormated.expectedRevenue,
       probability: leadFormated.probability,
+      tagIds: leadFormated.tagsId,
       priority: leadFormated.priority?.toString(),
     );
   }
@@ -106,8 +109,8 @@ class LeadFormated {
       // tagsId: json['tags_id'] != null ? List<int>.from(json['tags_id']) : null,
       dateDeadline: parseStringField(json['date_deadline']),
       expectedRevenue: parseIntField(json['expected_revenue']),
-      probability: parseStringField(json['probability']),
       priority: parseIntField(json['priority']),
+      probability: parseStringField(json['probability']),
     );
   }
 }

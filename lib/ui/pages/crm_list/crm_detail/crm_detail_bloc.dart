@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_crm_prove/data/repository/repository.dart';
+import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_page.dart';
 
 import '../../../../data/json/odoo_client.dart';
 import '../../../../data/odoo_config.dart';
@@ -14,12 +15,22 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     on<LoadLead>(loadDetails);
     on<SaveLeadButtonPressed>(updateLead);
     on<ToggleEditButtonPressed>(toggleEditLead);
+    on<ReloadDetail>(reloadDetails);
+    on<SetState>(setState);
   }
 
   OdooClient odooClient = OdooClient();
   late Repository repository = Repository(odooClient: odooClient);
   Lead lead = Lead(id: 0, name: '');
   bool isEditing = false;
+
+  setState(SetState event, Emitter<CrmDetailStates> emit) {
+    try {
+      emit(CrmDetailLoading());
+    } catch (e) {
+      emit(CrmDetailError(e.toString()));
+    }
+  }
 
   loadDetails(LoadLead event, Emitter<CrmDetailStates> emit) async {
     try {
@@ -33,55 +44,65 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
+  reloadDetails(ReloadDetail event, Emitter<CrmDetailStates> emit) async {
+    try {
+      emit(CrmDetailLoading());
+
+      lead = await repository.listLead('crm.lead', event.id);
+
+      emit(CrmDetailReload(lead));
+    } catch (e) {
+      emit(CrmDetailError(e.toString()));
+    }
+  }
+
   updateLead(SaveLeadButtonPressed event, Emitter<CrmDetailStates> emit) async {
     try {
       emit(CrmDetailLoading());
 
       LeadFormated leadFormated = LeadFormated.fromJson(event.changes);
 
-      if (leadFormated.client != null) {
-        leadFormated.clientId = await repository.getIdByName('res.partner', leadFormated.client!);
-      } else if (leadFormated.client == 'Ninguno') {
-        leadFormated.clientId = null;
-      }
+      dynamic ids = await Future.wait([
+        _getIdByNameOrNull('res.partner', leadFormated.client),
+        _getIdByNameOrNull('res.company', leadFormated.company),
+        _getIdByNameOrNull('res.users', leadFormated.user),
+        _getIdByNameOrNull('crm.stage', leadFormated.stage),
+        _getIdsByNames('crm.tag', leadFormated.tags),
+      ]);
 
-      if (leadFormated.company != null) {
-        leadFormated.companyId = await repository.getIdByName('res.company', leadFormated.company!);
-      } else if (leadFormated.company == 'Ninguno') {
-        leadFormated.companyId = null;
-      }
-
-      if (leadFormated.user != null) {
-        leadFormated.userId = await repository.getIdByName('res.users', leadFormated.user!);
-      } else if (leadFormated.user == 'Ninguno') {
-        leadFormated.userId = null;
-      }
-
-      if (leadFormated.stage != null) {
-        leadFormated.stageId = await repository.getIdByName('crm.stage', leadFormated.stage!);
-      }
-
-      if (leadFormated.tags != null) {
-        for (var tag in leadFormated.tags!) {
-          leadFormated.tagsId?.add(await repository.getIdByName('crm.tag', tag));
-        }
-      } else if (leadFormated.tags == ['Ninguno']) {
-        leadFormated.tagsId = null;
-      }
+      leadFormated.clientId = ids[0];
+      leadFormated.companyId = ids[1];
+      leadFormated.userId = ids[2];
+      leadFormated.stageId = ids[3];
+      leadFormated.tagsId = ids[4];
 
       Lead leadUpdated = leadFormated.leadFormatedToLead(leadFormated);
 
       var response = await repository.updateLead('crm.lead', event.changes['id'], leadUpdated);
 
       if (response.success) {
-        var responseList = await repository.listLead('crm.lead', leadUpdated.id);
+        var responseLead = await repository.listLead('crm.lead', leadUpdated.id);
 
-        emit(CrmDetailSuccess(responseList));
+        emit(CrmDetailReload(responseLead));
       }
     } catch (e) {
       emit(CrmDetailError(e.toString()));
     }
   }
+
+  Future<int?> _getIdByNameOrNull(String objectType, String? name) async {
+    if (name == null) return null;
+    if (name == 'Ninguno') return null;
+    return repository.getIdByName(objectType, name);
+  }
+
+  Future<List<int>> _getIdsByNames(String objectType, List<String>? names) async {
+    if (names == null) return [];
+    if (names.contains('Ninguno')) return [];
+    var ids = await Future.wait(names.map((name) => repository.getIdByName(objectType, name)));
+    return ids;
+  }
+
 
   toggleEditLead(ToggleEditButtonPressed event, Emitter<CrmDetailStates> emit) async {
     try {

@@ -3,25 +3,26 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_states.dart';
+import 'package:flutter_crm_prove/ui/pages/crm_list/crm_list_events.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import '../../../../domain/lead.dart';
 import '../../../../domain/lead_formated.dart';
+import '../crm_list_page.dart';
 import 'crm_detail_bloc.dart';
 import 'crm_detail_events.dart';
 
 class CrmDetail extends StatefulWidget {
-  final Lead lead;
+  Lead lead;
 
-  const CrmDetail({super.key, required this.lead});
+  CrmDetail({super.key, required this.lead});
 
   @override
   State<CrmDetail> createState() => _CrmDetailState();
 }
 
 class _CrmDetailState extends State<CrmDetail> {
-  bool isDataLoading = true;
-
   Map<String, List<String>> fieldOptions = {
     'stage': [],
     'user': [],
@@ -29,7 +30,7 @@ class _CrmDetailState extends State<CrmDetail> {
     'client': [],
     'tags': [],
   };
-  late Map <String, List<String>> selectedItems = {
+  Map <String, List<String>> selectedItems = {
     'stage': [],
     'user': [],
     'company': [],
@@ -56,6 +57,7 @@ class _CrmDetailState extends State<CrmDetail> {
 
   bool isEditEnabled = false;
   bool isDataChanged = false;
+  bool isDataLoading = true;
   int? selectedPriority;
 
 
@@ -66,8 +68,7 @@ class _CrmDetailState extends State<CrmDetail> {
   }
 
   void configData() {
-    _setText();
-
+    BlocProvider.of<CrmDetailBloc>(context).add(SetState());
     BlocProvider.of<CrmDetailBloc>(context).getLeadFormated(widget.lead).then((lead) {
       setState(() {
         leadFormated = lead;
@@ -78,7 +79,17 @@ class _CrmDetailState extends State<CrmDetail> {
         selectedItems['company'] = [leadFormated.company ?? ''];
         selectedItems['client'] = [leadFormated.client ?? ''];
       });
+    }).then((_) {
+      return BlocProvider.of<CrmDetailBloc>(context).getFieldsOptions();
+    }).then((options) {
+      setState(() {
+        fieldOptions = options;
+      });
+    }).then((_) {
+      BlocProvider.of<CrmDetailBloc>(context).add(LoadLead(widget.lead));
     });
+
+    _setText();
 
     Map<String, List<int>> allIds = {
       'stage': [],
@@ -99,14 +110,6 @@ class _CrmDetailState extends State<CrmDetail> {
     if (widget.lead.clientId != null) {
       allIds['client']?.add(widget.lead.clientId!);
     }
-    selectedPriority = int.parse(widget.lead.priority ?? '0');
-
-    BlocProvider.of<CrmDetailBloc>(context).getFieldsOptions().then((options) {
-      setState(() {
-        fieldOptions = options;
-        isDataLoading = false;
-      });
-    });
   }
 
   Future<void> _assignDataFromString(int id, String type, TextEditingController controller) async {
@@ -162,8 +165,11 @@ class _CrmDetailState extends State<CrmDetail> {
 
   void _onUpdatePressed() {
     changes['id'] = widget.lead.id;
+
     BlocProvider.of<CrmDetailBloc>(context).add(SaveLeadButtonPressed(changes));
-    _onResetPressed();
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text("Recargando, no haga nada"),
+    ));
   }
 
   void _onResetPressed() {
@@ -173,7 +179,6 @@ class _CrmDetailState extends State<CrmDetail> {
     });
     configData();
   }
-
 
   void _setText() {
     _nameController = TextEditingController(text: widget.lead.name);
@@ -195,64 +200,105 @@ class _CrmDetailState extends State<CrmDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: !isEditEnabled,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Oportunidad',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
-          ),
-          backgroundColor: Colors.purpleAccent.shade400,
-          actions: [
-            if (isDataChanged)
-              IconButton(
-                onPressed: _onUpdatePressed,
-                icon: const Icon(Icons.upload),
-                tooltip: 'Guardar Cambios',
+    bool canPop = !isEditEnabled;
+    return BlocListener<CrmDetailBloc, CrmDetailStates>(
+      listener: (context, state) {
+        if (state is CrmDetailSuccess) {
+          setState(() {
+            isDataLoading = false;
+            selectedPriority = int.parse(widget.lead.priority ?? '0');
+          });
+        } else if (state is CrmDetailSave) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Guardado con éxito"),
+          ));
+        } else if (state is CrmDetailError) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Error al guardar"),
+          ));
+        } else if (state is CrmDetailReload) {
+          widget.lead = state.lead;
+          _onResetPressed();
+        }
+      },
+      child: BlocBuilder<CrmDetailBloc, CrmDetailStates>(
+        builder: (context, state) {
+          if (state is CrmDetailLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return PopScope(
+            canPop: canPop,
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text(
+                  'Oportunidad',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
+                ),
+                backgroundColor: Colors.purpleAccent.shade400,
+                leading: canPop ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
+                  },
+                ) : null,
+                actions: [
+                  if (isDataChanged)
+                    IconButton(
+                      onPressed: _onUpdatePressed,
+                      icon: const Icon(Icons.upload),
+                      tooltip: 'Guardar Cambios',
+                    ),
+                  IconButton(
+                    onPressed: isDataChanged ? null : () {
+                      setState(() {
+                        isEditEnabled = !isEditEnabled;
+                      });
+                    },
+                    icon: Icon(isEditEnabled ? Icons.edit_off : Icons.edit),
+                    tooltip: isEditEnabled ? 'Deshabilitar Edición' : 'Habilitar Edición',
+                  ),
+                ],
               ),
-            IconButton(
-              onPressed: isDataChanged ? null : () {
-                setState(() {
-                  isEditEnabled = !isEditEnabled;
-                });
-              },
-              icon: Icon(isEditEnabled ? Icons.edit_off : Icons.edit),
-              tooltip: isEditEnabled ? 'Deshabilitar Edición' : 'Habilitar Edición',
+              body: _buildBody(state),
+              floatingActionButton: FloatingActionButton(
+                  onPressed: isDataChanged ? _onResetPressed : null,
+                  backgroundColor: isDataChanged ? Colors.red : Colors.grey,
+                  child: const Icon(Icons.undo)
+              ),
             ),
-          ],
-        ),
-        body: isDataLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildField("Nombre", _nameController, 'Text', 'name'),
-              _buildField("Cliente", _clientNameController, 'Client', 'client'),
-              _buildField("Teléfono", _phoneController, 'Text', 'phone'),
-              _buildField("Email", _emailController, 'Text', 'email'),
-              _buildField('Fecha límite', _dateDeadLineController, 'Date', 'date_deadline'),
-              _buildField('Compañía', _companyController, 'Company', 'company'),
-              _buildField('Usuario', _userController, 'User', 'user'),
-              _buildField('Equipo', _teamController, 'Text', 'team'),
-              _buildField('Ingreso esperado', _expectedRevenueController, 'Text', 'expected_revenue'),
-              _buildField('Tags', _tagsController, 'Tags', 'tags'),
-              _buildPriorityField('Prioridad', _priorityController, int.parse(widget.lead.priority as String)),
-              _buildField('Probabilidad', _probabilityController, 'Text', 'probability'),
-              _buildField('Fecha de creación', _createDateController, 'Text', 'create_date'),
-              _buildField('Etapa', _stageController, 'Stage', 'stage'),
-            ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: isDataChanged ? _onResetPressed : null,
-          backgroundColor: isDataChanged ? Colors.red : Colors.grey,
-          child: const Icon(Icons.undo)
-        ),
+          );
+        },
       ),
     );
+  }
+
+  Widget _buildBody(CrmDetailStates state) {
+    if (state is CrmDetailSuccess) {
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildField("Nombre", _nameController, 'Text', 'name'),
+            _buildField("Cliente", _clientNameController, 'Client', 'client'),
+            _buildField("Teléfono", _phoneController, 'Text', 'phone'),
+            _buildField("Email", _emailController, 'Text', 'email'),
+            _buildField('Fecha límite', _dateDeadLineController, 'Date', 'date_deadline'),
+            _buildField('Compañía', _companyController, 'Company', 'company'),
+            _buildField('Usuario', _userController, 'User', 'user'),
+            _buildField('Equipo', _teamController, 'Text', 'team'),
+            _buildField('Ingreso esperado', _expectedRevenueController, 'Text', 'expected_revenue'),
+            _buildField('Tags', _tagsController, 'Tags', 'tags'),
+            _buildPriorityField('Prioridad', _priorityController, int.parse(widget.lead.priority as String)),
+            _buildField('Probabilidad', _probabilityController, 'Text', 'probability'),
+            _buildField('Fecha de creación', _createDateController, 'Text', 'create_date'),
+            _buildField('Etapa', _stageController, 'Stage', 'stage'),
+          ],
+        ),
+      );
+    } else {
+      return const LinearProgressIndicator();
+    }
   }
 
   Widget _buildField(String label, TextEditingController controller, String caseType, String type) {
@@ -370,25 +416,25 @@ class _CrmDetailState extends State<CrmDetail> {
 
   Widget _buildComboBoxFields(TextEditingController editingController, String type) {
     List<String> list = fieldOptions[type] ?? [];
-    if (selectedItems[type]?.isNotEmpty ?? false) {
-      list.add('Ninguno');
-    }
-
     String? selectedValue;
 
-    if (selectedItems[type]?.isNotEmpty ?? false) {
-      if (selectedItems[type]?.first != '') {
-        selectedValue = selectedItems[type]?.first;
-      } else {
+    if (isEditEnabled) {
+      if (selectedItems[type]?.isEmpty ?? true) {
+        list.add('Ninguno');
         selectedValue = 'Ninguno';
+      } else {
+        if (selectedItems[type]?.first != '') {
+          selectedValue = selectedItems[type]?.first;
+        } else {
+          list.add('Ninguno');
+          selectedValue = 'Ninguno';
+        }
       }
-    } else {
-      selectedValue = 'Ninguno';
-    }
 
-    for (int i = 0; i < list.length; i++) {
-      if (list.lastIndexOf(list[i]) != i) {
-        list.removeAt(i);
+      for (int i = 0; i < list.length; i++) {
+        if (list.lastIndexOf(list[i]) != i) {
+          list.removeAt(i);
+        }
       }
     }
 
@@ -490,7 +536,7 @@ class _CrmDetailState extends State<CrmDetail> {
           });
         } : null,
         icon: Icon(
-          index < selectedPriority! ? Icons.star : Icons.star_border,
+          index < (selectedPriority != null ? selectedPriority! : 0) ? Icons.star : Icons.star_border,
           color: Colors.yellow,
           size: 20,
         ),
@@ -525,8 +571,6 @@ class _CrmDetailState extends State<CrmDetail> {
         changes.remove(key);
       }
     } else {
-      print(value);
-      print(initialData[key]);
       if (value != initialData[key]) {
         changes[key] = value;
       } else {

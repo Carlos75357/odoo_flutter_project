@@ -68,7 +68,7 @@ class _CrmListPageState extends State<CrmListPage> {
               SnackBar(content: Text(state.error)),
             );
           } else if (state is CrmListDetail) {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => CrmDetail(lead: state.lead)),
             );

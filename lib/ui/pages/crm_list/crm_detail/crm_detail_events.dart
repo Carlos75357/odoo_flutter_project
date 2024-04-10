@@ -24,3 +24,13 @@ class DeleteLeadButtonPressed extends CrmDetailEvents {
 class ToggleEditButtonPressed extends CrmDetailEvents {
 
 }
+
+class ReloadDetail extends CrmDetailEvents {
+  final int id;
+
+  ReloadDetail(this.id);
+}
+
+class SetState extends CrmDetailEvents {
+
+}

@@ -89,7 +89,7 @@ class Lead {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     if (name != null) data['name'] = name;
-    if (clientId != null) data['contact_name'] = clientId;
+    if (clientId != null) data['partner_id'] = clientId;
     if (phone != null) data['phone'] = phone;
     if (email != null) data['email'] = email;
     if (companyId != null) data['company_id'] = companyId;

@@ -104,7 +104,11 @@ class Repository extends RepositoryDataSource {
 
       return response['name'];
     } catch (e) {
-      throw Exception('Failed to get name: $e');
+      if (id == 0) {
+        return '';
+      } else {
+        throw Exception('Failed to get name: $e');
+      }
     }
   }
 

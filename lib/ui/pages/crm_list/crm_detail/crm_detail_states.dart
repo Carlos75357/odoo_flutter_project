@@ -6,6 +6,12 @@ class CrmDetailInitial extends CrmDetailStates {}
 
 class CrmDetailLoading extends CrmDetailStates {}
 
+class CrmDetailReload extends CrmDetailStates {
+  final Lead lead;
+
+  CrmDetailReload(this.lead);
+}
+
 class CrmDetailSuccess extends CrmDetailStates {
   final Lead lead;
 

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/repository/repository.dart';
+import 'package:flutter_crm_prove/data/repository/repository_response.dart';
 import 'package:flutter_crm_prove/domain/lead.dart';
 import 'package:test/test.dart';
 
@@ -11,7 +12,7 @@ void main() {
   group('Respository test', () {
     late Repository repository;
     late OdooClient odooClient;
-    int id = 52; //174
+    int id = 175; //174
 
     setUpAll(() async {
       odooClient = OdooClient();
@@ -48,9 +49,9 @@ void main() {
     // test('Create lead test', () async {
     //   // CreateResponse createResponse = await repository.createLead('crm.lead', {'name': 'Prueba2', 'description': 'Prueba2', 'expected_revenue': 100000});
     //   CreateResponse createResponse = await repository.createLead('crm.lead', {
-    //     'name': 'Prueba2',
+    //     'name': 'PruebaParaProbarEditar',
     //     'description': 'Prueba2',
-    //     'contact_name': 'Nombre de contacto',
+    //     'partner_id': 1,
     //     'phone': '+123456789',
     //     'email_from': 'correo@example.com',
     //     'company_id': 1,
@@ -79,15 +80,15 @@ void main() {
     //   }
     // });
     //
-    // test('Update lead test', () async {
-    //   Lead lead = Lead(id: id, name: 'Prueba', stageId: 2, priority: '3', expectedRevenue: 65359);
-    //   WriteResponse updateResponse = await repository.updateLead('crm.lead', id, lead);
-    //   expect(updateResponse.success, true);
-    //   if (kDebugMode) {
-    //     print(updateResponse.success);
-    //   }
-    //
-    // });
+    test('Update lead test', () async {
+      Lead lead = Lead(id: id, name: 'EDITADO', stageId: 2, priority: '3', expectedRevenue: 65359, tagIds: [1]);
+      WriteResponse updateResponse = await repository.updateLead('crm.lead', id, lead);
+      expect(updateResponse.success, true);
+      if (kDebugMode) {
+        print(updateResponse.success);
+      }
+
+    });
 
     test('tagName test', () async {
       List<String> tagNames = await repository.getNamesByIds('crm.tag', [1,2,3,4,5,6,7,8]);
@@ -122,6 +123,10 @@ void main() {
       int stageId = await repository.getIdByName('crm.stage','Propuesta');
       if (kDebugMode) {
         print('Stage $stageId: $stageId');
+      }
+      int tagId = await repository.getIdByName('crm.tag','Producto');
+      if (kDebugMode) {
+        print('Tag $tagId: $tagId');
       }
       int idPartner = await repository.getIdByName('res.partner','Henry Jordan');
       if (kDebugMode) {
