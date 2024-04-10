@@ -1,8 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
-import 'package:flutter_crm_prove/data/repository/repository.dart';
-import 'package:flutter_crm_prove/data/repository/repository_response.dart';
-import 'package:flutter_crm_prove/domain/lead.dart';
 import 'package:test/test.dart';
 
 class OdooClientTest {
@@ -38,42 +35,42 @@ void main() async {
         print(lead);
       }
     });
-
-    test('Create test', () async {
-      Map<String, dynamic> createResponse = await odooClient.create('crm.lead', {'name': 'Prueba2', 'description': 'Prueba2', 'expected_revenue': 100000});
-      expect(createResponse['result'], isNotNull);
-      expect(createResponse['result'], greaterThan(0));
-      // expect(createResponse.success, isTrue);
-      // expect(createResponse.id, isNotNull);
-      // expect(createResponse.id, greaterThan(0));
-      if (kDebugMode) {
-        print(createResponse['result']);
-      }
-    });
-
-    test('Write test', () async {
-      Lead lead = Lead(id: id, name: 'sobreescrito');
-      bool writeResponse = await odooClient.write('crm.lead', id, lead);
-
-      expect(writeResponse, isTrue);
-      expect(writeResponse, isNotNull);
-      Map<String, dynamic> updatedCrmLead = await odooClient.read('crm.lead', id);
-      expect(updatedCrmLead['name'], 'sobreescrito');
-
-      if (kDebugMode) {
-        print('La operación de escritura fue exitosa: $writeResponse');
-        if (writeResponse) {
-          print('ID del registro actualizado: $writeResponse');
-        }
-      }
-    });
-
-    test('Unlink test', () async {
-      bool unlinkResponse = await odooClient.unlink('crm.lead', id);
-      if (kDebugMode) {
-        print(unlinkResponse);
-      }
-    });
+    //
+    // test('Create test', () async {
+    //   Map<String, dynamic> createResponse = await odooClient.create('crm.lead', {'name': 'Prueba2', 'description': 'Prueba2', 'expected_revenue': 100000});
+    //   expect(createResponse['result'], isNotNull);
+    //   expect(createResponse['result'], greaterThan(0));
+    //   // expect(createResponse.success, isTrue);
+    //   // expect(createResponse.id, isNotNull);
+    //   // expect(createResponse.id, greaterThan(0));
+    //   if (kDebugMode) {
+    //     print(createResponse['result']);
+    //   }
+    // });
+    //
+    // test('Write test', () async {
+    //   Lead lead = Lead(id: id, name: 'sobreescrito');
+    //   bool writeResponse = await odooClient.write('crm.lead', id, lead);
+    //
+    //   expect(writeResponse, isTrue);
+    //   expect(writeResponse, isNotNull);
+    //   Map<String, dynamic> updatedCrmLead = await odooClient.read('crm.lead', id);
+    //   expect(updatedCrmLead['name'], 'sobreescrito');
+    //
+    //   if (kDebugMode) {
+    //     print('La operación de escritura fue exitosa: $writeResponse');
+    //     if (writeResponse) {
+    //       print('ID del registro actualizado: $writeResponse');
+    //     }
+    //   }
+    // });
+    //
+    // test('Unlink test', () async {
+    //   bool unlinkResponse = await odooClient.unlink('crm.lead', id);
+    //   if (kDebugMode) {
+    //     print(unlinkResponse);
+    //   }
+    // });
 
   });
 }

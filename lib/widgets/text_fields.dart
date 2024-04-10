@@ -7,24 +7,24 @@ class CustomTextField extends StatefulWidget {
   final bool isPassword;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.hintText,
     required this.icon,
     this.isPassword = false,
-  }) : super(key: key);
+  });
 
   @override
-  _CustomTextFieldState createState() => _CustomTextFieldState();
+  CustomTextFieldState createState() => CustomTextFieldState();
 }
 
-class _CustomTextFieldState extends State<CustomTextField> {
+class CustomTextFieldState extends State<CustomTextField> {
   bool _isHidden = true;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(

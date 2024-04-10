@@ -23,12 +23,17 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
   late Repository repository = Repository(odooClient: odooClient);
   List<Lead> leads = [];
 
+  // void getLeads() async {
+  //   final response = await repository.listLeads('crm.lead', []);
+  //   leads = response;
+  // }
+
   listCrm(ChangeFilter event, Emitter<CrmListStates> emit) async {
     try {
       emit(CrmListLoading());
       String? filter = event.filter;
       int idStage = 0;
-      idStage = await repository.stageIdByName(event.filter);
+      idStage = await repository.getIdByName('crm.stage', event.filter);
       filter = 'stage_id = ${event.filter}';
 
       List<Lead> filteredLeads = leads.where((lead) => lead.stageId == idStage).toList();
@@ -49,7 +54,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
       Map<String, dynamic> data = {
         'lead': response
       };
-      emit(CrmListDetail(data['lead'].id));
+      emit(CrmListDetail(data['lead']));
     } catch (e) {
       emit(CrmListError('Hubo un error al cargar las oportunidades'));
     }
@@ -70,9 +75,12 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
   }
 
-  reloadLeads(ReloadLeads event, Emitter<CrmListStates> emit) {
+  reloadLeads(ReloadLeads event, Emitter<CrmListStates> emit) async {
     try {
       emit(CrmListLoading());
+
+      final response = await repository.listLeads('crm.lead', []);
+      leads = response;
 
       Map<String, dynamic> data = {
         'leads': leads
@@ -95,7 +103,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
   Future<List<String>> fetchLeadStatuses() async {
     try {
-      List<String> leadStatuses = await repository.stageNames();
+      List<String> leadStatuses = (await repository.getAll('crm.stage')).cast<String>();
       return leadStatuses;
     } catch (e) {
       throw Exception('Failed to fetch lead statuses: $e');
