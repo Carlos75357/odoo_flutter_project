@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_page.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_page.dart';
 
 import '../../../widgets/crm_list_page/button_new_lead.dart';
@@ -78,7 +79,7 @@ class _CrmListPageState extends State<CrmListPage> {
           } else if (state is CrmNewLead) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Placeholder()),
+              MaterialPageRoute(builder: (context) => const CrmCreatePage()),
             );
           }
         },

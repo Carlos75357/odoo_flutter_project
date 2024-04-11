@@ -67,14 +67,18 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
         _getIdByNameOrNull('res.company', leadFormated.company),
         _getIdByNameOrNull('res.users', leadFormated.user),
         _getIdByNameOrNull('crm.stage', leadFormated.stage),
+        _getIdByNameOrNull('crm.team', leadFormated.team),
         _getIdsByNames('crm.tag', leadFormated.tags),
       ]);
+
+      print(ids);
 
       leadFormated.clientId = ids[0];
       leadFormated.companyId = ids[1];
       leadFormated.userId = ids[2];
       leadFormated.stageId = ids[3];
-      leadFormated.tagsId = ids[4];
+      leadFormated.teamId = ids[4];
+      leadFormated.tagsId = ids[5];
 
       Lead leadUpdated = leadFormated.leadFormatedToLead(leadFormated);
 
@@ -175,13 +179,15 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
       List<String> userNames = await getNames('res.users');
       List<String> companyNames = await getNames('res.company');
       List<String> clientNames = await getNames('res.partner');
+      List<String> teamNames = await getNames('crm.team');
 
       Map<String, List<String>> fieldsOptions = {
         'stage': stageNames,
         'user': userNames,
         'company': companyNames,
         'client': clientNames,
-        'tags': tagNames
+        'tags': tagNames,
+        'team': teamNames
       };
 
       return fieldsOptions;
@@ -248,11 +254,13 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
         stageId: lead.stageId,
         user: await repository.getNameById('res.users', lead.userId ?? 0),
         userId: lead.userId,
+        team: await translateTeam(lead.teamId),
+        teamId: lead.teamId,
         tags: translatedTags,
         tagsId: lead.tagIds,
         dateDeadline: lead.dateDeadline,
         expectedRevenue: lead.expectedRevenue,
-        probability: lead.probability,
+        probability: double.tryParse('${lead.probability}'),
       );
 
       return leadFormated;
@@ -264,53 +272,59 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
   Future<String?> translateStage(int? stageId) async {
     if (stageId == null) return null;
 
-    switch (stageId) {
-      case 1:
-        return 'Nuevo';
-      case 2:
-        return 'Calificado';
-      case 3:
-        return 'Propuesta';
-      case 4:
-        return 'Ganado';
-      default:
-        return null;
+    try {
+      List<Map<String, dynamic>> stages = await repository.getAllForModel('crm.stage', ['id', 'name']);
+
+      for (var stage in stages) {
+        if (stage['id'] == stageId) {
+          return stage['name'];
+        }
+      }
+
+      print('Stage with ID $stageId not found.');
+      return null;
+    } catch (e) {
+      print('Failed to translate stage: $e');
+      return null;
+    }
+  }
+
+  Future<String?> translateTeam(int? teamId) async {
+    if (teamId == null) return null;
+
+    try {
+      List<Map<String, dynamic>> teams = await repository.getAllForModel('crm.team', ['id', 'name']);
+
+      for (var team in teams) {
+        if (team['id'] == teamId) {
+          return team['name'];
+        }
+      }
+
+      print('Team with ID $teamId not found.');
+      return null;
+    } catch (e) {
+      print('Failed to translate team: $e');
+      return null;
     }
   }
 
   Future<List<String>> translateTags(List<int>? tagIds) async {
     if (tagIds == null || tagIds.isEmpty) return [];
 
-    List<String> translatedTags = [];
-    for (int tagId in tagIds) {
-      String? translatedTag = await translateTag(tagId);
-      if (translatedTag != null) {
-        translatedTags.add(translatedTag);
+    try {
+      List<String> translatedTags = [];
+
+      List<Map<String, dynamic>> tags = await repository.getAllForModel('crm.tag', ['id', 'name']);
+
+      for (int tagId in tagIds) {
+        Map<String, dynamic>? tag = tags.firstWhere((tag) => tag['id'] == tagId, orElse: () => throw Exception('Tag with ID $tagId not found.'));
+        translatedTags.add(tag['name']);
       }
+      return translatedTags;
+    } catch (e) {
+      throw Exception('Failed to translate tags: $e');
     }
-    return translatedTags;
   }
 
-  Future<String?> translateTag(int tagId) async {
-    switch (tagId) {
-      case 1:
-        return 'Producto';
-      case 2:
-        return 'Software';
-      case 3:
-        return 'Servicios';
-      case 4:
-        return 'Información';
-      case 5:
-        return 'Diseño';
-      case 6:
-        return 'Formación';
-      case 7:
-        return 'Consultoría';
-      case 8:
-        return 'Otro';
-      default:
-        return null;
-    }
-  }
 }

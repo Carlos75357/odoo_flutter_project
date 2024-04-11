@@ -12,7 +12,7 @@ void main() {
   group('Respository test', () {
     late Repository repository;
     late OdooClient odooClient;
-    int id = 175; //174
+    int id = 177; //174
 
     setUpAll(() async {
       odooClient = OdooClient();
@@ -61,7 +61,7 @@ void main() {
     //     'expected_revenue': 100000,
     //     'tag_ids': [1, 2, 3],
     //     'priority': '1',
-    //     'probability': '0.75',
+    //     'probability': 90,
     //     'create_date': '2024-03-25',
     //     'stage_id': 1,
     //   });
@@ -81,13 +81,12 @@ void main() {
     // });
     //
     test('Update lead test', () async {
-      Lead lead = Lead(id: id, name: 'EDITADO', stageId: 2, priority: '3', expectedRevenue: 65359, tagIds: [1]);
+      Lead lead = Lead(id: id, name: 'EDITADODENUEVo', stageId: 2, priority: '3', expectedRevenue: 65359, tagIds: [1], probability: 95);
       WriteResponse updateResponse = await repository.updateLead('crm.lead', id, lead);
       expect(updateResponse.success, true);
       if (kDebugMode) {
         print(updateResponse.success);
       }
-
     });
 
     test('tagName test', () async {
@@ -149,46 +148,54 @@ void main() {
     });
 
     test('get clients test', () async {
-      List<String> clients = (await repository.getAll('res.partner')).cast<String>();
+      // List<String> clients = (await repository.getAll('res.partner')).cast<String>();
+      //
+      // if (kDebugMode) {
+      //   print('Clients: $clients');
+      // }
+      //
+      // List<String> y = (await repository.getAll('res.users')).cast<String>();
+      //
+      // if (kDebugMode) {
+      //   print('Users: $y');
+      // }
+      //
+      // List<String> x = (await repository.getAll('res.company')).cast<String>();
+      //
+      // if (kDebugMode) {
+      //   print('Companies: $x');
+      // }
+      //
+      // List<String> z = (await repository.getAll('crm.tag')).cast<String>();
+      //
+      // if (kDebugMode) {
+      //   print('Tags: $z');
+      // }
+      //
+      // List<String> w = (await repository.getAll('crm.stage')).cast<String>();
+      //
+      // if (kDebugMode) {
+      //   print('Stages: $w');
+      // }
+      //
+      // String a = await repository.getNameById('res.users', 8);
+      //
+      // if (kDebugMode) {
+      //   print('User: $a');
+      // }
+      //
+      // List<dynamic> ids = await repository.getAllForModel('res.users', ['id', 'name']);
+      //
+      // if (kDebugMode) {
+      //   print('Ids: $ids');
+      // }
+
+      List<Map<String, dynamic>> idss = await repository.getAllForModel('crm.team', ['id', 'name']);
 
       if (kDebugMode) {
-        print('Clients: $clients');
-      }
-
-      List<String> y = (await repository.getAll('res.users')).cast<String>();
-
-      if (kDebugMode) {
-        print('Users: $y');
-      }
-
-      List<String> x = (await repository.getAll('res.company')).cast<String>();
-
-      if (kDebugMode) {
-        print('Companies: $x');
-      }
-
-      List<String> z = (await repository.getAll('crm.tag')).cast<String>();
-
-      if (kDebugMode) {
-        print('Tags: $z');
-      }
-
-      List<String> w = (await repository.getAll('crm.stage')).cast<String>();
-
-      if (kDebugMode) {
-        print('Stages: $w');
-      }
-
-      String a = await repository.getNameById('res.users', 8);
-
-      if (kDebugMode) {
-        print('User: $a');
-      }
-
-      List<dynamic> ids = await repository.getAllForModel('res.users', ['id', 'name']);
-
-      if (kDebugMode) {
-        print('Ids: $ids');
+        for (var team in idss) {
+          print('Id ${team['name']}, ${team['id']}');
+        }
       }
     });
   });

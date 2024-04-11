@@ -8,7 +8,7 @@ abstract class RepositoryDataSource {
   Future<CreateResponse> createLead(String model, Map<String, dynamic> values);
   Future<UnlinkResponse> unlinkLead(String model, int id);
   Future<WriteResponse> updateLead(String model, int id, Lead values);
-  Future<List<dynamic>> getAllForModel(String modelName, List<String> fields);
+  Future<List<Map<String, dynamic>>> getAllForModel(String modelName, List<String> fields);
   Future<int> getIdByName(String modelName, String name);
   Future<String> getNameById(String modelName, int id);
   Future<List<String>> getAll(String modelName);

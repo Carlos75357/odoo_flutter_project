@@ -8,10 +8,10 @@ class Lead {
   int? userId;
   String? dateDeadline;
   int? teamId;
-  int? expectedRevenue;
+  double? expectedRevenue;
   List<int>? tagIds;
   String? priority;
-  String? probability;
+  double? probability;
   String? createDate;
   int? stageId;
 
@@ -47,6 +47,16 @@ class Lead {
     }
   }
 
+  static double? parseDoublefield(dynamic value) {
+    if (value is int) {
+      return value.toDouble();
+    } else if (value is bool) {
+      return null;
+    } else {
+      return value as double?;
+    }
+  }
+
   factory Lead.fromJson(Map<String, dynamic> json) {
 
     final List<dynamic>? tagsJson = json['tag_ids'];
@@ -70,10 +80,10 @@ class Lead {
       userId: parseIntField(json['user_id']),
       dateDeadline: parseStringField(json['date_deadline']),
       teamId: parseIntField(json['team_id']),
-      expectedRevenue: parseIntField(json['expected_revenue']),
+      expectedRevenue: parseDoublefield(json['expected_revenue']),
       tagIds: tagIds,
       priority: parseStringField(json['priority']),
-      probability: double.parse(json['probability'].toString()).toStringAsFixed(2),
+      probability: parseDoublefield(json['probability']),
       createDate: parseStringField(json['create_date']),
       stageId: stagesIds,
     );
