@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_states.dart';
-import 'package:flutter_crm_prove/ui/pages/crm_list/crm_list_events.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import '../../../../domain/lead.dart';
@@ -349,6 +348,10 @@ class _CrmDetailState extends State<CrmDetail> {
   }
 
   Widget _buildTextField(TextEditingController controller, String label, String type) {
+    bool isEnable = true;
+    if (type == 'phone' || type == 'email' || type == 'create_date') {
+      isEnable = false;
+    }
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -361,6 +364,7 @@ class _CrmDetailState extends State<CrmDetail> {
         padding: const EdgeInsets.all(8),
         child: isEditEnabled
             ? TextField(
+          enabled: isEnable,
           controller: controller,
           onChanged: (value) {
             _onFieldChanged();
@@ -581,7 +585,7 @@ class _CrmDetailState extends State<CrmDetail> {
       if (value is List && !listEquals(value, initialData[key])) {
         changes[key] = value;
       } else if (value is! List) {
-        print("Error: se esperaba una lista para la llave $key, pero se recibió un ${value.runtimeType}");
+        throw Exception("Error: se esperaba una lista para la llave $key, pero se recibió un ${value.runtimeType}");
       } else {
         changes.remove(key);
       }

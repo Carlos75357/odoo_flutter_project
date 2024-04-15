@@ -10,6 +10,7 @@ abstract class RepositoryDataSource {
   Future<WriteResponse> updateLead(String model, int id, Lead values);
   Future<List<Map<String, dynamic>>> getAllForModel(String modelName, List<String> fields);
   Future<int> getIdByName(String modelName, String name);
+  Future<List<int>> getIdsByNames(String modelName, List<String> name);
   Future<String> getNameById(String modelName, int id);
   Future<List<String>> getAll(String modelName);
   Future<List<String>> getNamesByIds(String modelName, List<int>? ids);

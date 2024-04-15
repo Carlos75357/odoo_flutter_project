@@ -11,3 +11,5 @@ class CrmCreateError extends CrmCreateStates {
 
   CrmCreateError(this.error);
 }
+
+class CrmCreateDone extends CrmCreateStates {}

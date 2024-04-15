@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_crm_prove/data/repository/repository.dart';
-import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_page.dart';
 
 import '../../../../data/json/odoo_client.dart';
 import '../../../../data/odoo_config.dart';
@@ -70,8 +69,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
         _getIdByNameOrNull('crm.team', leadFormated.team),
         _getIdsByNames('crm.tag', leadFormated.tags),
       ]);
-
-      print(ids);
 
       leadFormated.clientId = ids[0];
       leadFormated.companyId = ids[1];
@@ -280,11 +277,9 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
           return stage['name'];
         }
       }
-
-      print('Stage with ID $stageId not found.');
       return null;
     } catch (e) {
-      print('Failed to translate stage: $e');
+      throw Exception('Failed to translate stage: $e');
       return null;
     }
   }
@@ -301,10 +296,8 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
         }
       }
 
-      print('Team with ID $teamId not found.');
       return null;
     } catch (e) {
-      print('Failed to translate team: $e');
       return null;
     }
   }
