@@ -280,7 +280,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
       return null;
     } catch (e) {
       throw Exception('Failed to translate stage: $e');
-      return null;
     }
   }
 

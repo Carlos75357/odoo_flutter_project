@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_states.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
@@ -60,6 +61,7 @@ class _CrmDetailState extends State<CrmDetail> {
   bool isDataChanged = false;
   bool isDataLoading = true;
   int? selectedPriority;
+  double currentValue = 0;
 
 
   @override
@@ -116,6 +118,8 @@ class _CrmDetailState extends State<CrmDetail> {
     if (widget.lead.teamId != null) {
       allIds['team']?.add(widget.lead.teamId!);
     }
+
+    currentValue = widget.lead.probability ?? 0;
   }
 
   Future<void> _assignDataFromString(int id, String type, TextEditingController controller) async {
@@ -352,6 +356,9 @@ class _CrmDetailState extends State<CrmDetail> {
     if (type == 'phone' || type == 'email' || type == 'create_date') {
       isEnable = false;
     }
+    if (type.toLowerCase() == 'probability') {
+      return _buildSlider(controller, label, type);
+    }
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -370,6 +377,9 @@ class _CrmDetailState extends State<CrmDetail> {
             _onFieldChanged();
             addChanges(type, value);
           },
+          // Configura el tipo de entrada y el formateador según el tipo 'expected_revenue'
+          keyboardType: type.toLowerCase() == 'expected_revenue' ? TextInputType.numberWithOptions(decimal: true) : TextInputType.text,
+          inputFormatters: type.toLowerCase() == 'expected_revenue' ? [DecimalTextInputFormatter()] : [],
           decoration: const InputDecoration(
             border: InputBorder.none,
           ),
@@ -380,6 +390,29 @@ class _CrmDetailState extends State<CrmDetail> {
             fontSize: 16,
           ),
         ),
+      ),
+    );
+  }
+
+
+  Widget _buildSlider(TextEditingController controller, String label, String type) {
+    return isEditEnabled ? Slider(
+      value: currentValue,
+      min: 0,
+      max: 100,
+      divisions: 100,
+      label: currentValue.round().toString(),
+      onChanged: isEditEnabled ? (double value) {
+        setState(() {
+          currentValue = value;
+          addChanges('probability', value);
+          _onFieldChanged();
+        });
+      } : null,
+    ) : Text(
+      '${currentValue.round()}%',
+      style: const TextStyle(
+        fontSize: 16,
       ),
     );
   }
@@ -598,6 +631,18 @@ class _CrmDetailState extends State<CrmDetail> {
           isDataChanged = false;
         });
       }
+    }
+  }
+}
+
+class DecimalTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final regEx = RegExp(r'^\d+\.?\d{0,2}$'); // Permite un máximo de 2 decimales
+    if (regEx.hasMatch(newValue.text)) {
+      return newValue;
+    } else {
+      return oldValue; // Rechaza la edición si no cumple con el formato permitido
     }
   }
 }

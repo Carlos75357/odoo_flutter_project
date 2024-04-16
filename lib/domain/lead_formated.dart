@@ -112,26 +112,26 @@ class LeadFormated {
   factory LeadFormated.fromJson(Map<String, dynamic> json) {
     print(json);
     return LeadFormated(
-      id: json['id'],
+      id: json['id'] ?? 0,
       name: json['name'],
       email: parseStringField(json['email']),
       phone: parseStringField(json['phone']),
       client: parseStringField(json['client']),
-      // clientId: parseIntField(json['client_id']),
+      clientId: parseIntField(json['client_id']),
       company: parseStringField(json['company']),
-      // companyId: parseIntField(json['company_id']),
+      companyId: parseIntField(json['company_id']),
       stage: parseStringField(json['stage']),
-      // stageId: parseIntField(json['stage_id']),
+      stageId: parseIntField(json['stage_id']),
       user: parseStringField(json['user']),
-      // userId: parseIntField(json['user_id']),
+      userId: parseIntField(json['user_id']),
       tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
-      // tagsId: json['tags_id'] != null ? List<int>.from(json['tags_id']) : null,
+      tagsId: json['tags_id'] != null ? List<int>.from(json['tags_id']) : null,
       dateDeadline: parseStringField(json['date_deadline']),
       expectedRevenue: parseDoubleField(json['expected_revenue']),
       priority: parseIntField(json['priority']),
       probability: parseDoubleField(json['probability']),
       team: parseStringField(json['team']),
-      // teamId: parseIntField(json['team_id']),
+      teamId: parseIntField(json['team_id']),
     );
   }
 }

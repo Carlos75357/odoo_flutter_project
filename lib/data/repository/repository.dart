@@ -125,12 +125,12 @@ class Repository extends RepositoryDataSource {
     }
   }
   @override
-  Future<List<int>> getIdsByNames(String modelName, List<String> names) async {
+  Future<List<int>> getIdsByNames(String modelName, List<String> name) async {
     try {
       List<int> ids = [];
       var response = await odooClient.searchRead(modelName, []);
       for (var record in response) {
-        if (names.contains(record['name'])) {
+        if (name.contains(record['name'])) {
           ids.add(record['id'] as int);
         }
       }

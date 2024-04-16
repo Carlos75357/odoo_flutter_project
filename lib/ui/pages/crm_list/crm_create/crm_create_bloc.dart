@@ -5,6 +5,8 @@ import 'package:flutter_crm_prove/data/repository/repository.dart';
 import 'package:flutter_crm_prove/domain/lead.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_states.dart';
 
+import '../../../../data/repository/repository_response.dart';
+import '../../../../domain/lead_formated.dart';
 import 'crm_create_events.dart';
 
 class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
@@ -48,9 +50,100 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
   }
 
   createlead(CreateEvents event, Emitter<CrmCreateStates> emit) async {
+    emit(CrmCreateLoading());
     Map<String, dynamic> data = event.values;
 
+    dynamic ids = await Future.wait([
+      _getIdByNameOrNull('res.partner', data['client']),
+      _getIdByNameOrNull('res.company', data['company']),
+      _getIdByNameOrNull('res.users', data['user']),
+      _getIdByNameOrNull('crm.stage', data['stage']),
+      _getIdByNameOrNull('crm.team', data['team']),
+      _getIdsByNames('crm.tag', data['tags']),
+    ]);
 
+    if (data.containsKey('client')) {
+      data['client_id'] = ids[0];
+      data.remove('client');
+    }
+    if (data.containsKey('company')) {
+      data['company_id'] = ids[1];
+      data.remove('company');
+    }
+    if (data.containsKey('user')) {
+      data['user_id'] = ids[2];
+      data.remove('user');
+    }
+    if (data.containsKey('stage')) {
+      data['stage_id'] = ids[3];
+      data.remove('stage');
+    }
+    if (data.containsKey('team')) {
+      data['team_id'] = ids[4];
+      data.remove('team');
+    }
+    if (data.containsKey('tags')) {
+      data['tags_id'] = ids[5];
+      data.remove('tags');
+    }
+
+    LeadFormated leadFormated = LeadFormated.fromJson(data);
+
+    Lead lead = leadFormated.leadFormatedToLead(leadFormated);
+
+    CreateResponse response = await repository.createLead('crm.lead', lead.toJson());
+
+    if (response.success) {
+      emit(CrmCreateDone());
+    } else {
+      emit(CrmCreateError('Failed to create lead'));
+    }
+  }
+
+  Future<int?> _getIdByNameOrNull(String objectType, String? name) async {
+    if (name == null) return null;
+    if (name == 'Ninguno') return null;
+    return repository.getIdByName(objectType, name);
+  }
+
+  Future<List<int>> _getIdsByNames(String objectType, List<String>? names) async {
+    if (names == null) return [];
+    if (names.contains('Ninguno')) return [];
+    var ids = await Future.wait(names.map((name) => repository.getIdByName(objectType, name)));
+    return ids;
+  }
+
+  Future<LeadFormated> getLeadFormated(Lead lead) async {
+    try {
+      String? stageName = await translateStage(lead.stageId);
+      List<String>? translatedTags = await translateTags(lead.tagIds);
+
+      LeadFormated leadFormated = LeadFormated(
+        id: lead.id ?? 0,
+        name: lead.name ?? '',
+        email: lead.email,
+        phone: lead.phone,
+        clientId: lead.clientId,
+        client: await repository.getNameById('res.partner', lead.clientId ?? 0),
+        company: await repository.getNameById('res.company', lead.companyId ?? 0),
+        companyId: lead.companyId,
+        stage: stageName,
+        stageId: lead.stageId,
+        user: await repository.getNameById('res.users', lead.userId ?? 0),
+        userId: lead.userId,
+        team: await translateTeam(lead.teamId),
+        teamId: lead.teamId,
+        tags: translatedTags,
+        tagsId: lead.tagIds,
+        dateDeadline: lead.dateDeadline,
+        expectedRevenue: lead.expectedRevenue,
+        probability: double.tryParse('${lead.probability}'),
+      );
+
+      return leadFormated;
+    } catch (e) {
+      throw Exception('Failed to get lead formated: $e');
+    }
   }
 
   Future<Map<String, List<String>>> getFieldsOptions() async {
@@ -115,7 +208,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
       }
       return null;
     } catch (e) {
-      throw Exception('Failed to translate stage: $e');
       return null;
     }
   }
