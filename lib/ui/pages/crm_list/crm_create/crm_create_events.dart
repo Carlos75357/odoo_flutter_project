@@ -8,12 +8,6 @@ class CreateButtonPressed extends CrmCreateEvents {
   CreateButtonPressed({required this.lead});
 }
 
-class LoadEvents extends CrmCreateEvents {
-  String model;
-
-  LoadEvents({required this.model});
-}
-
 class CreateEvents extends CrmCreateEvents {
   Map<String, dynamic> values;
 

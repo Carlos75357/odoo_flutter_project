@@ -112,6 +112,9 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
       body: BlocListener<CrmCreateBloc, CrmCreateStates>(
         listener: (context, state) {
           if (state is CrmCreateDone) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Guardado con exito"),
+            ));
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
           }
         },
@@ -391,10 +394,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
 
         updateChangesIfNotEmpty('team', _teamController.text);
 
-        print(changes);
-
         BlocProvider.of<CrmCreateBloc>(context).add(CreateEvents(values: changes));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
       },
       child: const Text('Crear Lead'),
     );

@@ -12,8 +12,7 @@ import 'crm_create_events.dart';
 class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
   CrmCreateBloc() : super(CrmCreateInitial()) {
     odooClient.setSettings(OdooConfig.getBaseUrl(), OdooConfig.getSessionId());
-    on<LoadEvents>((event, emit) => loadData(event, emit));
-    on<CreateEvents>((event, emit) => createlead(event, emit));
+    on<CreateEvents>((event, emit) => createLead(event, emit));
     on<SetSuccessState>((event, emit) => setSuccessState(event, emit));
     on<SetLoadingState>((event, emit) => setLoadingState(event, emit));
   }
@@ -37,19 +36,7 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  loadData(LoadEvents event, Emitter<CrmCreateStates> emit) async {
-    try {
-      emit(CrmCreateLoading());
-
-      List<String> leads = await repository.getAll(event.model);
-
-      emit(CrmCreateSuccess());
-    } catch (e) {
-      throw Exception('Failed to load data: $e');
-    }
-  }
-
-  createlead(CreateEvents event, Emitter<CrmCreateStates> emit) async {
+  createLead(CreateEvents event, Emitter<CrmCreateStates> emit) async {
     emit(CrmCreateLoading());
     Map<String, dynamic> data = event.values;
 
@@ -119,7 +106,7 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
       List<String>? translatedTags = await translateTags(lead.tagIds);
 
       LeadFormated leadFormated = LeadFormated(
-        id: lead.id ?? 0,
+        id: lead.id,
         name: lead.name ?? '',
         email: lead.email,
         phone: lead.phone,

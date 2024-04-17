@@ -638,11 +638,11 @@ class _CrmDetailState extends State<CrmDetail> {
 class DecimalTextInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    final regEx = RegExp(r'^\d+\.?\d{0,2}$'); // Permite un máximo de 2 decimales
+    final regEx = RegExp(r'^\d+\.?\d{0,2}$');
     if (regEx.hasMatch(newValue.text)) {
       return newValue;
     } else {
-      return oldValue; // Rechaza la edición si no cumple con el formato permitido
+      return oldValue;
     }
   }
 }
