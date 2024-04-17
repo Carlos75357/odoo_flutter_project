@@ -150,8 +150,8 @@ class Repository extends RepositoryDataSource {
         return {
           'id': record['id'],
           'name': record['name'],
-        }
-      })
+        };
+      }).toList();
     } catch (e) {
       throw Exception('Failed to get records: $e');
     }
