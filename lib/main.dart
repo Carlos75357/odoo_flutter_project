@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_list_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/login/login_bloc.dart';
@@ -24,6 +25,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<CrmDetailBloc>(
           create: (context) => CrmDetailBloc(),
+        ),
+        BlocProvider<CrmCreateBloc>(
+          create: (context) => CrmCreateBloc(),
         )
       ],
       child: const MaterialApp(

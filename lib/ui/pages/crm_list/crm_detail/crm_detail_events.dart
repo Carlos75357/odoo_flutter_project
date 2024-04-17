@@ -1,5 +1,4 @@
 import 'package:flutter_crm_prove/domain/lead.dart';
-import 'package:flutter_crm_prove/domain/lead_formated.dart';
 
 abstract class CrmDetailEvents {}
 

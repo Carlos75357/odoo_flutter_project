@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_states.dart';
-import 'package:flutter_crm_prove/ui/pages/crm_list/crm_list_events.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import '../../../../domain/lead.dart';
@@ -29,6 +29,7 @@ class _CrmDetailState extends State<CrmDetail> {
     'company': [],
     'client': [],
     'tags': [],
+    'team': [],
   };
   Map <String, List<String>> selectedItems = {
     'stage': [],
@@ -36,6 +37,7 @@ class _CrmDetailState extends State<CrmDetail> {
     'company': [],
     'client': [],
     'tags': [],
+    'team': [],
   };
   Map<String, dynamic> changes = {};
   late LeadFormated leadFormated;
@@ -59,6 +61,7 @@ class _CrmDetailState extends State<CrmDetail> {
   bool isDataChanged = false;
   bool isDataLoading = true;
   int? selectedPriority;
+  double currentValue = 0;
 
 
   @override
@@ -78,6 +81,7 @@ class _CrmDetailState extends State<CrmDetail> {
         selectedItems['user'] = [leadFormated.user ?? ''];
         selectedItems['company'] = [leadFormated.company ?? ''];
         selectedItems['client'] = [leadFormated.client ?? ''];
+        selectedItems['team'] = [leadFormated.team ?? ''];
       });
     }).then((_) {
       return BlocProvider.of<CrmDetailBloc>(context).getFieldsOptions();
@@ -97,6 +101,7 @@ class _CrmDetailState extends State<CrmDetail> {
       'company': [],
       'client': [],
       'tags': widget.lead.tagIds ?? [],
+      'team': [],
     };
     if (widget.lead.stageId != null) {
       allIds['stage']?.add(widget.lead.stageId!);
@@ -110,6 +115,11 @@ class _CrmDetailState extends State<CrmDetail> {
     if (widget.lead.clientId != null) {
       allIds['client']?.add(widget.lead.clientId!);
     }
+    if (widget.lead.teamId != null) {
+      allIds['team']?.add(widget.lead.teamId!);
+    }
+
+    currentValue = widget.lead.probability ?? 0;
   }
 
   Future<void> _assignDataFromString(int id, String type, TextEditingController controller) async {
@@ -130,6 +140,7 @@ class _CrmDetailState extends State<CrmDetail> {
     await _assignDataFromList(widget.lead.tagIds ?? [0], 'crm.tag', _tagsController);
     await _assignDataFromString(widget.lead.stageId ?? 0, 'crm.stage', _stageController);
     await _assignDataFromString(widget.lead.clientId ?? 0, 'res.partner', _clientNameController);
+    await _assignDataFromString(widget.lead.teamId ?? 0, 'crm.team', _teamController);
   }
 
   Future<List<String>> getLeadSelectedItems() async {
@@ -188,11 +199,11 @@ class _CrmDetailState extends State<CrmDetail> {
     _companyController = TextEditingController();
     _userController = TextEditingController();
     _dateDeadLineController = TextEditingController(text: widget.lead.dateDeadline);
-    _teamController = TextEditingController(text: widget.lead.teamId.toString());
+    _teamController = TextEditingController();
     _expectedRevenueController = TextEditingController(text: widget.lead.expectedRevenue.toString());
     _tagsController = TextEditingController();
     _priorityController = TextEditingController(text: widget.lead.priority);
-    _probabilityController = TextEditingController(text: widget.lead.probability);
+    _probabilityController = TextEditingController(text: widget.lead.probability.toString());
     _createDateController = TextEditingController(text: widget.lead.createDate);
     _stageController = TextEditingController();
     getDataStringForId();
@@ -201,73 +212,79 @@ class _CrmDetailState extends State<CrmDetail> {
   @override
   Widget build(BuildContext context) {
     bool canPop = !isEditEnabled;
-    return BlocListener<CrmDetailBloc, CrmDetailStates>(
-      listener: (context, state) {
-        if (state is CrmDetailSuccess) {
-          setState(() {
-            isDataLoading = false;
-            selectedPriority = int.parse(widget.lead.priority ?? '0');
-          });
-        } else if (state is CrmDetailSave) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Guardado con éxito"),
-          ));
-        } else if (state is CrmDetailError) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Error al guardar"),
-          ));
-        } else if (state is CrmDetailReload) {
-          widget.lead = state.lead;
-          _onResetPressed();
-        }
-      },
-      child: BlocBuilder<CrmDetailBloc, CrmDetailStates>(
-        builder: (context, state) {
-          if (state is CrmDetailLoading) {
-            return const Center(child: CircularProgressIndicator());
+    return Scaffold (
+      body: BlocListener<CrmDetailBloc, CrmDetailStates>(
+        listener: (context, state) {
+          if (state is CrmDetailSuccess) {
+            setState(() {
+              isDataLoading = false;
+              selectedPriority = int.parse(widget.lead.priority ?? '0');
+            });
+          } else if (state is CrmDetailSave) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Guardado con éxito"),
+            ));
+            changes.clear();
+          } else if (state is CrmDetailError) {
+            _onResetPressed();
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Error al guardar"),
+            ));
+            changes.clear();
+          } else if (state is CrmDetailReload) {
+            widget.lead = state.lead;
+            _onResetPressed();
+
           }
-          return PopScope(
-            canPop: canPop,
-            child: Scaffold(
-              appBar: AppBar(
-                title: const Text(
-                  'Oportunidad',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
-                ),
-                backgroundColor: Colors.purpleAccent.shade400,
-                leading: canPop ? IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
-                  },
-                ) : null,
-                actions: [
-                  if (isDataChanged)
-                    IconButton(
-                      onPressed: _onUpdatePressed,
-                      icon: const Icon(Icons.upload),
-                      tooltip: 'Guardar Cambios',
-                    ),
-                  IconButton(
-                    onPressed: isDataChanged ? null : () {
-                      setState(() {
-                        isEditEnabled = !isEditEnabled;
-                      });
-                    },
-                    icon: Icon(isEditEnabled ? Icons.edit_off : Icons.edit),
-                    tooltip: isEditEnabled ? 'Deshabilitar Edición' : 'Habilitar Edición',
-                  ),
-                ],
-              ),
-              body: _buildBody(state),
-              floatingActionButton: FloatingActionButton(
-                  onPressed: isDataChanged ? _onResetPressed : null,
-                  backgroundColor: isDataChanged ? Colors.red : Colors.grey,
-                  child: const Icon(Icons.undo)
-              ),
-            ),
-          );
         },
+        child: BlocBuilder<CrmDetailBloc, CrmDetailStates>(
+          builder: (context, state) {
+            if (state is CrmDetailLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return PopScope(
+              canPop: canPop,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: const Text(
+                    'Oportunidad',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
+                  ),
+                  backgroundColor: Colors.purpleAccent.shade400,
+                  leading: canPop ? IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
+                    },
+                  ) : null,
+                  actions: [
+                    if (isDataChanged)
+                      IconButton(
+                        onPressed: _onUpdatePressed,
+                        icon: const Icon(Icons.upload),
+                        tooltip: 'Guardar Cambios',
+                      ),
+                    IconButton(
+                      onPressed: isDataChanged ? null : () {
+                        setState(() {
+                          isEditEnabled = !isEditEnabled;
+                        });
+                      },
+                      icon: Icon(isEditEnabled ? Icons.edit_off : Icons.edit),
+                      tooltip: isEditEnabled ? 'Deshabilitar Edición' : 'Habilitar Edición',
+                    ),
+                  ],
+                ),
+                body: _buildBody(state),
+                floatingActionButton: FloatingActionButton(
+                    onPressed: isDataChanged ? _onResetPressed : null,
+                    backgroundColor: isDataChanged ? Colors.red : Colors.grey,
+                    child: const Icon(Icons.undo)
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -286,7 +303,7 @@ class _CrmDetailState extends State<CrmDetail> {
             _buildField('Fecha límite', _dateDeadLineController, 'Date', 'date_deadline'),
             _buildField('Compañía', _companyController, 'Company', 'company'),
             _buildField('Usuario', _userController, 'User', 'user'),
-            _buildField('Equipo', _teamController, 'Text', 'team'),
+            _buildField('Equipo', _teamController, 'Team', 'team'),
             _buildField('Ingreso esperado', _expectedRevenueController, 'Text', 'expected_revenue'),
             _buildField('Tags', _tagsController, 'Tags', 'tags'),
             _buildPriorityField('Prioridad', _priorityController, int.parse(widget.lead.priority as String)),
@@ -311,7 +328,7 @@ class _CrmDetailState extends State<CrmDetail> {
       case 'Date':
         fieldWidget = _buildDateTextField(controller);
         break;
-      case 'Tags' || 'Client' || 'Company' || 'User' || 'Stage':
+      case 'Tags' || 'Client' || 'Company' || 'User' || 'Stage' || 'Team':
         fieldWidget = _buildComboBoxFields(controller, caseType.toLowerCase());
         break;
       default:
@@ -335,6 +352,13 @@ class _CrmDetailState extends State<CrmDetail> {
   }
 
   Widget _buildTextField(TextEditingController controller, String label, String type) {
+    bool isEnable = true;
+    if (type == 'phone' || type == 'email' || type == 'create_date') {
+      isEnable = false;
+    }
+    if (type.toLowerCase() == 'probability') {
+      return _buildSlider(controller, label, type);
+    }
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -347,11 +371,15 @@ class _CrmDetailState extends State<CrmDetail> {
         padding: const EdgeInsets.all(8),
         child: isEditEnabled
             ? TextField(
+          enabled: isEnable,
           controller: controller,
           onChanged: (value) {
             _onFieldChanged();
             addChanges(type, value);
           },
+          // Configura el tipo de entrada y el formateador según el tipo 'expected_revenue'
+          keyboardType: type.toLowerCase() == 'expected_revenue' ? TextInputType.numberWithOptions(decimal: true) : TextInputType.text,
+          inputFormatters: type.toLowerCase() == 'expected_revenue' ? [DecimalTextInputFormatter()] : [],
           decoration: const InputDecoration(
             border: InputBorder.none,
           ),
@@ -362,6 +390,29 @@ class _CrmDetailState extends State<CrmDetail> {
             fontSize: 16,
           ),
         ),
+      ),
+    );
+  }
+
+
+  Widget _buildSlider(TextEditingController controller, String label, String type) {
+    return isEditEnabled ? Slider(
+      value: currentValue,
+      min: 0,
+      max: 100,
+      divisions: 100,
+      label: currentValue.round().toString(),
+      onChanged: isEditEnabled ? (double value) {
+        setState(() {
+          currentValue = value;
+          addChanges('probability', value);
+          _onFieldChanged();
+        });
+      } : null,
+    ) : Text(
+      '${currentValue.round()}%',
+      style: const TextStyle(
+        fontSize: 16,
       ),
     );
   }
@@ -484,6 +535,7 @@ class _CrmDetailState extends State<CrmDetail> {
             ? Padding(
           padding: const EdgeInsets.all(8),
           child: DropdownButtonFormField<String>(
+            isExpanded: true,
             hint: const Text('Selecciona una opción'),
             items: list.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
@@ -566,7 +618,7 @@ class _CrmDetailState extends State<CrmDetail> {
       if (value is List && !listEquals(value, initialData[key])) {
         changes[key] = value;
       } else if (value is! List) {
-        print("Error: se esperaba una lista para la llave $key, pero se recibió un ${value.runtimeType}");
+        throw Exception("Error: se esperaba una lista para la llave $key, pero se recibió un ${value.runtimeType}");
       } else {
         changes.remove(key);
       }
@@ -579,6 +631,18 @@ class _CrmDetailState extends State<CrmDetail> {
           isDataChanged = false;
         });
       }
+    }
+  }
+}
+
+class DecimalTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final regEx = RegExp(r'^\d+\.?\d{0,2}$'); // Permite un máximo de 2 decimales
+    if (regEx.hasMatch(newValue.text)) {
+      return newValue;
+    } else {
+      return oldValue; // Rechaza la edición si no cumple con el formato permitido
     }
   }
 }

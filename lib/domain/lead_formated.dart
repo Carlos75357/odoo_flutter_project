@@ -13,18 +13,20 @@ class LeadFormated {
   int? stageId;
   String? user;
   int? userId;
+  String? team;
+  int? teamId;
   List<String>? tags;
   List<int>? tagsId;
   String? dateDeadline;
-  int? expectedRevenue;
-  String? probability;
+  double? expectedRevenue;
+  double? probability;
   int? priority;
 
 
   LeadFormated({required this.id, this.name, this.email, this.phone, this.client,
       this.clientId, this.company, this.companyId, this.stage, this.stageId,
       this.user, this.userId, this.tags, this.tagsId, this.dateDeadline,
-      this.expectedRevenue, this.probability, this.priority});
+      this.expectedRevenue, this.probability, this.priority, this.team, this.teamId});
 
   static dynamic parseStringField(dynamic value) {
     return (value is bool) ? null : value as String?;
@@ -37,6 +39,16 @@ class LeadFormated {
       return null;
     } else if (value is int) {
       return value;
+    } else {
+      return null;
+    }
+  }
+
+  static double? parseDoubleField(dynamic field) {
+    if (field is int || field is double) {
+      return field.toDouble();
+    } else if (field is String) {
+      return double.tryParse(field);
     } else {
       return null;
     }
@@ -68,6 +80,8 @@ class LeadFormated {
     if (dateDeadline != null) data['date_deadline'] = dateDeadline;
     if (expectedRevenue != null) data['expected_revenue'] = expectedRevenue;
     if (probability != null) data['probability'] = probability;
+    if (team != null) data['team'] = team;
+    if (teamId != null) data['team_id'] = teamId;
 
     return data;
   }
@@ -87,30 +101,33 @@ class LeadFormated {
       probability: leadFormated.probability,
       tagIds: leadFormated.tagsId,
       priority: leadFormated.priority?.toString(),
+      teamId: leadFormated.teamId
     );
   }
 
   factory LeadFormated.fromJson(Map<String, dynamic> json) {
     print(json);
     return LeadFormated(
-      id: json['id'],
+      id: json['id'] ?? 0,
       name: json['name'],
       email: parseStringField(json['email']),
       phone: parseStringField(json['phone']),
       client: parseStringField(json['client']),
-      // clientId: parseIntField(json['client_id']),
+      clientId: parseIntField(json['client_id']),
       company: parseStringField(json['company']),
-      // companyId: parseIntField(json['company_id']),
+      companyId: parseIntField(json['company_id']),
       stage: parseStringField(json['stage']),
-      // stageId: parseIntField(json['stage_id']),
+      stageId: parseIntField(json['stage_id']),
       user: parseStringField(json['user']),
-      // userId: parseIntField(json['user_id']),
+      userId: parseIntField(json['user_id']),
       tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
-      // tagsId: json['tags_id'] != null ? List<int>.from(json['tags_id']) : null,
+      tagsId: json['tags_id'] != null ? List<int>.from(json['tags_id']) : null,
       dateDeadline: parseStringField(json['date_deadline']),
-      expectedRevenue: parseIntField(json['expected_revenue']),
+      expectedRevenue: parseDoubleField(json['expected_revenue']),
       priority: parseIntField(json['priority']),
-      probability: parseStringField(json['probability']),
+      probability: parseDoubleField(json['probability']),
+      team: parseStringField(json['team']),
+      teamId: parseIntField(json['team_id']),
     );
   }
 }

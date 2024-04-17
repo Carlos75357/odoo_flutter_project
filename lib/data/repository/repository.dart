@@ -124,19 +124,39 @@ class Repository extends RepositoryDataSource {
       return 0;
     }
   }
-
-  // TODO Get alls
   @override
-  Future<List<dynamic>> getAllForModel(String modelName, List<String> fields) async {
+  Future<List<int>> getIdsByNames(String modelName, List<String> name) async {
+    try {
+      List<int> ids = [];
+      var response = await odooClient.searchRead(modelName, []);
+      for (var record in response) {
+        if (name.contains(record['name'])) {
+          ids.add(record['id'] as int);
+        }
+      }
+
+      return ids;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getAllForModel(String modelName, List<String> fields) async {
     try {
       var response = await odooClient.searchRead(modelName, []);
-      return response.map<dynamic>((record) {
-        return fields.map((field) => record[field]).join(' ');
+
+      return response.map<Map<String, dynamic>>((record) {
+        return {
+          'id': record['id'],
+          'name': record['name'],
+        };
       }).toList();
     } catch (e) {
       throw Exception('Failed to get records: $e');
     }
   }
+
 
   @override
   Future<List<String>> getAllNames(String modelName) async {
