@@ -200,7 +200,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
 
     if (title.toLowerCase() == 'probabilidad') {
       return _buildSlider();
-    }
+    } 
 
     return TextField(
       controller: controller,

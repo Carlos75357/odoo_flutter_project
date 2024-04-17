@@ -45,12 +45,8 @@ class LeadFormated {
   }
 
   static double? parseDoubleField(dynamic field) {
-    if (field is int) {
+    if (field is int || field is double) {
       return field.toDouble();
-    } else if (field is bool) {
-      return null;
-    } else if (field is double) {
-      return field;
     } else if (field is String) {
       return double.tryParse(field);
     } else {

@@ -146,17 +146,12 @@ class Repository extends RepositoryDataSource {
     try {
       var response = await odooClient.searchRead(modelName, []);
 
-      List<Map<String, dynamic>> result = [];
-
-      for (var record in response) {
-        Map<String, dynamic> recordMap = {
+      return response.map<Map<String, dynamic>>((record) {
+        return {
           'id': record['id'],
           'name': record['name'],
-        };
-        result.add(recordMap);
-      }
-
-      return result;
+        }
+      })
     } catch (e) {
       throw Exception('Failed to get records: $e');
     }

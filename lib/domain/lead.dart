@@ -48,12 +48,10 @@ class Lead {
   }
 
   static double? parseDoublefield(dynamic value) {
-    if (value is int) {
+    if (value is int || value is double) {
       return value.toDouble();
-    } else if (value is bool) {
+    } else (value is bool) {
       return null;
-    } else {
-      return value as double?;
     }
   }
 
