@@ -147,14 +147,14 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
       List<String> stageNames = await getNames('crm.stage');
       List<String> userNames = await getNames('res.users');
       List<String> companyNames = await getNames('res.company');
-      List<String> clientNames = await getNames('res.partner');
+      // List<String> clientNames = await getNames('res.partner');
       List<String> teamNames = await getNames('crm.team');
 
       Map<String, List<String>> fieldsOptions = {
         'stage': stageNames,
         'user': userNames,
         'company': companyNames,
-        'client': clientNames,
+        // 'client': clientNames,
         'tags': tagNames,
         'team': teamNames
       };
@@ -168,7 +168,7 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
   /// [getNames] method to get names.
   Future<List<String>> getNames(String modelName) async {
     try {
-      List<String> records = await repository.getAll(modelName);
+      List<String> records = await repository.getAll(modelName, ['id', 'name']);
       return records;
     } catch (e) {
       throw Exception('Failed to get names: $e');

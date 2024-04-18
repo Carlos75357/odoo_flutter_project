@@ -16,8 +16,8 @@ class Repository extends RepositoryDataSource {
   /// [login] method it receives a [url] and a [jsonRequest] and returns a [JsonRpcClient]
   /// The method works to authenticate in Odoo.
   @override
-  Future<LoginResponse> login(String url, String username, String password) async {
-    var response = await odooClient.authenticate(url, username, password);
+  Future<LoginResponse> login(String url, String username, String password, String db) async {
+    var response = await odooClient.authenticate(url, username, password, db);
     if (response['sessionId'] == null) {
       throw Exception('Failed to authenticate');
     }
@@ -42,7 +42,7 @@ class Repository extends RepositoryDataSource {
   @override
   Future<List<Lead>> listLeads(String model, List<dynamic> domain) async {
     try {
-      var response = await odooClient.searchRead(model, domain);
+      var response = await odooClient.searchRead(model, domain, []);
 
       return response.map((e) => Lead.fromJson(e)).toList();
 
@@ -138,7 +138,7 @@ class Repository extends RepositoryDataSource {
   @override
   Future<int> getIdByName(String modelName, String name) async {
     try {
-      var response = await odooClient.searchRead(modelName, []);
+      var response = await odooClient.searchRead(modelName, [],[]);
 
       var record = response.firstWhere((record) => record['name'] == name);
       return record['id'] as int;
@@ -156,7 +156,7 @@ class Repository extends RepositoryDataSource {
   Future<List<int>> getIdsByNames(String modelName, List<String> name) async {
     try {
       List<int> ids = [];
-      var response = await odooClient.searchRead(modelName, []);
+      var response = await odooClient.searchRead(modelName, [], []);
       for (var record in response) {
         if (name.contains(record['name'])) {
           ids.add(record['id'] as int);
@@ -180,7 +180,7 @@ class Repository extends RepositoryDataSource {
   @override
   Future<List<Map<String, dynamic>>> getAllForModel(String modelName, List<String> fields) async {
     try {
-      var response = await odooClient.searchRead(modelName, []);
+      var response = await odooClient.searchRead(modelName, [], []);
 
       return response.map<Map<String, dynamic>>((record) {
         return {
@@ -203,7 +203,7 @@ class Repository extends RepositoryDataSource {
   @override
   Future<List<String>> getAllNames(String modelName) async {
     try {
-      var response = await odooClient.searchRead(modelName, []);
+      var response = await odooClient.searchRead(modelName, [], []);
       return response.map<String>((record) => record['name'] as String).toList();
     } catch (e) {
       throw Exception('Failed to get names: $e');
@@ -218,9 +218,9 @@ class Repository extends RepositoryDataSource {
   ///
   /// Throws an [Exception] if there's a failure while fetching the records.
   @override
-  Future<List<String>> getAll(String modelName) async {
+  Future<List<String>> getAll(String modelName, List<String> fields) async {
     try {
-      var response = await odooClient.searchRead(modelName, []);
+      var response = await odooClient.searchRead(modelName, [], fields);
       return response.map<String>((record) => record['name'] as String).toList();
     } catch (e) {
       throw Exception('Failed to get all data: $e');

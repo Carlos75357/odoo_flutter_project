@@ -6,6 +6,7 @@ class LoginButtonPressed extends LoginEvent {
   final String url;
   final String username;
   final String password;
+  final String db;
 
-  LoginButtonPressed({required this.url, required this.username, required this.password});
+  LoginButtonPressed({required this.url, required this.username, required this.password, required this.db});
 }

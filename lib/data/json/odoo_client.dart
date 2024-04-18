@@ -35,9 +35,9 @@ class OdooClient extends OdooDataSource{
   /// [authenticate] method, send credentials to login in Odoo, if credentials
   /// are correct saves [sessionId] in [sessionId] variable to be used in other methods.
   @override
-  Future<Map<String, dynamic>> authenticate(String url, String username, String password) async {
+  Future<Map<String, dynamic>> authenticate(String url, String username, String password, String db) async {
     var jsonRequest = JsonRequest({
-      'db': 'demos_demos15',
+      'db': db,
       'login': username,
       'password': password
     });
@@ -45,6 +45,7 @@ class OdooClient extends OdooDataSource{
     try {
       this.url = url;
       OdooConfig.setBaseUrl(url);
+      OdooConfig.setDb(db);
       var response = await call('$url/web/session/authenticate', jsonRequest);
 
       if (response.containsKey('error')) {
@@ -61,12 +62,15 @@ class OdooClient extends OdooDataSource{
   /// [searchRead] method, send domain to search in Odoo all records that match
   /// with the domain
   @override
-  Future<List<Map<String, dynamic>>> searchRead(String model, List<dynamic> domain) async {
+  Future<List<Map<String, dynamic>>> searchRead(String model, List<dynamic> domain, List<String> fields) async {
     var jsonRequest = JsonRequest({
       'model': model,
       'method': 'search_read',
       'args': [domain],
-      'kwargs': {'context': []},
+      'kwargs': {
+        'fields': fields,
+        'context': []
+      },
     });
 
     try {

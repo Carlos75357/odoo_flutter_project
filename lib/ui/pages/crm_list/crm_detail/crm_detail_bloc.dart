@@ -221,7 +221,7 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
   /// [getNames] method to get the names of objects
   Future<List<String>> getNames(String modelName) async {
     try {
-      List<String> records = await repository.getAll(modelName);
+      List<String> records = await repository.getAll(modelName, []);
       return records;
     } catch (e) {
       throw Exception('Failed to get names: $e');

@@ -6,7 +6,7 @@ import 'repository_response.dart';
 /// and methods for retrieving model data by name or ID.
 abstract class RepositoryDataSource {
   /// Logs in to the data source with the given [url], [username], and [password].
-  Future<LoginResponse> login(String url, String username, String password);
+  Future<LoginResponse> login(String url, String username, String password, String db);
 
   /// Lists all leads for the given [model] and [domain].
   Future<List<Lead>> listLeads(String model, List<dynamic> domain);
@@ -36,7 +36,7 @@ abstract class RepositoryDataSource {
   Future<String> getNameById(String modelName, int id);
 
   /// Retrieves all data for the given [modelName].
-  Future<List<String>> getAll(String modelName);
+  Future<List<String>> getAll(String modelName, List<String> fields);
 
   /// Retrieves the names for the given [modelName] and [ids].
   Future<List<String>> getNamesByIds(String modelName, List<int>? ids);
@@ -49,10 +49,10 @@ abstract class RepositoryDataSource {
 /// It includes methods for authenticating, reading, creating, updating, and deleting data.
 abstract class OdooDataSource {
   /// Authenticates with the given [url], [username], and [password].
-  Future<Map<String, dynamic>> authenticate(String url, String username, String password);
+  Future<Map<String, dynamic>> authenticate(String url, String username, String password, String db);
 
   /// Performs a search-read operation with the given [model] and [domain].
-  Future<List<Map<String, dynamic>>> searchRead(String model, List<dynamic> domain);
+  Future<List<Map<String, dynamic>>> searchRead(String model, List<dynamic> domain, List<String> fields);
 
   /// Reads the data with the given [model] and [id].
   Future<Map<String, dynamic>> read(String model, int id);

@@ -8,6 +8,7 @@ class OdooConfig {
 
   /// The session ID obtained after successful authentication with the Odoo server.
   static String sessionId = '';
+  static String database = '';
 
   /// Returns the current base URL configured for communication with the Odoo server.
   static String getBaseUrl() {
@@ -27,5 +28,9 @@ class OdooConfig {
   /// Sets the session ID obtained after successful authentication.
   static void setSessionId(String id) {
     sessionId = id;
+  }
+
+  static void setDb(String db) {
+    database = db;
   }
 }

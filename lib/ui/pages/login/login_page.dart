@@ -19,14 +19,16 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController urlController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController databaseController = TextEditingController();
   bool obscure = true;
 
   @override
   Widget build(BuildContext context) {
     // urlController.text = "https://demos15.aurestic.com";
-    urlController.text = "https://";
-    // usernameController.text = "admin";
-    // passwordController.text = "admin";
+    urlController.text = "https://testcoimasa15.aurestic.com";
+    usernameController.text = "marketing@coimasa.com";
+    passwordController.text = "marketing@coimasa.com";
+    databaseController.text = "coimasa15.0_migrated_pruebas";
 
     return Scaffold(
       /// The bloc listener is used to navigate to the next page when the login
@@ -108,6 +110,8 @@ class _LoginPageState extends State<LoginPage> {
                                   CustomTextField(controller: usernameController, hintText:'Nombre de usuario', icon: const Icon(Icons.person)),
                                   const SizedBox(height: 20),
                                   CustomTextField(controller: passwordController, hintText: 'Contraseña', icon: const Icon(Icons.password_outlined), isPassword: true),
+                                  const SizedBox(height: 20),
+                                  CustomTextField(controller: databaseController, hintText: 'Base de datos', icon: const Icon(Icons.data_array)),
                                 ],
                               ),
                             ),
@@ -126,6 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                                       url: urlController.text,
                                       username: usernameController.text,
                                       password: passwordController.text,
+                                      db: databaseController.text,
                                     ),
                                   );
                                 },

@@ -116,7 +116,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
   /// then this function is called
   Future<List<String>> fetchLeadStatuses() async {
     try {
-      List<String> leadStatuses = (await repository.getAll('crm.stage')).cast<String>();
+      List<String> leadStatuses = (await repository.getAll('crm.stage', ['id', 'name'])).cast<String>();
       return leadStatuses;
     } catch (e) {
       throw Exception('Failed to fetch lead statuses: $e');

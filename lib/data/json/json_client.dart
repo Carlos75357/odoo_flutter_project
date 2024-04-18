@@ -16,7 +16,6 @@ class JsonRpcClient {
   /// After that, it encodes the [jsonRequest]. Finally, it sends the request to the server.
   /// Depending on whether it's an [authenticate] request or not, it will store the sessionId for future
   /// calls, and finally, return the response as a [Future<Map<String, dynamic>>].
-
   Future<Map<String, dynamic>> call(String url, JsonRequest jsonRequest) async {
     try {
 
