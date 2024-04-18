@@ -6,6 +6,7 @@ import 'login_bloc.dart';
 import 'login_events.dart';
 import 'login_states.dart';
 
+/// [LoginPage] is a statefulwidget class, build the login page
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 

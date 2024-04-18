@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/domain/lead.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_events.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_states.dart';
@@ -8,6 +9,7 @@ import 'package:multi_select_flutter/util/multi_select_item.dart';
 
 import '../crm_list_page.dart';
 
+/// [CrmCreatePage] is a page that allows the user to create a new [Lead]
 class CrmCreatePage extends StatefulWidget {
   const CrmCreatePage({super.key});
 
@@ -36,9 +38,11 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
 
   int selectedPriority = 0;
 
+  /// [changes] is a map that contains the changes made by the user.
   Map<String, dynamic> changes = {
   };
 
+  /// [fieldOptions] is a map that contains the options of the fields.
   Map<String, List<String>> fieldOptions = {
     'stage': [],
     'user': [],
@@ -88,6 +92,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
     super.dispose();
   }
 
+  /// [configData] is the method to set the data of the page.
   Future<void> configData() async {
     BlocProvider.of<CrmCreateBloc>(context).add(SetLoadingState());
 
@@ -112,6 +117,9 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
       body: BlocListener<CrmCreateBloc, CrmCreateStates>(
         listener: (context, state) {
           if (state is CrmCreateDone) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Guardado con exito"),
+            ));
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
           }
         },
@@ -157,6 +165,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
+  /// [_buildField] method to create each widget for each field.
   Widget _buildField(String title, TextEditingController controller, String type, String caseType) {
     Widget fieldWidget;
 
@@ -192,6 +201,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
+  /// [_buildTextField] method to create each widget for each field.
   Widget _buildTextField(TextEditingController controller, String title, String type, String caseType) {
     bool isEnable = true;
     if (title.toLowerCase() == 'telefono' || title.toLowerCase() == 'email' || title.toLowerCase() == 'fecha de creacion') {
@@ -216,6 +226,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
+  /// [_buildSlider] method to create the slider.
   Widget _buildSlider() {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
@@ -236,6 +247,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
+  /// [_buildDropDownField] method to create the dropdown field.
   Widget _buildDropDownField(TextEditingController controller, String type) {
     List<String> list = fieldOptions[type] ?? [];
 
@@ -291,6 +303,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
     }
   }
 
+  /// [_buildDatePickerField] method to create the date picker field.
   Widget _buildDatePickerField(TextEditingController controller) {
     return Container(
       decoration: BoxDecoration(
@@ -331,6 +344,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
+  /// [_buildPriorityField] method to create the priority field.
   Widget _buildPriorityField(String label, TextEditingController controller) {
     List<Widget> stars = List.generate(
       3,
@@ -369,6 +383,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
+  /// [_buildButton] method to create the button.
   Widget _buildButton() {
     return ElevatedButton(
       onPressed: () {
@@ -391,15 +406,13 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
 
         updateChangesIfNotEmpty('team', _teamController.text);
 
-        print(changes);
-
         BlocProvider.of<CrmCreateBloc>(context).add(CreateEvents(values: changes));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
       },
       child: const Text('Crear Lead'),
     );
   }
 
+  /// [updateChangesIfNotEmpty] method to update the changes if the value is not empty.
   void updateChangesIfNotEmpty(String key, dynamic value) {
     if (value.runtimeType == String) {
       if (value.isNotEmpty) {
@@ -412,6 +425,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
     }
   }
 
+  /// [addChanges] method add the changes to the [changes] map.
   void addChanges(String key, dynamic value) {
     for (dynamic value in changes.values) {
       if (value is List) {

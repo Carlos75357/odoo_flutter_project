@@ -1,3 +1,4 @@
+/// [Lead] model class, contains the data of a lead
 class Lead {
   int id;
   String? name;
@@ -33,10 +34,12 @@ class Lead {
     this.stageId,
   });
 
+  /// Check if the field is null or bool, if so, return null else return the value
   static dynamic parseStringField(dynamic value) {
     return (value is bool) ? null : value as String?;
   }
 
+  /// Check if the field is bool, if so, return null else return the value parsed to int
   static int? parseIntField(dynamic value) {
     if (value is double) {
       return value.toInt();
@@ -47,14 +50,16 @@ class Lead {
     }
   }
 
+  /// Check if the field is bool, if so, return null else return the value parsed to double
   static double? parseDoublefield(dynamic value) {
     if (value is int || value is double) {
       return value.toDouble();
-    } else (value is bool) {
+    } else {
       return null;
     }
   }
 
+  /// Convert a [Map] into a [Lead]
   factory Lead.fromJson(Map<String, dynamic> json) {
 
     final List<dynamic>? tagsJson = json['tag_ids'];
@@ -93,6 +98,7 @@ class Lead {
     return 'Id: $id - Nombre: $name - Contacto: $clientId - Email: $email - Teléfono: $phone - Compañía: $companyId - Usuario: $userId - Fecha límite: $dateDeadline - Sales Team: $teamId - Expected Income: $expectedRevenue - Tags: $tagIds - Priority: $priority - Probability: $probability - Fecha de Creación: $createDate - Etapa: $stageId';
   }
 
+  /// Convert a [Lead] into a [Map]
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;

@@ -4,11 +4,17 @@ import 'package:flutter_crm_prove/data/repository/repository_response.dart';
 
 import '../../domain/lead.dart';
 
-/// Class api to interact with Odoo, based on http package have methods to authenticate, searchRead, read, unlink, write, create
+/// Repository class to interact with Odoo, based on OdooClient.
+///
+/// This class implements [RepositoryDataSource] to provide methods for
+/// [authenticate], [searchRead], [read], [update], [unlink] and [create]
+/// in Odoo.
 class Repository extends RepositoryDataSource {
   OdooClient odooClient;
   Repository({required this.odooClient});
 
+  /// [login] method it receives a [url] and a [jsonRequest] and returns a [JsonRpcClient]
+  /// The method works to authenticate in Odoo.
   @override
   Future<LoginResponse> login(String url, String username, String password) async {
     var response = await odooClient.authenticate(url, username, password);
@@ -18,6 +24,8 @@ class Repository extends RepositoryDataSource {
     return LoginResponse(success: true);
   }
 
+  /// [listLead] method it receives a [model] and a [id] and returns a [Lead].
+  /// works to get a [Lead] from Odoo.
   @override
   Future<Lead> listLead(String model, int id) async {
     try {
@@ -29,6 +37,8 @@ class Repository extends RepositoryDataSource {
     }
   }
 
+  /// [listLeads] method it receives a [model] and a [domain] and returns a [List<Lead>].
+  /// works to get all the [lead] from Odoo.
   @override
   Future<List<Lead>> listLeads(String model, List<dynamic> domain) async {
     try {
@@ -41,6 +51,8 @@ class Repository extends RepositoryDataSource {
     }
   }
 
+  /// [createLead] method it receives a [model] and a [values] and returns a [CreateResponse].
+  /// works to create a [lead] in Odoo.
   @override
   Future<CreateResponse> createLead(String model, Map<String, dynamic> values) async {
     try {
@@ -54,6 +66,8 @@ class Repository extends RepositoryDataSource {
     }
   }
 
+  /// [updateLead] method it receives a [model] and a [id] and returns a [WriteResponse].
+  /// works to update a [lead] in Odoo.
   @override
   Future<WriteResponse> updateLead(String model, int id, Lead values) async {
     try {
@@ -65,6 +79,7 @@ class Repository extends RepositoryDataSource {
     }
   }
 
+  /// [unlinkLead] method it receives a [model] and a [id] and returns a [UnlinkResponse].
   @override
   Future<UnlinkResponse> unlinkLead(String model, int id) async {
     try {
@@ -75,9 +90,8 @@ class Repository extends RepositoryDataSource {
     }
   }
 
-  // TODO Get by List<int> id
-  @override
-  /// TagNames method, get the names of the tags with the given ids
+  /// [getNamesByIds] method it receives a [model] and a [ids] and returns a [List<String>].
+  /// works to get names from the ids from Odoo.
   @override
   Future<List<String>> getNamesByIds(String modelName, List<int>? ids) async {
     List<String> names = [];
@@ -96,7 +110,11 @@ class Repository extends RepositoryDataSource {
     return names;
   }
 
-  // TODO Get
+  /// Method to retrieve the name associated with the given [id] of a lead record in the specified [model].
+  ///
+  /// Takes [modelName] and [id] as parameters.
+  ///
+  /// Returns a [Future] containing a [String] representing the name of the lead with the provided [id].
   @override
   Future<String> getNameById(String modelName, int id) async {
     try {
@@ -112,7 +130,11 @@ class Repository extends RepositoryDataSource {
     }
   }
 
-  // TODO Get by name
+  /// Method to retrieve the ID associated with the given [name] of a lead record in the specified [model].
+  ///
+  /// Takes [modelName] and [name] as parameters.
+  ///
+  /// Returns a [Future] containing an [int] representing the ID of the lead with the provided [name].
   @override
   Future<int> getIdByName(String modelName, String name) async {
     try {
@@ -124,6 +146,12 @@ class Repository extends RepositoryDataSource {
       return 0;
     }
   }
+
+  /// Method to retrieve the IDs associated with the given list of [names] of lead records in the specified [model].
+  ///
+  /// Takes [modelName] and [names] as parameters.
+  ///
+  /// Returns a [Future] containing a [List<int>] representing the IDs of the leads with the provided names.
   @override
   Future<List<int>> getIdsByNames(String modelName, List<String> name) async {
     try {
@@ -141,6 +169,14 @@ class Repository extends RepositoryDataSource {
     }
   }
 
+  /// Method to retrieve all records for the specified [modelName] with the specified [fields].
+  ///
+  /// Takes [modelName] and [fields] as parameters.
+  ///
+  /// Returns a [Future] containing a [List] of [Map] instances, where each map represents a record.
+  /// Each map contains the record's 'id' and 'name' fields.
+  ///
+  /// Throws an [Exception] if there's a failure while fetching the records.
   @override
   Future<List<Map<String, dynamic>>> getAllForModel(String modelName, List<String> fields) async {
     try {
@@ -150,14 +186,20 @@ class Repository extends RepositoryDataSource {
         return {
           'id': record['id'],
           'name': record['name'],
-        }
-      })
+        };
+      }).toList();
     } catch (e) {
       throw Exception('Failed to get records: $e');
     }
   }
 
-
+  /// Method to retrieve all names of records for the specified [modelName].
+  ///
+  /// Takes [modelName] as parameter.
+  ///
+  /// Returns a [Future] containing a [List] of [String] representing the names of all records for the specified model.
+  ///
+  /// Throws an [Exception] if there's a failure while fetching the names.
   @override
   Future<List<String>> getAllNames(String modelName) async {
     try {
@@ -168,6 +210,13 @@ class Repository extends RepositoryDataSource {
     }
   }
 
+  /// Method to retrieve all records for the specified [modelName].
+  ///
+  /// Takes [modelName] as parameter.
+  ///
+  /// Returns a [Future] containing a [List] of [String] representing the names of all records for the specified model.
+  ///
+  /// Throws an [Exception] if there's a failure while fetching the records.
   @override
   Future<List<String>> getAll(String modelName) async {
     try {
@@ -177,5 +226,4 @@ class Repository extends RepositoryDataSource {
       throw Exception('Failed to get all data: $e');
     }
   }
-
 }
