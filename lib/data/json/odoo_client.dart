@@ -5,11 +5,17 @@ import '../../domain/lead.dart';
 import 'json_client.dart';
 import 'json_rpc.dart';
 
+/// Class [OdooClient] interact with the Odoo server, based on http package have
+/// methods to [authenticate], [searchRead], [read], [unlink], [write], [create]
 class OdooClient extends OdooDataSource{
+  /// Class [JsonRpcClient] to handle calls and responses from json rpc.
   JsonRpcClient jsonRpcClient = JsonRpcClient();
+  /// [url] is the url of the Odoo server.
   String? url;
   String? db;
 
+  /// [call] method it receives a [url] and a [jsonRequest] and returns a [JsonRpcClient]
+  /// [response].
   Future<Map<String, dynamic>> call(String url, JsonRequest jsonRequest) async {
     try {
       var response = await jsonRpcClient.call(url, jsonRequest);
@@ -20,13 +26,14 @@ class OdooClient extends OdooDataSource{
 
   }
 
+  /// [setSettings] method, set [url] and [sessionId] variables.
   void setSettings(String url, String sessionId) {
     this.url = url;
     jsonRpcClient.sessionId = sessionId;
   }
 
-  /// Authenticate method, send credentials to login in Odoo, if credentials
-  /// are correct saves sessionId in sessionId variable to be used in other methods.
+  /// [authenticate] method, send credentials to login in Odoo, if credentials
+  /// are correct saves [sessionId] in [sessionId] variable to be used in other methods.
   @override
   Future<Map<String, dynamic>> authenticate(String url, String username, String password) async {
     var jsonRequest = JsonRequest({
@@ -51,7 +58,7 @@ class OdooClient extends OdooDataSource{
     }
   }
 
-  /// SearchRead method, send domain to search in Odoo all records that match
+  /// [searchRead] method, send domain to search in Odoo all records that match
   /// with the domain
   @override
   Future<List<Map<String, dynamic>>> searchRead(String model, List<dynamic> domain) async {
@@ -78,7 +85,7 @@ class OdooClient extends OdooDataSource{
   }
 
 
-  /// Read method, read the records with the given ids from the given model,
+  /// [read] method, read the records with the given ids from the given model,
   /// in args must be the id and in kwargs the fields that you want to read
   /// in this case is empty, which means that it will read all the fields
   @override
@@ -106,7 +113,7 @@ class OdooClient extends OdooDataSource{
   }
 
 
-  /// Unlink the record with the given id from the given model
+  /// [unlink] the record with the given id from the given model
   @override
   Future<bool> unlink(String model, int id) async {
     try {
@@ -127,7 +134,7 @@ class OdooClient extends OdooDataSource{
   }
 
 
-  /// Write method, update the record with the given id.
+  /// [write] method, update the record with the given id.
   @override
   Future<bool> write(String model, int id, Lead values) async {
     Map<String, dynamic> valuesMap = values.toJson();
@@ -150,7 +157,7 @@ class OdooClient extends OdooDataSource{
   }
 
 
-  /// Create method, create a new record in the given model with the given values
+  /// [create] method, create a new record in the given model with the given values
   @override
   Future<Map<String, dynamic>> create(String model, Map<String, dynamic> values) async {
     var jsonRequest = JsonRequest({

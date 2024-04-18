@@ -1,5 +1,6 @@
 import 'lead.dart';
 
+/// [LeadFormated] model class, contains the data of a lead, have names and the ids
 class LeadFormated {
   int id;
   String? name;
@@ -28,22 +29,23 @@ class LeadFormated {
       this.user, this.userId, this.tags, this.tagsId, this.dateDeadline,
       this.expectedRevenue, this.probability, this.priority, this.team, this.teamId});
 
+  /// Check if the field is null or bool, if so, return null else return the value
   static dynamic parseStringField(dynamic value) {
     return (value is bool) ? null : value as String?;
   }
 
+  /// Check if the field is bool, if so, return null else return the value parsed to int
   static int? parseIntField(dynamic value) {
     if (value is double) {
       return value.toInt();
-    } else if (value is bool) {
-      return null;
-    } else if (value is int) {
+    }else if (value is int) {
       return value;
     } else {
       return null;
     }
   }
 
+  /// Check if the field is bool, if so, return null else return the value parsed to double
   static double? parseDoubleField(dynamic field) {
     if (field is int || field is double) {
       return field.toDouble();
@@ -59,6 +61,7 @@ class LeadFormated {
     return 'Id: $id - Nombre: $name - Email: $email - Teléfono: $phone - Cliente: $client - ID de Cliente: $clientId - Compañía: $company - ID de Compañía: $companyId - Etapa: $stage - ID de Etapa: $stageId - Usuario: $user - ID de Usuario: $userId - Etiquetas: $tags - IDs de Etiquetas: $tagsId - Fecha Límite: $dateDeadline - Ingreso Esperado: $expectedRevenue - Probabilidad: $probability';
   }
 
+  /// Convert a [LeadFormated] into a [Map]
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
 
@@ -86,6 +89,7 @@ class LeadFormated {
     return data;
   }
 
+  /// Convert a [LeadFormated] into a [Lead]
   Lead leadFormatedToLead(LeadFormated leadFormated) {
     return Lead(
       id: leadFormated.id,
@@ -105,8 +109,8 @@ class LeadFormated {
     );
   }
 
+  /// Convert a [Map] into a [LeadFormated]
   factory LeadFormated.fromJson(Map<String, dynamic> json) {
-    print(json);
     return LeadFormated(
       id: json['id'] ?? 0,
       name: json['name'],
