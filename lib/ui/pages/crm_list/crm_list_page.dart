@@ -9,7 +9,7 @@ import '../../../widgets/crm_list_page/menu_crm.dart';
 import 'crm_list_bloc.dart';
 import 'crm_list_events.dart';
 import 'crm_list_states.dart';
-
+/// [CrmListPage] is a statefulwidget class, build the crm list page with the list of leads
 class CrmListPage extends StatefulWidget {
   const CrmListPage({super.key});
 
@@ -107,6 +107,7 @@ class _CrmListPageState extends State<CrmListPage> {
   }
 }
 
+/// [_buildLeadWidgets] is a function that builds the widget which shows a lead.
 List<Widget> _buildLeadWidgets(CrmListStates state) {
   List<Widget> leadWidgets = [];
 

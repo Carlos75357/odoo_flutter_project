@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../ui/pages/crm_list/crm_list_bloc.dart';
 import '../../ui/pages/crm_list/crm_list_events.dart';
 
+/// [buildMenu] is a function that build the menu of the [CrmListPage]
 Widget buildMenu(BuildContext context, List<String>? leadStatuses) {
   return Container(
     height: 50,

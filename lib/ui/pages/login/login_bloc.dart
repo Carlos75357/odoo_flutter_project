@@ -5,7 +5,7 @@ import 'package:flutter_crm_prove/ui/pages/login/login_states.dart';
 
 import 'login_events.dart';
 
-/// LoginBloc class, for login events and states, using flutter_bloc package
+/// [LoginBloc] class, for [LoginEvent] and [LoginState], using [flutter_bloc] package
 /// controll login events and states.
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInitial()) {
@@ -20,7 +20,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginError('Todos los campos son obligatorios'));
       return;
     }
-    /// Login request, try to authenticate with the provided credentials, if the
+    /// [LoginRequest], try to authenticate with the provided credentials, if the
     /// credentials are correct, return a LoginSuccess state, otherwise return a
     /// LoginError state.
     try {

@@ -8,7 +8,8 @@ import 'package:flutter_crm_prove/domain/lead.dart';
 import '../../../data/repository/repository.dart';
 import 'crm_list_events.dart';
 import 'crm_list_states.dart';
-
+/// [CrmListBloc] is a bloc class, works with [CrmListEvents] and [CrmListStates],
+/// wait for [CrmListEvents] and emit [CrmListStates].
 class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
   CrmListBloc() : super(CrmListInitial()) {
     odooClient.setSettings(OdooConfig.getBaseUrl(), OdooConfig.getSessionId());
@@ -28,6 +29,8 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
   //   leads = response;
   // }
 
+  /// [listCrm] is a function that loads the leads, depending on the filter,
+  /// when [ChangeFilter] is emitted, then this function is called
   listCrm(ChangeFilter event, Emitter<CrmListStates> emit) async {
     try {
       emit(CrmListLoading());
@@ -45,6 +48,8 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     }
   }
 
+  /// [selectLead] is a function that loads the lead details when [LeadSelected] is emitted
+  /// then this function is called
   selectLead(LeadSelected event, Emitter<CrmListStates> emit) async {
     try {
       emit(CrmListLoading());
@@ -60,6 +65,8 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     }
   }
 
+  /// [loadLeads] is a function that loads the leads when [LoadAllLeads] is emitted
+  /// then this function is called
   loadLeads(LoadAllLeads event, Emitter<CrmListStates> emit) async {
     try {
       emit(CrmListLoading());
@@ -75,6 +82,8 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
   }
 
+  /// [reloadLeads] is a function that reloads the leads when [ReloadLeads] is emitted
+  /// then this function is called
   reloadLeads(ReloadLeads event, Emitter<CrmListStates> emit) async {
     try {
       emit(CrmListLoading());
@@ -92,6 +101,8 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     }
   }
 
+  /// [newLead] is a function that loads the new lead when [NewLeadButtonPressed] is emitted
+  /// then this function is called
   newLead(NewLeadButtonPressed event, Emitter<CrmListStates> emit) async {
     try {
       emit(CrmListLoading());
@@ -101,6 +112,8 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     }
   }
 
+  /// [fetchLeadStatuses] is a function that fetches the lead statuses when [LoadAllLeads] is emitted
+  /// then this function is called
   Future<List<String>> fetchLeadStatuses() async {
     try {
       List<String> leadStatuses = (await repository.getAll('crm.stage')).cast<String>();
@@ -110,21 +123,4 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     }
   }
 
-  // Stream<CrmListStates> mapEventToState(CrmListEvents event, Emitter<CrmListStates> emit) async* {
-  //   if (event is LoadAllLeads) {
-  //     CrmListLoading();
-  //
-  //     final response = await repository.listLeads('crm.lead', []);
-  //
-  //     if (response.isEmpty) {
-  //       emit(CrmListEmpty());
-  //     }
-  //
-  //     emit(CrmListSuccess(response as Map<String, dynamic>));
-  //   } else if (event is LoadLeads) {
-  //     CrmListLoading();
-  //
-  //     final response = await repository.listLeads('crm.lead', []);
-  //   }
-  // }
 }

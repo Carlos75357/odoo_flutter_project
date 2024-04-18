@@ -12,7 +12,8 @@ import '../../../../domain/lead_formated.dart';
 import '../crm_list_page.dart';
 import 'crm_detail_bloc.dart';
 import 'crm_detail_events.dart';
-
+/// [CrmDetailPage] is a statefulwidget class, build the page to see the detail
+/// of one lead, it can also unlink or edit the lead.
 class CrmDetail extends StatefulWidget {
   Lead lead;
 
@@ -23,6 +24,7 @@ class CrmDetail extends StatefulWidget {
 }
 
 class _CrmDetailState extends State<CrmDetail> {
+  /// [fieldOptions] contains the options of each combobox.
   Map<String, List<String>> fieldOptions = {
     'stage': [],
     'user': [],
@@ -31,6 +33,7 @@ class _CrmDetailState extends State<CrmDetail> {
     'tags': [],
     'team': [],
   };
+  /// [selectedItems] contains the selected item(s) of each combobox.
   Map <String, List<String>> selectedItems = {
     'stage': [],
     'user': [],
@@ -39,6 +42,7 @@ class _CrmDetailState extends State<CrmDetail> {
     'tags': [],
     'team': [],
   };
+  /// [changes] is a [Map<String, dynamic>] which contains the changes of each field.
   Map<String, dynamic> changes = {};
   late LeadFormated leadFormated;
   late TextEditingController _nameController;
@@ -70,6 +74,7 @@ class _CrmDetailState extends State<CrmDetail> {
     configData();
   }
 
+  /// [configData] configures the data of the page.
   void configData() {
     BlocProvider.of<CrmDetailBloc>(context).add(SetState());
     BlocProvider.of<CrmDetailBloc>(context).getLeadFormated(widget.lead).then((lead) {
@@ -143,6 +148,7 @@ class _CrmDetailState extends State<CrmDetail> {
     await _assignDataFromString(widget.lead.teamId ?? 0, 'crm.team', _teamController);
   }
 
+  /// [getLeadSelectedItems] method to get the selected items from the lead.
   Future<List<String>> getLeadSelectedItems() async {
     List<int> tagIds = widget.lead.tagIds ?? [0];
     List<String> selectedItems = await BlocProvider.of<CrmDetailBloc>(context).getDataList(tagIds, 'crm.tag');
@@ -168,12 +174,14 @@ class _CrmDetailState extends State<CrmDetail> {
     super.dispose();
   }
 
+  /// [onFieldChanged] method set the [isDataChanged] to true.
   void _onFieldChanged() {
     setState(() {
       isDataChanged = true;
     });
   }
 
+  /// [onUpdatePressed] method to update the lead, send the event [SaveLeadButtonPressed] and show a message.
   void _onUpdatePressed() {
     changes['id'] = widget.lead.id;
 
@@ -183,6 +191,8 @@ class _CrmDetailState extends State<CrmDetail> {
     ));
   }
 
+  /// [onResetPressed] method to reset the data of the page, set the [isDataChanged] and [isEditEnabled] to false
+  /// and call the method [configData].
   void _onResetPressed() {
     setState(() {
       isDataChanged = false;
@@ -191,6 +201,15 @@ class _CrmDetailState extends State<CrmDetail> {
     configData();
   }
 
+  /// [onUnlinkPressed] method to unlink the lead, send the event [UnlinkLeadButtonPressed] and show a message.
+  void _onUnlinkPressed() {
+    BlocProvider.of<CrmDetailBloc>(context).add(UnlinkLeadButtonPressed(widget.lead.id));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text("Eliminando, no haga nada"),
+    ));
+  }
+
+  /// [setText] method to set the text of the fields.
   void _setText() {
     _nameController = TextEditingController(text: widget.lead.name);
     _clientNameController = TextEditingController();
@@ -209,6 +228,7 @@ class _CrmDetailState extends State<CrmDetail> {
     getDataStringForId();
   }
 
+  /// [build] method to build the widget.
   @override
   Widget build(BuildContext context) {
     bool canPop = !isEditEnabled;
@@ -234,7 +254,11 @@ class _CrmDetailState extends State<CrmDetail> {
           } else if (state is CrmDetailReload) {
             widget.lead = state.lead;
             _onResetPressed();
-
+          } else if (state is CrmDeleteSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Eliminado con exito"),
+            ));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
           }
         },
         child: BlocBuilder<CrmDetailBloc, CrmDetailStates>(
@@ -273,6 +297,11 @@ class _CrmDetailState extends State<CrmDetail> {
                       icon: Icon(isEditEnabled ? Icons.edit_off : Icons.edit),
                       tooltip: isEditEnabled ? 'Deshabilitar Edición' : 'Habilitar Edición',
                     ),
+                    IconButton(
+                      onPressed: _onUnlinkPressed,
+                      icon: const Icon(Icons.delete_forever),
+                      tooltip: 'Eliminar oportunidad',
+                    )
                   ],
                 ),
                 body: _buildBody(state),
@@ -289,6 +318,7 @@ class _CrmDetailState extends State<CrmDetail> {
     );
   }
 
+  /// [_buildBody] method to build the body of the widget, build each field.
   Widget _buildBody(CrmDetailStates state) {
     if (state is CrmDetailSuccess) {
       return SingleChildScrollView(
@@ -318,6 +348,7 @@ class _CrmDetailState extends State<CrmDetail> {
     }
   }
 
+  /// [_buildField] method to create each widget for each field.
   Widget _buildField(String label, TextEditingController controller, String caseType, String type) {
     Widget fieldWidget;
 
@@ -351,6 +382,7 @@ class _CrmDetailState extends State<CrmDetail> {
     );
   }
 
+  /// [_buildTextField] method to create the text field.
   Widget _buildTextField(TextEditingController controller, String label, String type) {
     bool isEnable = true;
     if (type == 'phone' || type == 'email' || type == 'create_date') {
@@ -377,8 +409,7 @@ class _CrmDetailState extends State<CrmDetail> {
             _onFieldChanged();
             addChanges(type, value);
           },
-          // Configura el tipo de entrada y el formateador según el tipo 'expected_revenue'
-          keyboardType: type.toLowerCase() == 'expected_revenue' ? TextInputType.numberWithOptions(decimal: true) : TextInputType.text,
+          keyboardType: type.toLowerCase() == 'expected_revenue' ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.text,
           inputFormatters: type.toLowerCase() == 'expected_revenue' ? [DecimalTextInputFormatter()] : [],
           decoration: const InputDecoration(
             border: InputBorder.none,
@@ -394,7 +425,7 @@ class _CrmDetailState extends State<CrmDetail> {
     );
   }
 
-
+  /// [_buildSlider] method to create the slider.
   Widget _buildSlider(TextEditingController controller, String label, String type) {
     return isEditEnabled ? Slider(
       value: currentValue,
@@ -417,6 +448,7 @@ class _CrmDetailState extends State<CrmDetail> {
     );
   }
 
+  /// [_buildDateTextField] method to create the date picker text field.
   Widget _buildDateTextField(TextEditingController controller) {
     return Container(
       decoration: BoxDecoration(
@@ -465,6 +497,7 @@ class _CrmDetailState extends State<CrmDetail> {
     );
   }
 
+  /// [_buildComboBoxFields] method to create the combo box, the [MultiSelectDialogField] and the [DropdownButtonFormField].
   Widget _buildComboBoxFields(TextEditingController editingController, String type) {
     List<String> list = fieldOptions[type] ?? [];
     String? selectedValue;
@@ -567,6 +600,8 @@ class _CrmDetailState extends State<CrmDetail> {
     }
   }
 
+  /// [_buildPriorityField] method to create the priority field, this widget creates 3 stars, if they are activated, they will be filled, if not, no,
+  /// they can be clicked to deactivate them and if the same one that is already activated is clicked, they are all removed.
   Widget _buildPriorityField(String label, TextEditingController controller, int initialPriority) {
     List<Widget> stars = List.generate(
       3,
@@ -613,6 +648,7 @@ class _CrmDetailState extends State<CrmDetail> {
     );
   }
 
+  /// [addChanges] method add the changes to the [changes] map.
   void addChanges(String key, dynamic value) {
     if (initialData[key] is List) {
       if (value is List && !listEquals(value, initialData[key])) {
@@ -635,6 +671,7 @@ class _CrmDetailState extends State<CrmDetail> {
   }
 }
 
+/// [DecimalTextInputFormatter] class to format the decimal input.
 class DecimalTextInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
