@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/odoo_config.dart';
 import 'package:flutter_crm_prove/domain/lead.dart';
+import 'package:flutter_crm_prove/remote_config_service.dart';
 
 import '../../../data/repository/repository.dart';
 import 'crm_list_events.dart';
@@ -35,8 +36,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     try {
       emit(CrmListLoading());
       String? filter = event.filter;
-      int idStage = 0;
-      idStage = await repository.getIdByName('crm.stage', event.filter);
+      int idStage = await repository.getIdByName('crm.stage', event.filter);
       filter = 'stage_id = ${event.filter}';
 
       List<Lead> filteredLeads = leads.where((lead) => lead.stageId == idStage).toList();
@@ -70,7 +70,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
   loadLeads(LoadAllLeads event, Emitter<CrmListStates> emit) async {
     try {
       emit(CrmListLoading());
-      final response = await repository.listLeads('crm.lead', []);
+      final response = await repository.listLeads('crm.lead', [], {'limit': RemoteConfigService.instance.crmLeadsLimit});
       leads = response;
       Map<String, dynamic> data = {
         'leads': response
@@ -79,7 +79,6 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     } catch (e) {
       emit(CrmListError('Hubo un error al cargar las oportunidades'));
     }
-
   }
 
   /// [reloadLeads] is a function that reloads the leads when [ReloadLeads] is emitted
@@ -88,7 +87,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
     try {
       emit(CrmListLoading());
 
-      final response = await repository.listLeads('crm.lead', []);
+      final response = await repository.listLeads('crm.lead', [], {'limit': RemoteConfigService.instance.crmLeadsLimit});
       leads = response;
 
       Map<String, dynamic> data = {
@@ -116,7 +115,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
   /// then this function is called
   Future<List<String>> fetchLeadStatuses() async {
     try {
-      List<String> leadStatuses = (await repository.getAll('crm.stage')).cast<String>();
+      List<String> leadStatuses = (await repository.getAllNames('crm.stage', ['id', 'name'])).cast<String>();
       return leadStatuses;
     } catch (e) {
       throw Exception('Failed to fetch lead statuses: $e');

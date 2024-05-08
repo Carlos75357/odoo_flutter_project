@@ -168,7 +168,7 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
   /// [getNames] method to get names.
   Future<List<String>> getNames(String modelName) async {
     try {
-      List<String> records = await repository.getAll(modelName);
+      List<String> records = await repository.getAllNames(modelName, ['name']);
       return records;
     } catch (e) {
       throw Exception('Failed to get names: $e');

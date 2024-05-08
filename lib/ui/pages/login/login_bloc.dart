@@ -24,7 +24,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     /// credentials are correct, return a LoginSuccess state, otherwise return a
     /// LoginError state.
     try {
-      final response = await repository.login(event.url, event.username, event.password);
+      final response = await repository.login(event.url, event.username, event.password, event.db);
 
       if (response.success) {
         emit(LoginSuccess());

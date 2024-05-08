@@ -19,6 +19,7 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     on<ReloadDetail>(reloadDetails);
     on<SetState>(setState);
     on<UnlinkLeadButtonPressed>(unlinkLead);
+    on<ErrorEvent>(detailError);
   }
 
   OdooClient odooClient = OdooClient();
@@ -33,6 +34,10 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     } catch (e) {
       emit(CrmDetailError(e.toString()));
     }
+  }
+
+  detailError(ErrorEvent event, Emitter<CrmDetailStates> emit) {
+    emit(CrmDetailError(event.message));
   }
 
   /// [loadDetails] method to load the details of a lead
@@ -143,11 +148,11 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     try {
       Map<String, List<String>> dataList = {};
 
-      dataList['etapas'] = (await repository.getAllNames('crm.stage')).cast<String>();
-      dataList['usuarios'] = (await repository.getAllNames('res.users')).cast<String>();
-      dataList['compañías'] = (await repository.getAllNames('res.company')).cast<String>();
-      dataList['clientes'] = (await repository.getAllNames('crm.lead')).cast<String>();
-      dataList['tags'] = (await repository.getAllNames('crm.tag')).cast<String>();
+      dataList['etapas'] = (await repository.getAllNames('crm.stage', ['name'])).cast<String>();
+      dataList['usuarios'] = (await repository.getAllNames('res.users', ['name'])).cast<String>();
+      dataList['compañías'] = (await repository.getAllNames('res.company', ['name'])).cast<String>();
+      dataList['clientes'] = (await repository.getAllNames('crm.lead', ['name'])).cast<String>();
+      dataList['tags'] = (await repository.getAllNames('crm.tag', ['name'])).cast<String>();
 
       return dataList;
     } catch (e) {
@@ -221,7 +226,10 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
   /// [getNames] method to get the names of objects
   Future<List<String>> getNames(String modelName) async {
     try {
-      List<String> records = await repository.getAll(modelName);
+      List<String> records = await repository.getAllNames(modelName, ['name']);
+      if (records.isEmpty) {
+        return [];
+      }
       return records;
     } catch (e) {
       throw Exception('Failed to get names: $e');
@@ -264,8 +272,13 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
   /// [getLeadFormated] method to get the lead formated
   Future<LeadFormated> getLeadFormated(Lead lead) async {
     try {
+      // print(lead.toString());
       String? stageName = await translateStage(lead.stageId);
+      // print('Etapa traducida: $stageName');
       List<String>? translatedTags = await translateTags(lead.tagIds);
+      // print('Tags traducidos: $translatedTags');
+      String? team = await translateTeam(lead.teamId);
+      // print('Equipo traducido: $team');
 
       LeadFormated leadFormated = LeadFormated(
         id: lead.id,
@@ -280,7 +293,7 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
         stageId: lead.stageId,
         user: await repository.getNameById('res.users', lead.userId ?? 0),
         userId: lead.userId,
-        team: await translateTeam(lead.teamId),
+        team: team,
         teamId: lead.teamId,
         tags: translatedTags,
         tagsId: lead.tagIds,
@@ -300,13 +313,13 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     if (stageId == null) return null;
 
     try {
-      List<Map<String, dynamic>> stages = await repository.getAllForModel('crm.stage', ['id', 'name']);
 
-      for (var stage in stages) {
-        if (stage['id'] == stageId) {
-          return stage['name'];
-        }
+      String? stageName = await repository.getNameById('crm.stage', stageId);
+
+      if (stageName != null) {
+        return stageName;
       }
+
       return null;
     } catch (e) {
       throw Exception('Failed to translate stage: $e');
@@ -318,12 +331,11 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     if (teamId == null) return null;
 
     try {
-      List<Map<String, dynamic>> teams = await repository.getAllForModel('crm.team', ['id', 'name']);
 
-      for (var team in teams) {
-        if (team['id'] == teamId) {
-          return team['name'];
-        }
+      String? teamName = await repository.getNameById('crm.team', teamId);
+      // print('Nombre del equipo traducido: $teamName');
+      if (teamName != null) {
+        return teamName;
       }
 
       return null;
@@ -339,12 +351,10 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     try {
       List<String> translatedTags = [];
 
-      List<Map<String, dynamic>> tags = await repository.getAllForModel('crm.tag', ['id', 'name']);
+      List<String> tags = await repository.getNamesByIds('crm.tag', tagIds);
 
-      for (int tagId in tagIds) {
-        Map<String, dynamic>? tag = tags.firstWhere((tag) => tag['id'] == tagId, orElse: () => throw Exception('Tag with ID $tagId not found.'));
-        translatedTags.add(tag['name']);
-      }
+      translatedTags.addAll(tags);
+      // print('Tags traducidos: $translatedTags');
       return translatedTags;
     } catch (e) {
       throw Exception('Failed to translate tags: $e');

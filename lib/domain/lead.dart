@@ -95,7 +95,7 @@ class Lead {
 
   @override
   String toString() {
-    return 'Id: $id - Nombre: $name - Contacto: $clientId - Email: $email - Teléfono: $phone - Compañía: $companyId - Usuario: $userId - Fecha límite: $dateDeadline - Sales Team: $teamId - Expected Income: $expectedRevenue - Tags: $tagIds - Priority: $priority - Probability: $probability - Fecha de Creación: $createDate - Etapa: $stageId';
+    return 'Id: $id - Nombre: $name - Contacto: $clientId - Email: $email - Teléfono: $phone - Cliente: $clientId - Compañía: $companyId - Usuario: $userId - Fecha límite: $dateDeadline - Sales Team: $teamId - Expected Income: $expectedRevenue - Tags: $tagIds - Priority: $priority - Probability: $probability - Fecha de Creación: $createDate - Etapa: $stageId';
   }
 
   /// Convert a [Lead] into a [Map]

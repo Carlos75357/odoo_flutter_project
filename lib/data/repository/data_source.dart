@@ -6,10 +6,10 @@ import 'repository_response.dart';
 /// and methods for retrieving model data by name or ID.
 abstract class RepositoryDataSource {
   /// Logs in to the data source with the given [url], [username], and [password].
-  Future<LoginResponse> login(String url, String username, String password);
+  Future<LoginResponse> login(String url, String username, String password, String db);
 
   /// Lists all leads for the given [model] and [domain].
-  Future<List<Lead>> listLeads(String model, List<dynamic> domain);
+  Future<List<Lead>> listLeads(String model, List<dynamic> domain, Map<String, dynamic> kwargs);
 
   /// Lists a single lead with the given [model] and [id].
   Future<Lead> listLead(String model, int id);
@@ -35,27 +35,24 @@ abstract class RepositoryDataSource {
   /// Retrieves the name for the given [modelName] and [id].
   Future<String> getNameById(String modelName, int id);
 
-  /// Retrieves all data for the given [modelName].
-  Future<List<String>> getAll(String modelName);
-
   /// Retrieves the names for the given [modelName] and [ids].
   Future<List<String>> getNamesByIds(String modelName, List<int>? ids);
 
   /// Retrieves all names for the given [modelName].
-  Future<List<String>> getAllNames(String modelName);
+  Future<List<String>> getAllNames(String modelName, List<String> fields);
 }
 
 /// [OdooDataSource] is an abstract class that defines the contract for an Odoo data source.
 /// It includes methods for authenticating, reading, creating, updating, and deleting data.
 abstract class OdooDataSource {
   /// Authenticates with the given [url], [username], and [password].
-  Future<Map<String, dynamic>> authenticate(String url, String username, String password);
+  Future<Map<String, dynamic>> authenticate(String url, String username, String password, String db);
 
   /// Performs a search-read operation with the given [model] and [domain].
-  Future<List<Map<String, dynamic>>> searchRead(String model, List<dynamic> domain);
+  Future<List<Map<String, dynamic>>> searchRead(String model, List<dynamic> domain, Map<String, dynamic> kwargs);
 
   /// Reads the data with the given [model] and [id].
-  Future<Map<String, dynamic>> read(String model, int id);
+  Future<Map<String, dynamic>> read(String model, int id, Map<String, dynamic> kwargs);
 
   /// Deletes the data with the given [model] and [id].
   Future<bool> unlink(String model, int id);

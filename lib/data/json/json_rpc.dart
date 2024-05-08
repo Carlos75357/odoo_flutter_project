@@ -1,13 +1,14 @@
+
 /// The [JsonRequest] class represents a JSON-RPC request.
 class JsonRequest {
   /// The version of the JSON-RPC protocol. Always '2.0' for this implementation.
-  var jsonrpc;
+  var jsonrpc = '';
 
   /// The name of the method to be invoked. Always 'call' for this implementation.
-  var method;
+  var method = '';
 
   /// The parameters of the method to be invoked.
-  var params;
+  var params = {};
 
   /// Constructs a [JsonRequest] with the given [map] as parameters.
   JsonRequest(Map map) {

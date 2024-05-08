@@ -42,3 +42,9 @@ class ReloadDetail extends CrmDetailEvents {
 class SetState extends CrmDetailEvents {
 
 }
+
+class ErrorEvent extends CrmDetailEvents {
+  final String message;
+
+  ErrorEvent(this.message);
+}

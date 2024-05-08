@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "364692800921",
+    "project_id": "flutter-crm-prove",
+    "storage_bucket": "flutter-crm-prove.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:364692800921:android:3a16ded0c53b50e62a3f08",
+        "android_client_info": {
+          "package_name": "es.aures.flutter_crm_prove"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8cJvFDpgW0CeKWpp3ZuQj4isAXdBk-mA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
