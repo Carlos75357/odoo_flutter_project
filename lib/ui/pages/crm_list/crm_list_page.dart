@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_page.dart';
@@ -68,6 +69,7 @@ class _CrmListPageState extends State<CrmListPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error)),
             );
+            FirebaseCrashlytics.instance.recordError(state, null, fatal: true);
           } else if (state is CrmListDetail) {
             Navigator.pushReplacement(
               context,

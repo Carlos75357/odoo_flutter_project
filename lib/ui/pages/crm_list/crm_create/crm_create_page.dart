@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/domain/lead.dart';
@@ -14,10 +15,10 @@ class CrmCreatePage extends StatefulWidget {
   const CrmCreatePage({super.key});
 
   @override
-  _CrmCreatePageState createState() => _CrmCreatePageState();
+  CrmCreatePageState createState() => CrmCreatePageState();
 }
 
-class _CrmCreatePageState extends State<CrmCreatePage> {
+class CrmCreatePageState extends State<CrmCreatePage> {
   late TextEditingController _nameController;
   late TextEditingController _clientNameController;
   late TextEditingController _phoneController;
@@ -97,11 +98,15 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
     BlocProvider.of<CrmCreateBloc>(context).add(SetLoadingState());
 
     BlocProvider.of<CrmCreateBloc>(context).getFieldsOptions().then((options) {
-      setState(() {
-        fieldOptions = options;
-      });
+      if (mounted) {
+        setState(() {
+          fieldOptions = options;
+        });
+      }
     }).then((_) {
-      BlocProvider.of<CrmCreateBloc>(context).add(SetSuccessState());
+      if (mounted) {
+        BlocProvider.of<CrmCreateBloc>(context).add(SetSuccessState());
+      }
     });
 
     _createDateController.text = _creationDate.toString().substring(0, 10);
@@ -122,6 +127,12 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
             ));
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
           }
+          if (state is CrmCreateError) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Error al guardar"),
+            ));
+            FirebaseCrashlytics.instance.recordError(state, null, fatal: true);
+          }
         },
         child: BlocBuilder<CrmCreateBloc, CrmCreateStates>(
           builder: (context, state) {
@@ -137,8 +148,8 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
                       children: [
                         _buildField('Nombre', _nameController, 'Text', 'name'),
                         _buildField('Cliente', _clientNameController, 'Client', 'client'),
-                        // _buildField('Email', _emailController, 'Text', 'email'),
-                        // _buildField('Telefono', _phoneController, 'Text', 'phone'),
+                        _buildField('Email', _emailController, 'Text', 'email'),
+                        _buildField('Telefono', _phoneController, 'Text', 'phone'),
                         _buildField('Fecha de Límite', _dateDeadLineController, 'Date', 'date_deadline'),
                         _buildField('Fecha de Creacion', _createDateController, 'Text' , 'create_date'),
                         _buildField('Compañia', _companyController, 'Company', 'company'),
@@ -250,6 +261,7 @@ class _CrmCreatePageState extends State<CrmCreatePage> {
   /// [_buildDropDownField] method to create the dropdown field.
   Widget _buildDropDownField(TextEditingController controller, String type) {
     List<String> list = fieldOptions[type] ?? [];
+    // print('Lista: ${list.length}');
 
     if (type == 'tags') {
       return Container(

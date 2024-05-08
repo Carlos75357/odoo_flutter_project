@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_crm_prove/data/odoo_config.dart';
 import 'package:flutter_crm_prove/data/repository/data_source.dart';
 import '../../domain/lead.dart';
@@ -62,26 +63,22 @@ class OdooClient extends OdooDataSource{
   /// [searchRead] method, send domain to search in Odoo all records that match
   /// with the domain
   @override
-  Future<List<Map<String, dynamic>>> searchRead(String model, List<dynamic> domain, List<String> fields) async {
+  Future<List<Map<String, dynamic>>> searchRead(String model, List<dynamic> domain, Map<String, dynamic> kwargs) async {
     var jsonRequest = JsonRequest({
       'model': model,
       'method': 'search_read',
       'args': [domain],
-      'kwargs': {
-        'fields': fields,
-        'context': []
-      },
+      'kwargs': kwargs
     });
 
     try {
-      String urlToPut = '$url/web/dataset/search_read';
+      String urlToPut = '$url/web/dataset/call_kw';
       var response = await call(urlToPut, jsonRequest);
-
-      List<dynamic> records = response['result']['records'];
+      List<dynamic> records = response['result'];
       if (records.isNotEmpty) {
         return records.map((record) => record as Map<String, dynamic>).toList();
       } else {
-        throw Exception('No records found');
+        return [];
       }
     } catch (e) {
       throw Exception('Failed to perform search_read: $e');
@@ -93,16 +90,16 @@ class OdooClient extends OdooDataSource{
   /// in args must be the id and in kwargs the fields that you want to read
   /// in this case is empty, which means that it will read all the fields
   @override
-  Future<Map<String, dynamic>> read(String model, int id) async {
+  Future<Map<String, dynamic>> read(String model, int id, Map<String, dynamic> kwargs) async {
     var jsonRequest = JsonRequest({
       'model': model,
       'method': 'read',
       'args': [id],
-      'kwargs': {'fields': [], 'context': []},
+      'kwargs': kwargs,
     });
     try {
 
-      var response = await call('$url/web/dataset/call_kw/crm/read', jsonRequest);
+      var response = await call('$url/web/dataset/call_kw', jsonRequest);
 
       List<dynamic> records = response['result'];
       for (var record in records) {
@@ -132,7 +129,7 @@ class OdooClient extends OdooDataSource{
       bool result = response['result'];
 
       return result;
-        } catch (e) {
+    } catch (e) {
       throw Exception('Error al intentar eliminar el registro: $e');
     }
   }

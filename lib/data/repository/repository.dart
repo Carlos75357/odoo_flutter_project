@@ -29,7 +29,16 @@ class Repository extends RepositoryDataSource {
   @override
   Future<Lead> listLead(String model, int id) async {
     try {
-      var response = await odooClient.read(model, id);
+      // var context = {
+      //   'lang': 'es_ES',
+      // };
+      //
+      // var kwargs = {
+      //   'context': context,
+      //   'fields': []
+      // };
+
+      var response = await odooClient.read(model, id, {});
 
       return Lead.fromJson(response);
     } catch (e) {
@@ -40,9 +49,9 @@ class Repository extends RepositoryDataSource {
   /// [listLeads] method it receives a [model] and a [domain] and returns a [List<Lead>].
   /// works to get all the [lead] from Odoo.
   @override
-  Future<List<Lead>> listLeads(String model, List<dynamic> domain) async {
+  Future<List<Lead>> listLeads(String model, List<dynamic> domain, Map<String, dynamic> kwargs) async {
     try {
-      var response = await odooClient.searchRead(model, domain, []);
+      var response = await odooClient.searchRead(model, domain, kwargs);
 
       return response.map((e) => Lead.fromJson(e)).toList();
 
@@ -98,7 +107,16 @@ class Repository extends RepositoryDataSource {
     if (ids != null && ids.isNotEmpty) {
       for (var id in ids) {
         try {
-          var response = await odooClient.read(modelName, id);
+          var context = {
+            'lang': 'es_ES',
+          };
+
+          var kwargs = {
+            'context': context,
+            'fields': ['id', 'name']
+          };
+
+          var response = await odooClient.read(modelName, id, kwargs);
 
           String? name = response['name'];
           names.add(name!);
@@ -110,6 +128,7 @@ class Repository extends RepositoryDataSource {
     return names;
   }
 
+
   /// Method to retrieve the name associated with the given [id] of a lead record in the specified [model].
   ///
   /// Takes [modelName] and [id] as parameters.
@@ -118,7 +137,17 @@ class Repository extends RepositoryDataSource {
   @override
   Future<String> getNameById(String modelName, int id) async {
     try {
-      var response = await odooClient.read(modelName, id);
+
+      var context = {
+        'lang': 'es_ES',
+      };
+
+      var kwargs = {
+        'context': context,
+        'fields': ['id', 'name']
+      };
+
+      var response = await odooClient.read(modelName, id, kwargs);
 
       return response['name'];
     } catch (e) {
@@ -138,14 +167,41 @@ class Repository extends RepositoryDataSource {
   @override
   Future<int> getIdByName(String modelName, String name) async {
     try {
-      var response = await odooClient.searchRead(modelName, [],[]);
+      int offset = 0;
+      int limit = 10;
+      while (true) {
+        var context = {
+          'lang': 'es_ES',
+        };
 
-      var record = response.firstWhere((record) => record['name'] == name);
-      return record['id'] as int;
+        var kwargs = {
+          'context': context,
+          'offset': offset,
+          'limit': limit,
+          'fields': ['id', 'name']
+        };
+
+        var response = await odooClient.searchRead(modelName, [['name', '=', name]], kwargs);
+        if (response.isEmpty) {
+          return 0;
+        }
+
+        var record = response.firstWhere(
+                (record) => record['name'] == name
+        );
+
+        if (record != null) {
+          return record['id'] as int;
+        }
+
+        offset += limit;
+      }
     } catch (e) {
+      // print('Failed to get ID by name: $e');
       return 0;
     }
   }
+
 
   /// Method to retrieve the IDs associated with the given list of [names] of lead records in the specified [model].
   ///
@@ -153,21 +209,45 @@ class Repository extends RepositoryDataSource {
   ///
   /// Returns a [Future] containing a [List<int>] representing the IDs of the leads with the provided names.
   @override
-  Future<List<int>> getIdsByNames(String modelName, List<String> name) async {
+  Future<List<int>> getIdsByNames(String modelName, List<String> names) async {
     try {
       List<int> ids = [];
-      var response = await odooClient.searchRead(modelName, [], []);
-      for (var record in response) {
-        if (name.contains(record['name'])) {
+      int offset = 0;
+      int limit = 10;
+
+      var fields = ['id', 'name'];
+      while (true) {
+        var context = {
+          'lang': 'es_ES',
+        };
+
+        var kwargs = {
+          'context': context,
+          'offset': offset,
+          'limit': limit,
+          'fields': fields
+        };
+
+        var domain = [['name', 'in', names]];
+        var response = await odooClient.searchRead(modelName, domain, kwargs);
+        if (response.isEmpty) {
+          break;
+        }
+
+        for (var record in response) {
           ids.add(record['id'] as int);
         }
+
+        offset += limit;
       }
 
       return ids;
     } catch (e) {
+      // print('Failed to get IDs by names: $e');
       return [];
     }
   }
+
 
   /// Method to retrieve all records for the specified [modelName] with the specified [fields].
   ///
@@ -180,18 +260,25 @@ class Repository extends RepositoryDataSource {
   @override
   Future<List<Map<String, dynamic>>> getAllForModel(String modelName, List<String> fields) async {
     try {
-      var response = await odooClient.searchRead(modelName, [], []);
+      var response = await odooClient.searchRead(modelName, [], {
+        'fields': fields,
+      });
+
+      if (response == null || response.isEmpty) {
+        return [];
+      }
 
       return response.map<Map<String, dynamic>>((record) {
         return {
-          'id': record['id'],
-          'name': record['name'],
+          'id': record['id'] ?? 0,
+          'name': record['name'] ?? 'Unknown',
         };
       }).toList();
     } catch (e) {
       throw Exception('Failed to get records: $e');
     }
   }
+
 
   /// Method to retrieve all names of records for the specified [modelName].
   ///
@@ -200,15 +287,45 @@ class Repository extends RepositoryDataSource {
   /// Returns a [Future] containing a [List] of [String] representing the names of all records for the specified model.
   ///
   /// Throws an [Exception] if there's a failure while fetching the names.
+
   @override
-  Future<List<String>> getAllNames(String modelName) async {
+  Future<List<String>> getAllNames(String modelName, List<String> fields) async {
+    List<String> names = [];
+    int offset = 0;
+    int limit = 2000;
+
     try {
-      var response = await odooClient.searchRead(modelName, [], []);
-      return response.map<String>((record) => record['name'] as String).toList();
+      while (true) {
+        var context = {
+          'lang': 'es_ES',
+        };
+
+        var kwargs = {
+          'context': context,
+          'offset': offset,
+          'limit': limit,
+          'fields': fields
+        };
+
+        var response = await odooClient.searchRead(modelName, [], kwargs);
+        if (response.isEmpty) {
+          break;
+        }
+
+        var validNames = response
+            .where((record) => record['name'] != false)
+            .map((record) => record['name'] as String)
+            .toList();
+
+        names.addAll(validNames);
+        offset += limit;
+      }
+      return names;
     } catch (e) {
       throw Exception('Failed to get names: $e');
     }
   }
+
 
   /// Method to retrieve all records for the specified [modelName].
   ///
@@ -217,13 +334,13 @@ class Repository extends RepositoryDataSource {
   /// Returns a [Future] containing a [List] of [String] representing the names of all records for the specified model.
   ///
   /// Throws an [Exception] if there's a failure while fetching the records.
-  @override
-  Future<List<String>> getAll(String modelName, List<String> fields) async {
-    try {
-      var response = await odooClient.searchRead(modelName, [], fields);
-      return response.map<String>((record) => record['name'] as String).toList();
-    } catch (e) {
-      throw Exception('Failed to get all data: $e');
-    }
-  }
+  // @override
+  // Future<List<String>> getAll(String modelName, List<String> fields) async {
+  //   try {
+  //     var response = await odooClient.searchRead(modelName, [],{});
+  //     return response.map<String>((record) => record['name'] as String).toList();
+  //   } catch (e) {
+  //     throw Exception('Failed to get all data: $e');
+  //   }
+  // }
 }

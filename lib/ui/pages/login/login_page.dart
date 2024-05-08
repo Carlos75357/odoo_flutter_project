@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/widgets/text_fields.dart';
@@ -24,11 +25,18 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // urlController.text = "https://demos15.aurestic.com";
-    urlController.text = "https://testcoimasa15.aurestic.com";
-    usernameController.text = "marketing@coimasa.com";
-    passwordController.text = "marketing@coimasa.com";
-    databaseController.text = "coimasa15.0_migrated_pruebas";
+    // datos para inciar sesión en demos15
+    urlController.text = "https://demos15.aurestic.com";
+    usernameController.text = "admin";
+    passwordController.text = "admin";
+    databaseController.text = "demos_demos15";
+    // datos para iniciar en coimasa
+    // Aqui no funciona el search para usuario cliente y equipo, en equipo se la
+    // razón del error, el resto no se porque
+    // urlController.text = "https://testcoimasa15.aurestic.com";
+    // usernameController.text = "marketing@coimasa.com";
+    // passwordController.text = "marketing@coimasa.com";
+    // databaseController.text = "coimasa15.0_migrated_pruebas";
 
     return Scaffold(
       /// The bloc listener is used to navigate to the next page when the login
@@ -42,9 +50,9 @@ class _LoginPageState extends State<LoginPage> {
               MaterialPageRoute(builder: (context) => const CrmListPage()),
             );
           } else if (state is LoginError) {
-            String errorMessage = state.error;
+            FirebaseCrashlytics.instance.recordError(state, null, fatal: true);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(errorMessage)),
+              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
             );
           }
         },
