@@ -43,6 +43,7 @@ dependencies:
   firebase_remote_config: ^4.4.2
 #  firebase_analytics: ^10.10.2
   firebase_crashlytics: ^3.3.0
+  adaptive_theme: ^3.6.0
 
 dev_dependencies:
   flutter_test:

@@ -291,56 +291,27 @@ class Repository extends RepositoryDataSource {
   @override
   Future<List<String>> getAllNames(String modelName, List<String> fields) async {
     List<String> names = [];
-    int offset = 0;
-    int limit = 2000;
-
     try {
-      while (true) {
-        var context = {
-          'lang': 'es_ES',
-        };
+      var context = {
+        'lang': 'es_ES',
+      };
 
-        var kwargs = {
-          'context': context,
-          'offset': offset,
-          'limit': limit,
-          'fields': fields
-        };
+      var kwargs = {
+        'context': context,
+        'fields': fields
+      };
 
-        var response = await odooClient.searchRead(modelName, [], kwargs);
-        if (response.isEmpty) {
-          break;
-        }
+      var response = await odooClient.searchRead(modelName, [], kwargs);
 
-        var validNames = response
-            .where((record) => record['name'] != false)
-            .map((record) => record['name'] as String)
-            .toList();
+      var validNames = response
+          .where((record) => record['name'] != false)
+          .map((record) => record['name'] as String)
+          .toList();
 
-        names.addAll(validNames);
-        offset += limit;
-      }
+      names.addAll(validNames);
       return names;
     } catch (e) {
       throw Exception('Failed to get names: $e');
     }
   }
-
-
-  /// Method to retrieve all records for the specified [modelName].
-  ///
-  /// Takes [modelName] as parameter.
-  ///
-  /// Returns a [Future] containing a [List] of [String] representing the names of all records for the specified model.
-  ///
-  /// Throws an [Exception] if there's a failure while fetching the records.
-  // @override
-  // Future<List<String>> getAll(String modelName, List<String> fields) async {
-  //   try {
-  //     var response = await odooClient.searchRead(modelName, [],{});
-  //     return response.map<String>((record) => record['name'] as String).toList();
-  //   } catch (e) {
-  //     throw Exception('Failed to get all data: $e');
-  //   }
-  // }
 }
