@@ -117,7 +117,7 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Crear Nuevo Lead'),
-        backgroundColor: Colors.purpleAccent.shade400,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: BlocListener<CrmCreateBloc, CrmCreateStates>(
         listener: (context, state) {
@@ -267,7 +267,7 @@ class CrmCreatePageState extends State<CrmCreatePage> {
       return Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.purpleAccent[400]!,
+            color: Theme.of(context).colorScheme.primary,
             width: 1,
           )
         ),
@@ -288,7 +288,7 @@ class CrmCreatePageState extends State<CrmCreatePage> {
       return Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.purpleAccent[400]!,
+            color: Theme.of(context).colorScheme.primary,
             width: 1,
           )
         ),

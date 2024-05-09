@@ -1,4 +1,3 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_crm_prove/data/odoo_config.dart';
 import 'package:flutter_crm_prove/data/repository/data_source.dart';
 import '../../domain/lead.dart';

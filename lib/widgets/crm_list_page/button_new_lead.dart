@@ -16,6 +16,7 @@ Widget _buildNewLeadButton(BuildContext context) {
     bottom: 20,
     right: 20,
     child: FloatingActionButton(
+      backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
       onPressed: () {
         BlocProvider.of<CrmListBloc>(context).add(NewLeadButtonPressed());
       },
@@ -29,6 +30,7 @@ Widget _buildErrorNewLeadButton(BuildContext context) {
     bottom: 20,
     right: 20,
     child: FloatingActionButton(
+      backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
       onPressed: () {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
