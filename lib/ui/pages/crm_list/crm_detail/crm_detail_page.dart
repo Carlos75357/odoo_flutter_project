@@ -286,7 +286,7 @@ class _CrmDetailState extends State<CrmDetail> {
                     'Oportunidad',
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
                   ),
-                  backgroundColor: Colors.purpleAccent.shade400,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   leading: canPop ? IconButton(
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () {
@@ -315,7 +315,7 @@ class _CrmDetailState extends State<CrmDetail> {
                 body: _buildBody(state),
                 floatingActionButton: FloatingActionButton(
                     onPressed: isDataChanged ? _onResetPressed : null,
-                    backgroundColor: isDataChanged ? Colors.red : Colors.grey,
+                    backgroundColor: isDataChanged ? Colors.red : Theme.of(context).floatingActionButtonTheme.backgroundColor,
                     child: const Icon(Icons.undo)
                 ),
               ),

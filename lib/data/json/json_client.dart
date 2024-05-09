@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_crm_prove/data/odoo_config.dart';
 
 import 'json_rpc.dart';
