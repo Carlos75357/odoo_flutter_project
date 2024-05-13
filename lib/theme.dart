@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_crm_prove/remote_config_service.dart';
 
 ThemeData lightMode = ThemeData(
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
-    primary: Colors.purpleAccent.shade400,
-    background: Colors.white,
+    primary: RemoteConfigService.instance.primaryLightColor,
+    background: RemoteConfigService.instance.backgroundLightColor,
   ),
-  floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: Color.fromRGBO(102, 90, 119, 1.0),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: RemoteConfigService.instance.floatingButtonLightColor,
   ),
 );
 
 ThemeData darkMode = ThemeData(
   brightness: Brightness.dark,
   colorScheme: ColorScheme.dark(
-    primary: Colors.purple.shade800,
-    background: const Color.fromRGBO(35, 7, 48, 1.0),
+    primary: RemoteConfigService.instance.primaryDarkColor,
+    background: RemoteConfigService.instance.backgroundDarkColor,
   ),
-  floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: Color.fromRGBO(156, 136, 186, 1.0),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: RemoteConfigService.instance.floatingButtonDarkColor,
   ),
 );
