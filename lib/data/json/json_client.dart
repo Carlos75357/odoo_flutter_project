@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_crm_prove/data/odoo_config.dart';
 
 import 'json_rpc.dart';
@@ -8,7 +9,7 @@ import 'package:http/http.dart' as http;
 /// Class [JsonRpcClient] to handle calls and responses from json rpc
 class JsonRpcClient {
   /// [sessionId] is the identifier that validate the authentication
-  var sessionId;
+  var sessionId = '';
 
   /// The [call] method builds the request and sends it to the server. It receives a [JsonRequest]
   /// and the [url] as parameters. First, it constructs the header, checking if the
@@ -16,7 +17,6 @@ class JsonRpcClient {
   /// After that, it encodes the [jsonRequest]. Finally, it sends the request to the server.
   /// Depending on whether it's an [authenticate] request or not, it will store the sessionId for future
   /// calls, and finally, return the response as a [Future<Map<String, dynamic>>].
-
   Future<Map<String, dynamic>> call(String url, JsonRequest jsonRequest) async {
     try {
 
@@ -24,10 +24,10 @@ class JsonRpcClient {
         'Content-Type': 'application/json',
       };
 
-      if (sessionId != null) {
+      if (sessionId != '') {
         header = {
           'Content-Type': 'application/json',
-          'Cookie': sessionId ?? '',
+          'Cookie': sessionId,
         };
       }
 
@@ -60,9 +60,11 @@ class JsonRpcClient {
         final responseToMap = jsonDecode(response.body);
         return responseToMap;
       } else {
+        FirebaseCrashlytics.instance.recordError(Exception('Ha habido un error con el servidor, número del error: ${response.statusCode}'), null, fatal: true);
         throw Exception('Failed to call remote API with status code ${response.statusCode}');
       }
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null, fatal: true);
       throw Exception('Failed to call remote API: $e');
     }
   }

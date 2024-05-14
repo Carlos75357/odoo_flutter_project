@@ -9,7 +9,7 @@ Widget buildMenu(BuildContext context, List<String>? leadStatuses) {
   return Container(
     height: 50,
     decoration: BoxDecoration(
-      color: Colors.purpleAccent.shade400,
+      color: Theme.of(context).colorScheme.primary,
       borderRadius: BorderRadius.circular(10),
     ),
     child: Row(

@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/remote_config_service.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_states.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
@@ -96,35 +98,42 @@ class _CrmDetailState extends State<CrmDetail> {
       });
     }).then((_) {
       BlocProvider.of<CrmDetailBloc>(context).add(LoadLead(widget.lead));
-    });
+    }).catchError((error) {
+      BlocProvider.of<CrmDetailBloc>(context).add(ErrorEvent(error));
+      }
+    );
 
-    _setText();
+    try {
+      _setText();
 
-    Map<String, List<int>> allIds = {
-      'stage': [],
-      'user': [],
-      'company': [],
-      'client': [],
-      'tags': widget.lead.tagIds ?? [],
-      'team': [],
-    };
-    if (widget.lead.stageId != null) {
-      allIds['stage']?.add(widget.lead.stageId!);
-    }
-    if (widget.lead.userId != null) {
-      allIds['user']?.add(widget.lead.userId!);
-    }
-    if (widget.lead.companyId != null) {
-      allIds['company']?.add(widget.lead.companyId!);
-    }
-    if (widget.lead.clientId != null) {
-      allIds['client']?.add(widget.lead.clientId!);
-    }
-    if (widget.lead.teamId != null) {
-      allIds['team']?.add(widget.lead.teamId!);
-    }
+      Map<String, List<int>> allIds = {
+        'stage': [],
+        'user': [],
+        'company': [],
+        'client': [],
+        'tags': widget.lead.tagIds ?? [],
+        'team': [],
+      };
+      if (widget.lead.stageId != null) {
+        allIds['stage']?.add(widget.lead.stageId!);
+      }
+      if (widget.lead.userId != null) {
+        allIds['user']?.add(widget.lead.userId!);
+      }
+      if (widget.lead.companyId != null) {
+        allIds['company']?.add(widget.lead.companyId!);
+      }
+      if (widget.lead.clientId != null) {
+        allIds['client']?.add(widget.lead.clientId!);
+      }
+      if (widget.lead.teamId != null) {
+        allIds['team']?.add(widget.lead.teamId!);
+      }
 
-    currentValue = widget.lead.probability ?? 0;
+      currentValue = widget.lead.probability ?? 0;
+    } catch (e) {
+      BlocProvider.of<CrmDetailBloc>(context).add(ErrorEvent(e.toString()));
+    }
   }
 
   Future<void> _assignDataFromString(int id, String type, TextEditingController controller) async {
@@ -246,11 +255,14 @@ class _CrmDetailState extends State<CrmDetail> {
             ));
             changes.clear();
           } else if (state is CrmDetailError) {
-            _onResetPressed();
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("Error al guardar"),
+              content: Text("Ha ocurrido un error"),
             ));
             changes.clear();
+            FirebaseCrashlytics.instance.recordError(state, null, fatal: true);
+            setState(() {
+              isEditEnabled = false;
+            });
           } else if (state is CrmDetailReload) {
             widget.lead = state.lead;
             _onResetPressed();
@@ -274,7 +286,7 @@ class _CrmDetailState extends State<CrmDetail> {
                     'Oportunidad',
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
                   ),
-                  backgroundColor: Colors.purpleAccent.shade400,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   leading: canPop ? IconButton(
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () {
@@ -297,17 +309,13 @@ class _CrmDetailState extends State<CrmDetail> {
                       icon: Icon(isEditEnabled ? Icons.edit_off : Icons.edit),
                       tooltip: isEditEnabled ? 'Deshabilitar Edición' : 'Habilitar Edición',
                     ),
-                    IconButton(
-                      onPressed: _onUnlinkPressed,
-                      icon: const Icon(Icons.delete_forever),
-                      tooltip: 'Eliminar oportunidad',
-                    )
+                    _buildDeleteButton(),
                   ],
                 ),
                 body: _buildBody(state),
                 floatingActionButton: FloatingActionButton(
                     onPressed: isDataChanged ? _onResetPressed : null,
-                    backgroundColor: isDataChanged ? Colors.red : Colors.grey,
+                    backgroundColor: isDataChanged ? Colors.red : Theme.of(context).floatingActionButtonTheme.backgroundColor,
                     child: const Icon(Icons.undo)
                 ),
               ),
@@ -316,6 +324,27 @@ class _CrmDetailState extends State<CrmDetail> {
         ),
       ),
     );
+  }
+
+  Widget _buildDeleteButton() {
+    if (RemoteConfigService.instance.canDeleteCrmLeads) {
+      return IconButton(
+        onPressed: _onUnlinkPressed,
+        icon: const Icon(Icons.delete),
+        tooltip: 'Eliminar oportunidad',
+      );
+    } else {
+      return IconButton(
+        onPressed: () {
+          // FirebaseCrashlytics.instance.recordError("Error al eliminar la oportunidad", null, fatal: true);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("No tienes permisos para eliminar la oportunidad"),
+          ));
+        },
+        icon: const Icon(Icons.delete_forever),
+        tooltip: 'Eliminar oportunidad',
+      );
+    }
   }
 
   /// [_buildBody] method to build the body of the widget, build each field.
@@ -343,6 +372,8 @@ class _CrmDetailState extends State<CrmDetail> {
           ],
         ),
       );
+    } else if (state is CrmDetailError) {
+      return const Center(child: Text('Error al cargar la información'));
     } else {
       return const LinearProgressIndicator();
     }
@@ -499,18 +530,17 @@ class _CrmDetailState extends State<CrmDetail> {
 
   /// [_buildComboBoxFields] method to create the combo box, the [MultiSelectDialogField] and the [DropdownButtonFormField].
   Widget _buildComboBoxFields(TextEditingController editingController, String type) {
+    fieldOptions[type]!.add('Ninguno');
     List<String> list = fieldOptions[type] ?? [];
     String? selectedValue;
 
     if (isEditEnabled) {
       if (selectedItems[type]?.isEmpty ?? true) {
-        list.add('Ninguno');
         selectedValue = 'Ninguno';
       } else {
         if (selectedItems[type]?.first != '') {
           selectedValue = selectedItems[type]?.first;
         } else {
-          list.add('Ninguno');
           selectedValue = 'Ninguno';
         }
       }
@@ -556,47 +586,52 @@ class _CrmDetailState extends State<CrmDetail> {
         ),
       );
     } else {
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Colors.grey[400]!,
-            width: 1.5,
-          ),
-        ),
-        child: isEditEnabled
-            ? Padding(
-          padding: const EdgeInsets.all(8),
-          child: DropdownButtonFormField<String>(
-            isExpanded: true,
-            hint: const Text('Selecciona una opción'),
-            items: list.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            value: selectedValue,
-            onChanged: (String? value) {
-              setState(() {
-                selectedItems[type] = [value!];
-                _onFieldChanged();
-                addChanges(type.toLowerCase(), value);
-              });
-            },
-            decoration: InputDecoration(
-              labelText: 'Selecciona $type',
-              border: const OutlineInputBorder(),
+      try {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Colors.grey[400]!,
+              width: 1.5,
             ),
           ),
-        )
-            : Text(
-          editingController.text,
-          style: const TextStyle(
-            fontSize: 16,
+          child: isEditEnabled
+              ? Padding(
+            padding: const EdgeInsets.all(8),
+            child: DropdownButtonFormField<String>(
+              isExpanded: true,
+              hint: const Text('Selecciona una opción'),
+              items: list.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              value: selectedValue,
+              onChanged: (String? value) {
+                setState(() {
+                  selectedItems[type] = [value!];
+                  _onFieldChanged();
+                  addChanges(type.toLowerCase(), value);
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Selecciona $type',
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          )
+              : Text(
+            editingController.text,
+            style: const TextStyle(
+              fontSize: 16,
+            ),
           ),
-        ),
-      );
+        );
+      } catch (e) {
+        BlocProvider.of<CrmDetailBloc>(context).add(ErrorEvent(e.toString()));
+        return Container();
+      }
     }
   }
 

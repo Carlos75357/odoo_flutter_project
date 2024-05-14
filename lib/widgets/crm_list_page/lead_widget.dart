@@ -33,7 +33,7 @@ class LeadItemWidget extends StatelessWidget {
         child: Container(
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
-            color: Colors.purpleAccent,
+            color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.circular(10.0),
             boxShadow: const [
               BoxShadow(

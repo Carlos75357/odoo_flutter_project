@@ -1,8 +1,12 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/theme_provider.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_page.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_page.dart';
+import 'package:provider/provider.dart';
 
+import '../../../remote_config_service.dart';
 import '../../../widgets/crm_list_page/button_new_lead.dart';
 import '../../../widgets/crm_list_page/lead_widget.dart';
 import '../../../widgets/crm_list_page/menu_crm.dart';
@@ -20,6 +24,7 @@ class CrmListPage extends StatefulWidget {
 class _CrmListPageState extends State<CrmListPage> {
   List<Widget> leadWidgets = [];
   List<String>? leadStatuses;
+  bool isDarkMode = false;
 
   @override
   void initState() {
@@ -30,6 +35,12 @@ class _CrmListPageState extends State<CrmListPage> {
         leadStatuses = statuses;
       });
     });
+    print('primaryLightColor: ${RemoteConfigService.instance.primaryLightColor}');
+    print('primaryDarkColor: ${RemoteConfigService.instance.primaryDarkColor}');
+    print('backgroundLightColor: ${RemoteConfigService.instance.backgroundLightColor}');
+    print('backgroundDarkColor: ${RemoteConfigService.instance.backgroundDarkColor}');
+    print('floatingButtonLightColor: ${RemoteConfigService.instance.floatingButtonLightColor}');
+    print('floatingButtonDarkColor: ${RemoteConfigService.instance.floatingButtonDarkColor}');
   }
 
   @override
@@ -40,7 +51,7 @@ class _CrmListPageState extends State<CrmListPage> {
           'CRM',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
         ),
-        backgroundColor: Colors.purpleAccent.shade400,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60.0),
           child: Padding(
@@ -57,6 +68,15 @@ class _CrmListPageState extends State<CrmListPage> {
             },
             icon: const Icon(Icons.update, color: Colors.white),
           ),
+          IconButton(
+            onPressed: () {
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+            },
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark ? Icons.dark_mode : Icons.light_mode,
+              color: Colors.white,
+            ), // icon
+          )
         ],
       ),
       body: BlocListener<CrmListBloc, CrmListStates>(
@@ -68,6 +88,7 @@ class _CrmListPageState extends State<CrmListPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error)),
             );
+            FirebaseCrashlytics.instance.recordError(state, null, fatal: true);
           } else if (state is CrmListDetail) {
             Navigator.pushReplacement(
               context,
@@ -88,7 +109,7 @@ class _CrmListPageState extends State<CrmListPage> {
             return Stack(
               children: [
                 Container(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.background,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Column(

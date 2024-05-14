@@ -11,7 +11,7 @@ void main() async {
 
     setUpAll(() async {
       odooClient = OdooClient();
-      await odooClient.authenticate('https://demos15.aurestic.com', 'admin', 'admin');
+      await odooClient.authenticate('https://demos15.aurestic.com', 'admin', 'admin', 'demos_demos15');
     });
 
     test('Authenticate test', () async {
@@ -19,7 +19,7 @@ void main() async {
     });
 
     test('SearchRead test', () async {
-      List<Map<String, dynamic>> leads = await odooClient.searchRead('crm.lead', [['expected_revenue', '>', 1000]]);
+      List<Map<String, dynamic>> leads = await odooClient.searchRead('crm.lead', [['expected_revenue', '>', 1000]], {});
       expect(leads.length, greaterThan(0));
       for (var lead in leads) {
         if (kDebugMode) {
@@ -29,7 +29,7 @@ void main() async {
     });
 
     test('Read test', () async {
-      Map<String, dynamic> lead = await odooClient.read('crm.lead', id);
+      Map<String, dynamic> lead = await odooClient.read('crm.lead', id, {});
       expect(lead, isNotNull);
       if (kDebugMode) {
         print(lead);
