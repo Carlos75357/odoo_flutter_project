@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_crm_prove/data/repository/repository.dart';
-import 'package:flutter_crm_prove/data/repository/repository_response.dart';
 
 import '../../../../data/json/odoo_client.dart';
 import '../../../../data/odoo_config.dart';
-import '../../../../domain/lead.dart';
-import '../../../../domain/lead_formated.dart';
+import '../../../../data/repository/crm/crm_repository.dart';
+import '../../../../data/repository/crm/crm_repository_response.dart';
+import '../../../../domain/crm/lead.dart';
+import '../../../../domain/crm/lead_formated.dart';
 import 'crm_detail_events.dart';
 import 'crm_detail_states.dart';
 

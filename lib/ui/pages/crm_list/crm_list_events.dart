@@ -1,4 +1,5 @@
-import 'package:flutter_crm_prove/domain/lead.dart';
+
+import '../../../domain/crm/lead.dart';
 
 /// [CrmListEvents] is an abstract class that defines events related to the [CrmListPage].
 abstract class CrmListEvents {}

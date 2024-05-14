@@ -1,6 +1,6 @@
 import 'package:flutter_crm_prove/data/odoo_config.dart';
 import 'package:flutter_crm_prove/data/repository/data_source.dart';
-import '../../domain/lead.dart';
+import '../../domain/crm/lead.dart';
 
 import 'json_client.dart';
 import 'json_rpc.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_list_page.dart';
 
-import '../../../domain/lead.dart';
+import '../../../domain/crm/lead.dart';
+
 /// [CrmListStates] is an abstract class that represents the various states of the [CrmListPage].
 abstract class CrmListStates {
   get data => null;

@@ -1,5 +1,5 @@
-import '../../domain/lead.dart';
-import 'repository_response.dart';
+import '../../domain/crm/lead.dart';
+import 'crm/crm_repository_response.dart';
 
 /// [RepositoryDataSource] is an abstract class that defines the contract for a data source.
 /// It includes methods for logging in, listing leads, creating, updating, and deleting leads,
@@ -40,6 +40,9 @@ abstract class RepositoryDataSource {
 
   /// Retrieves all names for the given [modelName].
   Future<List<String>> getAllNames(String modelName, List<String> fields);
+}
+
+abstract class ProjectRepositoryDataSource {
 }
 
 /// [OdooDataSource] is an abstract class that defines the contract for an Odoo data source.

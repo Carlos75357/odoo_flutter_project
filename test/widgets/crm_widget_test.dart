@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_crm_prove/domain/lead.dart';
+import 'package:flutter_crm_prove/domain/crm/lead.dart';
 import 'package:flutter_crm_prove/widgets/crm_list_page/button_new_lead.dart';
 import 'package:flutter_crm_prove/widgets/crm_list_page/lead_widget.dart';
 import 'package:flutter_crm_prove/widgets/crm_list_page/menu_crm.dart';

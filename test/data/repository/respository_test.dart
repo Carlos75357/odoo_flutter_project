@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
-import 'package:flutter_crm_prove/data/repository/repository.dart';
-import 'package:flutter_crm_prove/domain/lead.dart';
+import 'package:flutter_crm_prove/data/repository/crm/crm_repository.dart';
+import 'package:flutter_crm_prove/domain/crm/lead.dart';
 import 'package:test/test.dart';
 
 class RespositoryTest {

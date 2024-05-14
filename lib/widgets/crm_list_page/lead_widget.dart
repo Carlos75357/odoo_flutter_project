@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_list_events.dart';
 
-import '../../domain/lead.dart';
+import '../../domain/crm/lead.dart';
 import '../../ui/pages/crm_list/crm_list_bloc.dart';
 
 /// [LeadItemWidget] is a widget class, build the lead item widget

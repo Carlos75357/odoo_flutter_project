@@ -1,8 +1,8 @@
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/repository/data_source.dart';
-import 'package:flutter_crm_prove/data/repository/repository_response.dart';
+import 'package:flutter_crm_prove/data/repository/crm/crm_repository_response.dart';
 
-import '../../domain/lead.dart';
+import '../../../domain/crm/lead.dart';
 
 /// Repository class to interact with Odoo, based on OdooClient.
 ///

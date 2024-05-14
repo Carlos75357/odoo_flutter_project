@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
-import 'package:flutter_crm_prove/data/repository/repository.dart';
 import 'package:flutter_crm_prove/ui/pages/login/login_states.dart';
 
+import '../../../data/repository/crm/crm_repository.dart';
 import 'login_events.dart';
 
 /// [LoginBloc] class, for [LoginEvent] and [LoginState], using [flutter_bloc] package
