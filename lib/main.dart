@@ -9,6 +9,7 @@ import 'package:flutter_crm_prove/ui/pages/crm_list/crm_list_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/login/login_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/login/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_crm_prove/ui/pages/login/select_module/select_module_bloc.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -45,6 +46,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<CrmCreateBloc>(
           create: (context) => CrmCreateBloc(),
         ),
+        BlocProvider<ModuleBloc>(
+          create: (context) => ModuleBloc(),
+        )
       ],
       child: MaterialApp(
         theme: Provider.of<ThemeProvider>(context).themeData,

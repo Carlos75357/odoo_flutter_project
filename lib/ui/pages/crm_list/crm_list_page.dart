@@ -6,7 +6,6 @@ import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_page.d
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_page.dart';
 import 'package:provider/provider.dart';
 
-import '../../../remote_config_service.dart';
 import '../../../widgets/crm_list_page/button_new_lead.dart';
 import '../../../widgets/crm_list_page/lead_widget.dart';
 import '../../../widgets/crm_list_page/menu_crm.dart';
@@ -35,12 +34,6 @@ class _CrmListPageState extends State<CrmListPage> {
         leadStatuses = statuses;
       });
     });
-    print('primaryLightColor: ${RemoteConfigService.instance.primaryLightColor}');
-    print('primaryDarkColor: ${RemoteConfigService.instance.primaryDarkColor}');
-    print('backgroundLightColor: ${RemoteConfigService.instance.backgroundLightColor}');
-    print('backgroundDarkColor: ${RemoteConfigService.instance.backgroundDarkColor}');
-    print('floatingButtonLightColor: ${RemoteConfigService.instance.floatingButtonLightColor}');
-    print('floatingButtonDarkColor: ${RemoteConfigService.instance.floatingButtonDarkColor}');
   }
 
   @override

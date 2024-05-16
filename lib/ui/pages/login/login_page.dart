@@ -1,8 +1,8 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/login/select_module/select_module_page.dart';
 import 'package:flutter_crm_prove/widgets/text_fields.dart';
-import '../crm_list/crm_list_page.dart';
 import 'login_bloc.dart';
 import 'login_events.dart';
 import 'login_states.dart';
@@ -47,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
           if (state is LoginSuccess) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const CrmListPage()),
+              MaterialPageRoute(builder: (context) => const ModulePage()),
             );
           } else if (state is LoginError) {
             FirebaseCrashlytics.instance.recordError(state, null, fatal: true);
