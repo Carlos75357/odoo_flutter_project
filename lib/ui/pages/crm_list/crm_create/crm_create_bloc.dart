@@ -18,7 +18,7 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     on<SetLoadingState>((event, emit) => setLoadingState(event, emit));
   }
   OdooClient odooClient = OdooClient();
-  late Repository repository = Repository(odooClient: odooClient);
+  late RepositoryCrm repository = RepositoryCrm(odooClient: odooClient);
   List<Lead> leads = [];
 
   /// [setLoadingState] method to set the [CrmCreateStates] to [CrmCreateLoading].

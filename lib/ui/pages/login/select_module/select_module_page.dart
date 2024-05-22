@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/login/select_module/select_module_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/login/select_module/select_module_events.dart';
 import 'package:flutter_crm_prove/ui/pages/login/select_module/select_module_states.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_page.dart';
 
 import '../../crm_list/crm_list_page.dart';
 
@@ -26,7 +27,7 @@ class _ModulePageState extends State<ModulePage> {
               context,
               MaterialPageRoute(
                 // TODO: CANBIAR EL PLACEHOLDER
-                builder: (context) => state.id == 1 ? const CrmListPage() : const Placeholder(),
+                builder: (context) => state.id == 1 ? const CrmListPage() : const ProjectListPage(),
               ),
             );
           }

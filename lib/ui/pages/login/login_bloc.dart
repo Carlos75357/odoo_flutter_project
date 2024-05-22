@@ -12,7 +12,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginButtonPressed>(login);
   }
   OdooClient odooClient = OdooClient();
-  late Repository repository = Repository(odooClient: odooClient);
+  late RepositoryCrm repository = RepositoryCrm(odooClient: odooClient);
   /// login event, for login button check if all fields are not empty, if there
   /// is some empty field return a LoginError state.
   login(LoginButtonPressed event, Emitter<LoginState> emit) async {
