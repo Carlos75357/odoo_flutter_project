@@ -22,7 +22,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
   }
 
   OdooClient odooClient = OdooClient();
-  late Repository repository = Repository(odooClient: odooClient);
+  late RepositoryCrm repository = RepositoryCrm(odooClient: odooClient);
   List<Lead> leads = [];
 
   // void getLeads() async {
@@ -56,10 +56,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
       final response = await repository.listLead('crm.lead', event.lead.id);
 
-      Map<String, dynamic> data = {
-        'lead': response
-      };
-      emit(CrmListDetail(data['lead']));
+      emit(CrmListDetail(response));
     } catch (e) {
       emit(CrmListError('Hubo un error al cargar las oportunidades'));
     }

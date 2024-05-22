@@ -9,13 +9,13 @@ class RespositoryTest {
 
 void main() {
   group('Respository test', () {
-    late Repository repository;
+    late RepositoryCrm repository;
     late OdooClient odooClient;
     int id = 20; //174
 
     setUpAll(() async {
       odooClient = OdooClient();
-      repository = Repository(odooClient: odooClient);
+      repository = RepositoryCrm(odooClient: odooClient);
       // await repository.login('https://testcoimasa15.aurestic.com', 'marketing@coimasa.com', 'marketing@coimasa.com', 'coimasa15.0_migrated_pruebas');
       await repository.login('https://demos15.aurestic.com', 'admin', 'admin', 'demos_demos15');
     });

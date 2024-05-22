@@ -23,7 +23,7 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
   }
 
   OdooClient odooClient = OdooClient();
-  late Repository repository = Repository(odooClient: odooClient);
+  late RepositoryCrm repository = RepositoryCrm(odooClient: odooClient);
   Lead lead = Lead(id: 0, name: '');
   bool isEditing = false;
 

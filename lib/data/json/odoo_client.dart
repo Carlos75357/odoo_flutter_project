@@ -136,7 +136,7 @@ class OdooClient extends OdooDataSource{
 
   /// [write] method, update the record with the given id.
   @override
-  Future<bool> write(String model, int id, Lead values) async {
+  Future<bool> write(String model, int id, dynamic values) async {
     Map<String, dynamic> valuesMap = values.toJson();
     var jsonRequest = JsonRequest({
       'model': model,

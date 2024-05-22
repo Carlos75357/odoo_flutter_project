@@ -9,9 +9,9 @@ import '../../../domain/crm/lead.dart';
 /// This class implements [RepositoryDataSource] to provide methods for
 /// [authenticate], [searchRead], [read], [update], [unlink] and [create]
 /// in Odoo.
-class Repository extends RepositoryDataSource {
+class RepositoryCrm extends RepositoryDataSource {
   OdooClient odooClient;
-  Repository({required this.odooClient});
+  RepositoryCrm({required this.odooClient});
 
   /// [login] method it receives a [url] and a [jsonRequest] and returns a [JsonRpcClient]
   /// The method works to authenticate in Odoo.
@@ -197,7 +197,6 @@ class Repository extends RepositoryDataSource {
         offset += limit;
       }
     } catch (e) {
-      // print('Failed to get ID by name: $e');
       return 0;
     }
   }
@@ -243,7 +242,6 @@ class Repository extends RepositoryDataSource {
 
       return ids;
     } catch (e) {
-      // print('Failed to get IDs by names: $e');
       return [];
     }
   }

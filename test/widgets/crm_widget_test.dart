@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/domain/crm/lead.dart';
+import 'package:flutter_crm_prove/ui/pages/crm_list/crm_list_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/crm_list/crm_list_events.dart';
 import 'package:flutter_crm_prove/widgets/crm_list_page/button_new_lead.dart';
 import 'package:flutter_crm_prove/widgets/crm_list_page/lead_widget.dart';
 import 'package:flutter_crm_prove/widgets/crm_list_page/menu_crm.dart';
@@ -15,7 +18,11 @@ void main() {
               children: [
                 Builder(
                   builder: (BuildContext context) {
-                    return buildButton(context);
+                    return                 buildButton(
+                        context,
+                        BlocProvider.of<CrmListBloc>(context),
+                        NewLeadButtonPressed()
+                    );
                   },
                 ),
               ],

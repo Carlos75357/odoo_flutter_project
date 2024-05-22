@@ -59,7 +59,7 @@ class _CrmListPageState extends State<CrmListPage> {
             onPressed: () {
               BlocProvider.of<CrmListBloc>(context).add(ReloadLeads());
             },
-            icon: const Icon(Icons.update, color: Colors.white),
+            icon: const Icon(Icons.refresh, color: Colors.white),
           ),
           IconButton(
             onPressed: () {
@@ -111,7 +111,11 @@ class _CrmListPageState extends State<CrmListPage> {
                     ),
                   ),
                 ),
-                buildButton(context),
+                buildButton(
+                    context,
+                  BlocProvider.of<CrmListBloc>(context),
+                  NewLeadButtonPressed()
+                ),
               ],
             );
           },
