@@ -33,6 +33,8 @@ class JsonRpcClient {
 
       final request = jsonEncode(jsonRequest.toJson());
 
+      print(request);
+
       final response = await http.post(
         Uri.parse(url),
         headers: header,

@@ -45,7 +45,7 @@ class Project {
     }
     
     return Project(
-      id: json['id'] as int,
+      id: json['id'] ?? 0,
       name: parseStringField(json['name']),
       partnerId: parseListToString(json['partner_id']),
       companyId: parseListToString(json['company_id']),
