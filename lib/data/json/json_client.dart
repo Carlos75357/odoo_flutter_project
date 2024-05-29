@@ -60,6 +60,7 @@ class JsonRpcClient {
 
       if (response.statusCode == 200) {
         final responseToMap = jsonDecode(response.body);
+        print(responseToMap);
         return responseToMap;
       } else {
         FirebaseCrashlytics.instance.recordError(Exception('Ha habido un error con el servidor, número del error: ${response.statusCode}'), null, fatal: true);

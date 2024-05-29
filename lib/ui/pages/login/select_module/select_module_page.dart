@@ -26,7 +26,6 @@ class _ModulePageState extends State<ModulePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                // TODO: CANBIAR EL PLACEHOLDER
                 builder: (context) => state.id == 1 ? const CrmListPage() : const ProjectListPage(),
               ),
             );

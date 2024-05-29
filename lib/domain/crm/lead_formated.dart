@@ -1,3 +1,4 @@
+import '../parse_types.dart';
 import 'lead.dart';
 
 /// [LeadFormated] model class, contains the data of a lead, have names and the ids
@@ -29,32 +30,32 @@ class LeadFormated {
       this.user, this.userId, this.tags, this.tagsId, this.dateDeadline,
       this.expectedRevenue, this.probability, this.priority, this.team, this.teamId});
 
-  /// Check if the field is null or bool, if so, return null else return the value
-  static dynamic parseStringField(dynamic value) {
-    return (value is bool) ? null : value as String?;
-  }
-
-  /// Check if the field is bool, if so, return null else return the value parsed to int
-  static int? parseIntField(dynamic value) {
-    if (value is double) {
-      return value.toInt();
-    }else if (value is int) {
-      return value;
-    } else {
-      return null;
-    }
-  }
-
-  /// Check if the field is bool, if so, return null else return the value parsed to double
-  static double? parseDoubleField(dynamic field) {
-    if (field is int || field is double) {
-      return field.toDouble();
-    } else if (field is String) {
-      return double.tryParse(field);
-    } else {
-      return null;
-    }
-  }
+  // /// Check if the field is null or bool, if so, return null else return the value
+  // static dynamic parseStringField(dynamic value) {
+  //   return (value is bool) ? null : value as String?;
+  // }
+  //
+  // /// Check if the field is bool, if so, return null else return the value parsed to int
+  // static int? parseIntField(dynamic value) {
+  //   if (value is double) {
+  //     return value.toInt();
+  //   }else if (value is int) {
+  //     return value;
+  //   } else {
+  //     return null;
+  //   }
+  // }
+  //
+  // /// Check if the field is bool, if so, return null else return the value parsed to double
+  // static double? parseDoubleField(dynamic field) {
+  //   if (field is int || field is double) {
+  //     return field.toDouble();
+  //   } else if (field is String) {
+  //     return double.tryParse(field);
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   @override
   String toString() {

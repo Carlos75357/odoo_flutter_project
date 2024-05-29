@@ -3,11 +3,12 @@ import 'package:flutter_crm_prove/domain/parse_types.dart';
 class Project {
   final int id;
   final String? name;
+  final String? taskName;
   final String? partnerId;
   final String? companyId;
   final String? userId; // responsable del proyecto
   final List<int>? tagIds;
-  final dynamic status; // last_update_status, no se como llega de momento
+  final String? status; // last_update_status, no se como llega de momento
   final String? dateStart;
   final String? date;
   // final int? objectives;
@@ -18,6 +19,7 @@ class Project {
   Project({
     required this.id,
     this.name,
+    this.taskName,
     this.partnerId,
     this.companyId,
     this.userId,
@@ -47,6 +49,7 @@ class Project {
     return Project(
       id: json['id'] ?? 0,
       name: parseStringField(json['name']),
+      taskName: parseStringField(json['label_task']),
       partnerId: parseListToString(json['partner_id']),
       companyId: parseListToString(json['company_id']),
       userId: parseListToString(json['user_id']),

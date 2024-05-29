@@ -15,7 +15,7 @@ int? parseIntField(dynamic value) {
 }
 
 /// Check if the field is bool, if so, return null else return the value parsed to double
-double? parseDoublefield(dynamic value) {
+double? parseDoubleField(dynamic value) {
   if (value is int || value is double) {
     return value.toDouble();
   } else {

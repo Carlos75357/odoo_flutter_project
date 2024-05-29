@@ -11,7 +11,7 @@ class Task {
   List<int>? tagIds;
   String? company; // company_id
   double? plannedHours; // planned_hours
-  int? stageId; // stage_id
+  String? stageId; // stage_id
   int? priority; // priority
   double? totalHoursSpent; // total_hours_spent
   double? remainingHours; // remaining_hours
@@ -39,16 +39,16 @@ class Task {
       name: parseStringField(json['name']),
       description: parseStringField(json['description']),
       assigned: parseListInt(json['assigned']),
-      client: parseStringField(json['client']),
+      client: parseStringField(json['partner_id']),
       milestone: parseStringField(json['milestone']),
       dateEnd: parseStringField(json['date_end']),
       tagIds: parseListInt(json['tag_ids']),
       company: parseStringField(json['company']),
-      plannedHours: parseDoublefield(json['planned_hours']),
-      stageId: parseIntField(json['stage_id']),
+      plannedHours: parseDoubleField(json['planned_hours']),
+      stageId: parseStringField(json['stage_id']),
       priority: parseIntField(json['priority']),
-      totalHoursSpent: parseDoublefield(json['total_hours_spent']),
-      remainingHours: parseDoublefield(json['remaining_hours']),
+      totalHoursSpent: parseDoubleField(json['total_hours_spent']),
+      remainingHours: parseDoubleField(json['remaining_hours']),
     );
   }
 

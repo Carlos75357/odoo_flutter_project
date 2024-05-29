@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/repository/project/pjt_repository.dart';
 import 'package:flutter_crm_prove/domain/project/project.dart';
+import 'package:flutter_crm_prove/domain/project/task.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_events.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_states.dart';
 
@@ -13,6 +14,9 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvents, ProjectDetailStates> {
     on<SetState>(setState);
     on<LoadProject>(loadProject);
     on<ReloadDetail>(reloadProject);
+    on<SaveProjectButtonPressed>(updateProject);
+    on<NewProjectButtonPressed>(createProject);
+    // on<DeleteProject>(deleteProject);
   }
 
   OdooClient odooClient = OdooClient();
@@ -52,7 +56,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvents, ProjectDetailStates> {
     }
   }
 
-  updateProject(SaveLeadButtonPressed event, Emitter<ProjectDetailStates> emit) async {
+  updateProject(SaveProjectButtonPressed event, Emitter<ProjectDetailStates> emit) async {
     try {
       emit(ProjectDetailLoading());
 
@@ -79,12 +83,59 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvents, ProjectDetailStates> {
     }
   }
 
-  Future<List<String>> fetchProjectStages() async {
+  Future<List<String>> fetchProjectTaskStages() async {
     try {
-      List<String> stages = (await projectRepository.getAllNames('crm.stage', ['id', 'name'])).cast<String>();
+      List<String> stages = (await projectRepository.getAllNames('project.task.type', ['id', 'name'])).cast<String>();
       return stages;
     } catch (e) {
       throw Exception('Failed to fetch lead statuses: $e');
+    }
+  }
+
+  Future<Map<String, List<String>>> getDataList() async {
+    try {
+      List<String> tagNames = [];
+      List<String> responsibles = [];
+      List<String> projectStages = [];
+      List<String> companyNames = [];
+      List<String> clientNames = [];
+
+      projectStages = (await projectRepository.getAllNames('project.project.stage', ['name'])).cast<String>();
+      tagNames = (await projectRepository.getAllNames('mail.activity.type', ['name'])).cast<String>();
+      responsibles = (await projectRepository.getAllNames('res.users', ['name'])).cast<String>();
+      companyNames = (await projectRepository.getAllNames('res.company', ['name'])).cast<String>();
+      clientNames = (await projectRepository.getAllNames('res.partner', ['name'])).cast<String>();
+
+      Map<String, List<String>> dataList = {
+        'tags': [],
+        'responsible': [],
+        'project_stage': [],
+        'client': [],
+        'company': [],
+      };
+
+      dataList['tags'] = tagNames;
+      dataList['responsible'] = responsibles;
+      dataList['project_stage'] = projectStages;
+      dataList['client'] = clientNames;
+      dataList['company'] = companyNames;
+
+      return dataList;
+    } catch (e) {
+      throw Exception('Failed to get data: $e');
+    }
+  }
+
+  Future<List<Task>> tasks() async {
+    try {
+      List<Task> tasks = [];
+
+      Map<String, dynamic> results = await projectRepository.getAll('project.task', [], ['project_id', '=', project.id]);
+
+      tasks = results['records'].map<Task>((task) => Task.fromJson(task)).toList();
+      return tasks;
+    } catch (e) {
+      throw Exception('Failed to get tasks: $e');
     }
   }
 }

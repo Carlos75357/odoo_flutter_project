@@ -8,10 +8,10 @@ class LoadProject extends ProjectDetailEvents {
   LoadProject(this.project);
 }
 
-class SaveLeadButtonPressed extends ProjectDetailEvents {
+class SaveProjectButtonPressed extends ProjectDetailEvents {
   final Map<String, dynamic> changes;
 
-  SaveLeadButtonPressed(this.changes);
+  SaveProjectButtonPressed(this.changes);
 }
 
 class UnlinkProjectButtonPressed extends ProjectDetailEvents {

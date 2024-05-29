@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/repository/crm/crm_repository.dart';
 import 'package:flutter_crm_prove/data/repository/crm/crm_repository_response.dart';
+import 'package:flutter_crm_prove/data/repository/project/pjt_repository.dart';
 import 'package:flutter_crm_prove/domain/crm/lead.dart';
+import 'package:flutter_crm_prove/domain/project/task.dart';
 import 'package:test/test.dart';
 
 class RespositoryTest {
@@ -11,14 +13,16 @@ class RespositoryTest {
 void main() {
   group('Respository test', () {
     late RepositoryCrm repository;
+    late RepositoryProject repositoryProject;
     late OdooClient odooClient;
     int id = 47; //174
 
     setUpAll(() async {
       odooClient = OdooClient();
       repository = RepositoryCrm(odooClient: odooClient);
+      repositoryProject = RepositoryProject(odooClient: odooClient);
       // await repository.login('https://testcoimasa15.aurestic.com', 'marketing@coimasa.com', 'marketing@coimasa.com', 'coimasa15.0_migrated_pruebas');
-      await repository.login('https://demos16.aurestic.com', 'admin', 'admin', 'demos_demos16');
+      await repository.login('https://demos15.aurestic.com', 'admin', 'admin', 'demos_demos15');
     });
 
     test('Login test', () async {
@@ -175,15 +179,21 @@ void main() {
       //   print('e: $e');
       // }
 
-      String name = await repository.getNameById('res.partner', id);
-      if (kDebugMode) {
-        print('Name: $name');
-      }
+      // String name = await repository.getNameById('res.partner', id);
+      // if (kDebugMode) {
+      //   print('Name: $name');
+      // }
+      //
+      // List<Map<String, dynamic>> clients = await repository.getAllForModel('res.partner', ['id', 'name']);
+      //
+      // if (kDebugMode) {
+      //   print('Clients: $clients');
+      // }
 
-      List<Map<String, dynamic>> clients = await repository.getAllForModel('res.partner', ['id', 'name']);
-
+      Map<String, dynamic> a = await repositoryProject.getAll('project.task', [], ['project_id', '=', 8]);
+      List<Task> tasks = a['records'].map<Task>((task) => Task.fromJson(task)).toList();
       if (kDebugMode) {
-        print('Clients: $clients');
+        print('a: $a');
       }
 
       // List<String> clients = (await repository.getAllNames('res.partner', ['name'])).cast<String>();

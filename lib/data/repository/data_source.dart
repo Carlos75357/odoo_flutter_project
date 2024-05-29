@@ -55,6 +55,7 @@ abstract class ProjectRepositoryDataSource {
   Future<String> getNameById(String modelName, int id);
   Future<List<String>> getNamesByIds(String modelName, List<int>? ids);
   Future<List<String>> getAllNames(String modelName, List<String> fields);
+  Future<Map<String, dynamic>> getAll(String modelName, List<String> fields, List<dynamic> domain);
 }
 
 /// [OdooDataSource] is an abstract class that defines the contract for an Odoo data source.

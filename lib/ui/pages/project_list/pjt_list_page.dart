@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_events.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_states.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_page.dart';
 import 'package:flutter_crm_prove/widgets/crm_list_page/button_new_lead.dart';
 import 'package:provider/provider.dart';
 
@@ -72,7 +73,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const Placeholder(),
+                builder: (context) => ProjectDetailPage(project: state.project),
               ),
             );
           }
@@ -91,7 +92,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
                     child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _buildProjectWidget(state.data['projects'][0]),
+                        children: _buildProjectWidget(),
                       ),
                     ),
                   ),
@@ -111,7 +112,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
     );
   }
 
-  List<Widget> _buildProjectWidget(Project project) {
+  List<Widget> _buildProjectWidget() {
     List<Widget> projectWidgets = [];
 
     for (var projectData in projects) {
