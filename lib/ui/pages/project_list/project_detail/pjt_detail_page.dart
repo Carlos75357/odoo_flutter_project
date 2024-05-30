@@ -3,12 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_events.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_states.dart';
-import 'package:flutter_crm_prove/widgets/project_list/project_detail/edit_widget.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_page.dart';
 
 import '../../../../domain/project/project.dart';
 import '../../../../domain/project/task.dart';
-import '../../../../theme_provider.dart';
 import '../../../../widgets/crm_list_page/button_new_lead.dart';
 import '../../../../widgets/crm_list_page/menu_crm.dart';
 import '../../../../widgets/project_list/project_detail/task_widget.dart';
@@ -135,7 +133,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return EditPopupWidget(
+        return EditPopupPage(
           project: widget.project,
           onSave: (newName) {
             BlocProvider.of<ProjectDetailBloc>(context).add(SaveProjectButtonPressed(newName.toJson()));

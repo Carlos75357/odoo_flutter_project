@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_events.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 
@@ -11,10 +13,10 @@ class EditPopupPage extends StatefulWidget {
   final ValueChanged<Project> onSave;
 
   const EditPopupPage({
-    Key? key,
+    super.key,
     required this.project,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   _EditPopupPageState createState() => _EditPopupPageState();
@@ -74,6 +76,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
   }
 
   Future<void> configData() async {
+    BlocProvider.of<ProjectEditBloc>(context).add(SetState());
     // los tipos seleciconados
     selectedItems['tags'] = widget.project.tagIds?.map((e) => e.toString()).toList() ?? [];
     selectedItems['responsible'] = [widget.project.userId ?? ''];
