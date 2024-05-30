@@ -83,7 +83,6 @@ class _EditPopupWidgetState extends State<EditPopupWidget> {
 
     // todos los valores que se pueden seleccionar
     fieldOptions = await BlocProvider.of<ProjectDetailBloc>(context).getDataList();
-
   }
 
   @override
@@ -218,6 +217,7 @@ class _EditPopupWidgetState extends State<EditPopupWidget> {
   Widget _buildMultiSelectField(TextEditingController controller, String label, String type) {
 
     List<String> options = fieldOptions[type] ?? [];
+    print('FieldOptions: $options');
 
     return Container(
       decoration: BoxDecoration(
@@ -248,6 +248,7 @@ class _EditPopupWidgetState extends State<EditPopupWidget> {
   Widget _buildDropdownField(TextEditingController controller, String label, String type) {
 
     List<String> options = fieldOptions[type] ?? [];
+    print('FieldOptions: $options');
 
     return Container(
       decoration: BoxDecoration(
@@ -261,7 +262,7 @@ class _EditPopupWidgetState extends State<EditPopupWidget> {
         padding: const EdgeInsets.all(4.0),
         child: DropdownButtonFormField(
           isExpanded: true,
-          value: selectedItems[type]?.first,
+          value: options,
           items: options.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
