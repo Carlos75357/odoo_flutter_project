@@ -1,5 +1,13 @@
 /// Check if the field is null or bool, if so, return null else return the value
 dynamic parseStringField(dynamic value) {
+  if (value is List) {
+    for (var item in value) {
+      if (item is String) {
+        return item;
+      }
+    }
+    return null;
+  }
   return (value is bool) ? null : value as String?;
 }
 

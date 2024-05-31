@@ -87,16 +87,16 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                       },
                       icon: const Icon(Icons.edit, color: Colors.white,),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Placeholder()),
-                        );
-                      }, // crear etiqueta,
-                      icon: const Icon(Icons.create_new_folder, color: Colors.white,),
-                      tooltip: 'Crear nueva tarea',
-                    )
+                    // IconButton(
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(builder: (context) => const Placeholder()),
+                    //     );
+                    //   }, // crear etiqueta,
+                    //   icon: const Icon(Icons.create_new_folder, color: Colors.white,),
+                    //   tooltip: 'Crear nueva tarea',
+                    // )
                   ],
                 ),
                 body: Stack(

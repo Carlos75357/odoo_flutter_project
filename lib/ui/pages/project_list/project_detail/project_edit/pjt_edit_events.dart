@@ -15,3 +15,7 @@ class ErrorEvent extends ProjectEditEvent {
 class SetState extends ProjectEditEvent {
 
 }
+
+class StateSuccess extends ProjectEditEvent {
+
+}

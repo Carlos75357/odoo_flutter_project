@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_events.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_states.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 
@@ -85,7 +86,10 @@ class _EditPopupPageState extends State<EditPopupPage> {
     selectedItems['company'] = [widget.project.companyId ?? ''];
 
     // todos los valores que se pueden seleccionar
-    fieldOptions = await BlocProvider.of<ProjectDetailBloc>(context).getDataList();
+    fieldOptions = await BlocProvider.of<ProjectDetailBloc>(context).getDataList().then((_) {
+      BlocProvider.of<ProjectEditBloc>(context).add(StateSuccess());
+      return fieldOptions;
+    });
   }
 
   @override
@@ -115,18 +119,35 @@ class _EditPopupPageState extends State<EditPopupPage> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Edit Project Details"),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildField("Name", _nameController, 'Text', 'name'),
-            _buildField("Task Name", _taskNameController, 'Text', 'task_name'),
-            _buildField("Client", _clientController, 'Dropdown', 'client'),
-            _buildField("Tags", _tagsController, 'MultiSelect', 'tags'),
-            _buildField("Company", _companyController, 'Dropdown', 'company'),
-            _buildField("Responsible", _responsibleController, 'Dropdown', 'responsible'),
-            _buildField("Project Stage", _projectStageController, 'Dropdown', 'project_stage'),
-          ],
+      content: BlocListener<ProjectEditBloc, ProjectEditStates>(
+        listener: (context, state) {
+          if (state is ProjectEditSuccess) {
+            Navigator.of(context).pop();
+          }
+        },
+        child: BlocBuilder<ProjectEditBloc, ProjectEditStates>(
+          builder: (context, state) {
+            if (state is ProjectEditLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is ProjectEditSuccess) {
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildField("Name", _nameController, 'Text', 'name'),
+                    _buildField("Task Name", _taskNameController, 'Text', 'task_name'),
+                    _buildField("Client", _clientController, 'Dropdown', 'client'),
+                    _buildField("Tags", _tagsController, 'MultiSelect', 'tags'),
+                    _buildField("Company", _companyController, 'Dropdown', 'company'),
+                    _buildField("Responsible", _responsibleController, 'Dropdown', 'responsible'),
+                    _buildField("Project Stage", _projectStageController, 'Dropdown', 'project_stage'),
+                  ],
+                ),
+              );
+            } else {
+              return const Center(child: LinearProgressIndicator());
+            }
+          },
         ),
       ),
       actions: <Widget>[
@@ -162,6 +183,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
       ],
     );
   }
+
 
 
   Widget _buildField(String label, TextEditingController controller, String caseType, String type) {

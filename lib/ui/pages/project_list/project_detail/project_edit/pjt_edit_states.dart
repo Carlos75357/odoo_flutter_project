@@ -1,18 +1,18 @@
-class ProjectEditState {} // loading, success, error, inital
+class ProjectEditStates {} // loading, success, error, inital
 
-class ProjectEditSuccess extends ProjectEditState {}
+class ProjectEditSuccess extends ProjectEditStates {}
 
-class ProjectEditError extends ProjectEditState {
+class ProjectEditError extends ProjectEditStates {
   String message;
 
   ProjectEditError(this.message);
 }
 
-class ProjectEditInitial extends ProjectEditState {}
+class ProjectEditInitial extends ProjectEditStates {}
 
-class ProjectEditLoading extends ProjectEditState {}
+class ProjectEditLoading extends ProjectEditStates {}
 
-class ProjectEditUpdate extends ProjectEditState {
+class ProjectEditUpdate extends ProjectEditStates {
   Map<String, dynamic> data;
   ProjectEditUpdate(this.data);
 }

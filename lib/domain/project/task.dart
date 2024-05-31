@@ -12,7 +12,7 @@ class Task {
   String? company; // company_id
   double? plannedHours; // planned_hours
   String? stageId; // stage_id
-  int? priority; // priority
+  String? priority; // priority
   double? totalHoursSpent; // total_hours_spent
   double? remainingHours; // remaining_hours
 
@@ -46,7 +46,7 @@ class Task {
       company: parseStringField(json['company']),
       plannedHours: parseDoubleField(json['planned_hours']),
       stageId: parseStringField(json['stage_id']),
-      priority: parseIntField(json['priority']),
+      priority: parseStringField(json['priority']),
       totalHoursSpent: parseDoubleField(json['total_hours_spent']),
       remainingHours: parseDoubleField(json['remaining_hours']),
     );
