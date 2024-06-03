@@ -117,74 +117,74 @@ class _EditPopupPageState extends State<EditPopupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text("Edit Project Details"),
-      content: BlocListener<ProjectEditBloc, ProjectEditStates>(
-        listener: (context, state) {
-          if (state is ProjectEditSuccess) {
-            Navigator.of(context).pop();
-          }
-        },
-        child: BlocBuilder<ProjectEditBloc, ProjectEditStates>(
-          builder: (context, state) {
-            if (state is ProjectEditLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is ProjectEditSuccess) {
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildField("Name", _nameController, 'Text', 'name'),
-                    _buildField("Task Name", _taskNameController, 'Text', 'task_name'),
-                    _buildField("Client", _clientController, 'Dropdown', 'client'),
-                    _buildField("Tags", _tagsController, 'MultiSelect', 'tags'),
-                    _buildField("Company", _companyController, 'Dropdown', 'company'),
-                    _buildField("Responsible", _responsibleController, 'Dropdown', 'responsible'),
-                    _buildField("Project Stage", _projectStageController, 'Dropdown', 'project_stage'),
-                  ],
-                ),
-              );
-            } else {
-              return const Center(child: LinearProgressIndicator());
-            }
-          },
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text("Cancel"),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: _isEdited,
-          builder: (context, isEdited, child) {
-            return ElevatedButton(
-              onPressed: isEdited
-                  ? () {
-                widget.onSave(Project(
-                  id: widget.project.id,
-                  name: _nameController.text,
-                  taskName: _taskNameController.text,
-                  partnerId: _clientController.text,
-                  tagIds: _tagsController.text.split(',').map((tag) => int.parse(tag)).toList(),
-                  userId: _responsibleValue,
-                  companyId: _companyController.text,
-                  status: _projectStageValue,
-                ));
-                Navigator.of(context).pop();
+    return BlocListener<ProjectEditBloc, ProjectEditStates>(
+      listener: (context, state) {
+        if (state is ProjectEditUpdate) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: BlocBuilder<ProjectEditBloc, ProjectEditStates>(
+        builder: (context, state) {
+          return AlertDialog(
+            title: const Text("Edit Project Details"),
+            content: () {
+              if (state is ProjectEditLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is ProjectEditSuccess) {
+                return SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildField("Name", _nameController, 'Text', 'name'),
+                      _buildField("Task Name", _taskNameController, 'Text', 'task_name'),
+                      _buildField("Client", _clientController, 'Dropdown', 'client'),
+                      _buildField("Tags", _tagsController, 'MultiSelect', 'tags'),
+                      _buildField("Company", _companyController, 'Dropdown', 'company'),
+                      _buildField("Responsible", _responsibleController, 'Dropdown', 'responsible'),
+                      _buildField("Project Stage", _projectStageController, 'Dropdown', 'project_stage'),
+                    ],
+                  ),
+                );
+              } else {
+                return const Center(child: LinearProgressIndicator());
               }
-                  : null,
-              child: const Text("Save"),
-            );
-          },
-        ),
-      ],
+            }(),
+            actions: <Widget>[
+              TextButton(
+                child: const Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ValueListenableBuilder<bool>(
+                valueListenable: _isEdited,
+                builder: (context, isEdited, child) {
+                  return ElevatedButton(
+                    onPressed: isEdited
+                        ? () {
+                      widget.onSave(Project(
+                        id: widget.project.id,
+                        name: _nameController.text,
+                        taskName: _taskNameController.text,
+                        partnerId: _clientController.text,
+                        tagIds: _tagsController.text.split(',').map((tag) => int.parse(tag)).toList(),
+                        userId: _responsibleValue,
+                        companyId: _companyController.text,
+                        status: _projectStageValue,
+                      ));
+                      Navigator.of(context).pop();
+                    }
+                        : null,
+                    child: const Text("Save"),
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
-
-
 
   Widget _buildField(String label, TextEditingController controller, String caseType, String type) {
     Widget fieldWidget;
