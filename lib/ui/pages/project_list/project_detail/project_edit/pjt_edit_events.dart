@@ -13,7 +13,9 @@ class ErrorEvent extends ProjectEditEvent {
 }
 
 class SetState extends ProjectEditEvent {
+  final Project project;
 
+  SetState({required this.project});
 }
 
 class StateSuccess extends ProjectEditEvent {

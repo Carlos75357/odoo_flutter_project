@@ -50,6 +50,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
     'client': [],
     'company': [],
   };
+  String? stageTr;
 
   @override
   void initState() {
@@ -77,7 +78,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
   }
 
   Future<void> configData() async {
-    BlocProvider.of<ProjectEditBloc>(context).add(SetState());
+    BlocProvider.of<ProjectEditBloc>(context).add(SetState(project: widget.project));
     // los tipos seleciconados
     selectedItems['tags'] = widget.project.tagIds?.map((e) => e.toString()).toList() ?? [];
     selectedItems['responsible'] = [widget.project.userId ?? ''];
@@ -86,9 +87,21 @@ class _EditPopupPageState extends State<EditPopupPage> {
     selectedItems['company'] = [widget.project.companyId ?? ''];
 
     // todos los valores que se pueden seleccionar
-    fieldOptions = await BlocProvider.of<ProjectDetailBloc>(context).getDataList().then((_) {
+    BlocProvider.of<ProjectDetailBloc>(context).getDataList().then((data) {
+      fieldOptions['tags'] = data['tags'] ?? [];
+      fieldOptions['responsible'] = data['responsible'] ?? [];
+      fieldOptions['project_stage'] = data['project_stage'] ?? [];
+      fieldOptions['client'] = data['client'] ?? [];
+      fieldOptions['company'] = data['company'] ?? [];
+
+      return BlocProvider.of<ProjectEditBloc>(context).getIdByName('project.project.stage', widget.project.status ?? '');
+    }).then((stageId) {
+      return BlocProvider.of<ProjectEditBloc>(context).translateStage(stageId);
+    }).then((translatedStage) {
+      stageTr = translatedStage;
       BlocProvider.of<ProjectEditBloc>(context).add(StateSuccess());
-      return fieldOptions;
+    }).catchError((error) {
+      print('Error: $error');
     });
   }
 
@@ -256,7 +269,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
             padding: const EdgeInsets.all(4.0),
             child: MultiSelectDialogField(
                 items: options.map((option) => MultiSelectItem(option, option)).toList(),
-                initialValue: selectedItems[type]?.toList() ?? [],
+                initialValue: selectedItems[type]?.map((e) => e.toString()).toList() ?? [],
                 title: Text('Select $label'),
                 buttonIcon: const Icon(Icons.arrow_drop_down),
                 buttonText: Text('Select $label'),
@@ -272,8 +285,31 @@ class _EditPopupPageState extends State<EditPopupPage> {
 
   Widget _buildDropdownField(TextEditingController controller, String label, String type) {
 
+    fieldOptions[type]!.add('Ninguno');
     List<String> options = fieldOptions[type] ?? [];
     print('FieldOptions: $options');
+
+    String? selectedValue;
+
+    if (selectedItems[type]?.isEmpty ?? true) {
+      selectedValue = 'Ninguno';
+    } else {
+      if (selectedItems[type]?.first != '') {
+        if (type == 'project_stage') {
+          selectedValue = stageTr;
+        } else {
+          selectedValue = selectedItems[type]?.first;
+        }
+      } else {
+        selectedValue = 'Ninguno';
+      }
+    }
+
+    for (int i = 0; i < options.length; i++) {
+      if (options.lastIndexOf(options[i]) != i) {
+        options.removeAt(i);
+      }
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -287,13 +323,13 @@ class _EditPopupPageState extends State<EditPopupPage> {
         padding: const EdgeInsets.all(4.0),
         child: DropdownButtonFormField(
           isExpanded: true,
-          value: options,
           items: options.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Text(value),
             );
           }).toList(),
+          value: selectedValue,
           onChanged: (value) {
             setState(() {
               selectedItems[type] = [value.toString()];
