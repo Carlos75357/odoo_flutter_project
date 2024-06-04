@@ -280,7 +280,7 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
       String? team = await translateTeam(lead.teamId);
       // print('Equipo traducido: $team');
 
-      LeadFormated leadFormated = LeadFormated(
+      return LeadFormated(
         id: lead.id,
         name: lead.name ?? '',
         email: lead.email,
@@ -302,7 +302,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
         probability: double.tryParse('${lead.probability}'),
       );
 
-      return leadFormated;
     } catch (e) {
       throw Exception('Failed to get lead formated: $e');
     }

@@ -1,20 +1,21 @@
 import 'package:flutter_crm_prove/domain/parse_types.dart';
 
 class Project {
-  final int id;
-  final String? name;
-  final String? taskName;
-  final String? partnerId;
-  final String? companyId;
-  final String? userId; // responsable del proyecto
-  final List<int>? tagIds;
-  final String? status; // last_update_status, no se como llega de momento
-  final String? dateStart;
-  final String? date;
+  int id;
+  String? name;
+  String? taskName;
+  int? partnerId;
+  int? companyId;
+  int? userId; // responsable del proyecto
+  List<int>? tagIds;
+  String? status; // last_update_status, no se como llega de momento
+  int? stageId;
+  String? dateStart;
+  String? date;
   // final int? objectives;
   // final int? objectivesDone;
-  final List<int>? tasks;
-  final String? createdUser;
+  List<int>? tasks;
+  // final String? createdUser;
 
   Project({
     required this.id,
@@ -25,12 +26,13 @@ class Project {
     this.userId,
     this.tagIds,
     this.status,
+    this.stageId,
     this.dateStart,
     this.date,
     // this.objectives,
     // this.objectivesDone,
     this.tasks,
-    this.createdUser
+    // this.createdUser
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
@@ -49,18 +51,19 @@ class Project {
     return Project(
       id: json['id'] ?? 0,
       name: parseStringField(json['name']),
-      taskName: parseStringField(json['label_task']),
-      partnerId: parseListToString(json['partner_id']),
-      companyId: parseListToString(json['company_id']),
-      userId: parseListToString(json['user_id']),
+      taskName: parseStringField(json['label_tasks']),
+      partnerId: parseListToInt(json['partner_id']),
+      companyId: parseListToInt(json['company_id']),
+      userId: parseListToInt(json['user_id']),
       tagIds: tagIds,
       status: parseStringField(json['last_update_status']),
+      stageId: parseListToInt(json['stage_id']),
       dateStart: parseStringField(json['date_start']),
       date: parseStringField(json['date']),
       tasks: tasks,
       // objectives: parseIntField(json['objectives']),
       // objectivesDone: parseIntField(json['objectives_done']),
-      createdUser: parseStringField(json['created_user']),
+      // createdUser: parseStringField(json['create_uid']),
     );
   }
 
@@ -73,12 +76,13 @@ class Project {
     if (userId != null) data['user_id'] = userId;
     if (tagIds != null) data['tag_ids'] = tagIds;
     if (status != null) data['status'] = status;
+    if (stageId != null) data['stage_id'] = stageId;
     if (dateStart != null) data['create_date'] = dateStart;
     if (date != null) data['date_deadline'] = date;
     // if (objectives != null) data['objectives'] = objectives;
     // if (objectivesDone != null) data['objectives_done'] = objectivesDone;
     if (tasks != null) data['tasks'] = tasks;
-    if (createdUser != null) data['created_user'] = createdUser;
+    // if (createdUser != null) data['created_user'] = createdUser;
     return data;
   }
 

@@ -81,7 +81,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
     BlocProvider.of<ProjectEditBloc>(context).add(SetState(project: widget.project));
     // los tipos seleciconados
     selectedItems['tags'] = widget.project.tagIds?.map((e) => e.toString()).toList() ?? [];
-    selectedItems['responsible'] = [widget.project.userId ?? ''];
+    selectedItems['responsible'] = [widget.project.userId ?? 0];
     selectedItems['project_stage'] = [widget.project.status ?? ''];
     selectedItems['client'] = [widget.project.partnerId ?? ''];
     selectedItems['company'] = [widget.project.companyId ?? ''];

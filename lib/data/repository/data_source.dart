@@ -1,5 +1,6 @@
 import '../../domain/crm/lead.dart';
 import '../../domain/project/project.dart';
+import '../../domain/Task/task.dart';
 import 'crm/crm_repository_response.dart';
 
 /// [RepositoryDataSource] is an abstract class that defines the contract for a data source.
@@ -50,6 +51,20 @@ abstract class ProjectRepositoryDataSource {
   Future<CreateResponse> createProject(String model, Map<String, dynamic> values);
   Future<WriteResponse> updateProject(String model, int id, Project values);
   Future<UnlinkResponse> unlinkProject(String model, int id);
+  Future<int> getIdByName(String modelName, String name);
+  Future<List<int>> getIdsByName(String modelName, List<String> names);
+  Future<String> getNameById(String modelName, int id);
+  Future<List<String>> getNamesByIds(String modelName, List<int>? ids);
+  Future<List<String>> getAllNames(String modelName, List<String> fields);
+  Future<Map<String, dynamic>> getAll(String modelName, List<String> fields, List<dynamic> domain);
+}
+
+abstract class TaskRepositoryDataSource {
+  Future<List<Task>> listTasks(String modelName, List<dynamic> domain, Map<String, dynamic> kwargs);
+  Future<Task> listTask(String modelName, int id);
+  Future<CreateResponse> createTask(String model, Map<String, dynamic> values);
+  Future<WriteResponse> updateTask(String model, int id, Task values);
+  Future<UnlinkResponse> unlinkTask(String model, int id);
   Future<int> getIdByName(String modelName, String name);
   Future<List<int>> getIdsByName(String modelName, List<String> names);
   Future<String> getNameById(String modelName, int id);

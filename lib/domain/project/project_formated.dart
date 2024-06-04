@@ -1,20 +1,24 @@
+import 'package:flutter_crm_prove/domain/project/project.dart';
+
 class ProjectFormated {
-  final int id;
-  final String? name;
-  final String? taskName;
-  final int? partnerId;
-  final String? partnerName;
-  final int? companyId;
-  final String? companyName;
-  final int? userId;
-  final String? userName; // responsable del proyecto
-  final List<int>? tagIds;
-  final List<String>? tagNames;
-  final dynamic status; // last_update_status, no se como llega de momento
-  final String? dateStart;
-  final String? date;
-  final List<int>? tasks;
-  final String? createdUser;
+  int id;
+  String? name;
+  String? taskName;
+  int? partnerId;
+  String? partnerName;
+  int? companyId;
+  String? companyName;
+  int? userId;
+  String? userName; // responsable del proyecto
+  List<int>? tagIds;
+  List<String>? tagNames;
+  String? status; // last_update_status, no se como llega de momento
+  int? stageId;
+  String? stageName;
+  String? dateStart;
+  String? date;
+  List<int>? tasks;
+  // String? createdUser;
 
   ProjectFormated({
     required this.id,
@@ -29,11 +33,30 @@ class ProjectFormated {
     this.tagIds,
     this.tagNames,
     this.status,
+    this.stageId,
+    this.stageName,
     this.dateStart,
     this.date,
     this.tasks,
-    this.createdUser,
+    // this.createdUser,
   });
+
+  Project projectFormatedToProject(ProjectFormated projectFormated) {
+    return Project(
+        id: projectFormated.id,
+        name: projectFormated.name,
+        taskName: projectFormated.taskName,
+        partnerId: projectFormated.partnerId,
+        companyId: projectFormated.companyId,
+        userId: projectFormated.userId,
+        tagIds: projectFormated.tagIds,
+        status: projectFormated.status,
+        stageId: projectFormated.stageId,
+        dateStart: projectFormated.dateStart,
+        date: projectFormated.date,
+        tasks: projectFormated.tasks,
+    );
+  }
 
   factory ProjectFormated.fromJson(Map<String, dynamic> json) {
     return ProjectFormated(
@@ -49,10 +72,12 @@ class ProjectFormated {
       tagIds: json['tag_ids'],
       tagNames: json['tag_names'],
       status: json['status'],
+      stageId: json['stage_id'],
+      stageName: json['stage_name'],
       dateStart: json['create_date'],
       date: json['date_deadline'],
       tasks: json['tasks'],
-      createdUser: json['created_user'],
+      // createdUser: json['created_user'],
     );
   }
 
@@ -70,10 +95,12 @@ class ProjectFormated {
     data['tag_ids'] = tagIds;
     data['tag_names'] = tagNames;
     data['status'] = status;
+    data['stage_id'] = stageId;
+    data['stage_name'] = stageName;
     data['create_date'] = dateStart;
     data['date_deadline'] = date;
     data['tasks'] = tasks;
-    data['created_user'] = createdUser;
+    // data['created_user'] = createdUser;
     return data;
   }
 }

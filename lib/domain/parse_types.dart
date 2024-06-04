@@ -46,6 +46,21 @@ String? parseListToString(dynamic list) {
   return null;
 }
 
+int? parseListToInt(dynamic list) {
+  if (list is! List) {
+    return null;
+  }
+  for (var item in list) {
+    if (item is bool) {
+      return null;
+    }
+    if (item is int) {
+      return item;
+    }
+  }
+  return null;
+}
+
 List<int>? parseListInt(dynamic list) {
   final List<dynamic>? listJson = list;
   List<int>? parse;
