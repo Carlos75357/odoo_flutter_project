@@ -4,7 +4,7 @@ import 'package:flutter_crm_prove/data/repository/crm/crm_repository.dart';
 import 'package:flutter_crm_prove/data/repository/crm/crm_repository_response.dart';
 import 'package:flutter_crm_prove/data/repository/project/pjt_repository.dart';
 import 'package:flutter_crm_prove/domain/crm/lead.dart';
-import 'package:flutter_crm_prove/domain/project/task.dart';
+import 'package:flutter_crm_prove/domain/Task/task.dart';
 import 'package:test/test.dart';
 
 class RespositoryTest {

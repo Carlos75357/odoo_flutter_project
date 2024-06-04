@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/repository/project/pjt_repository.dart';
 import 'package:flutter_crm_prove/domain/project/project.dart';
-import 'package:flutter_crm_prove/domain/project/task.dart';
+import 'package:flutter_crm_prove/domain/Task/task.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_events.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_states.dart';
 

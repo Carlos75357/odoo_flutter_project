@@ -13,3 +13,7 @@ class ReloadAll extends PjtListEvents {}
 
 class CreateNewPjt extends PjtListEvents {}
 
+class ChangeFilter extends PjtListEvents {
+  final String filter;
+  ChangeFilter({required this.filter});
+}
