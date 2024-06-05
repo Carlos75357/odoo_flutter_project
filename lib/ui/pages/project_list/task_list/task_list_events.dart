@@ -7,20 +7,14 @@ class TaskSelected extends TaskListEvents {
   TaskSelected(this.task);
 }
 
-class TaskListLoaded extends TaskListEvents {
-  final List<Task> tasks;
-  TaskListLoaded(this.tasks);
-}
+class TaskListLoad extends TaskListEvents {}
 
-class TaskListError extends TaskListEvents {
+class TaskListErrorEvent extends TaskListEvents {
   final String message;
-  TaskListError(this.message);
+  TaskListErrorEvent(this.message);
 }
 
-class TaskListReload extends TaskListEvents {
-  final List<Task> tasks;
-  TaskListReload(this.tasks);
-}
+class TaskListReloadEvent extends TaskListEvents {}
 
 class TaskListNewButtonPressed extends TaskListEvents {}
 

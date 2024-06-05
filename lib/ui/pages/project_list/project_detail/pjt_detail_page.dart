@@ -8,7 +8,7 @@ import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_e
 import '../../../../domain/project/project.dart';
 import '../../../../domain/Task/task.dart';
 import '../../../../widgets/crm_list_page/button_new_lead.dart';
-import '../../../../widgets/crm_list_page/menu_crm.dart';
+import '../../../../widgets/crm_list_page/menu.dart';
 import '../../../../widgets/project_list/project_detail/task_widget.dart';
 
 class ProjectDetailPage extends StatefulWidget {

@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../../../widgets/crm_list_page/button_new_lead.dart';
 import '../../../widgets/crm_list_page/lead_widget.dart';
-import '../../../widgets/crm_list_page/menu_crm.dart';
+import '../../../widgets/crm_list_page/menu.dart';
 import 'crm_list_bloc.dart';
 import 'crm_list_events.dart';
 import 'crm_list_states.dart';
