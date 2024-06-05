@@ -1,3 +1,5 @@
+import '../../../../../domain/project/project.dart';
+
 class ProjectEditStates {} // loading, success, error, inital
 
 class ProjectEditSuccess extends ProjectEditStates {}
@@ -13,6 +15,6 @@ class ProjectEditInitial extends ProjectEditStates {}
 class ProjectEditLoading extends ProjectEditStates {}
 
 class ProjectEditUpdate extends ProjectEditStates {
-  Map<String, dynamic> data;
+  Project data;
   ProjectEditUpdate(this.data);
 }

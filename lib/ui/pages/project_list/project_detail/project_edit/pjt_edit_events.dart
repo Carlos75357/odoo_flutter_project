@@ -1,10 +1,12 @@
+import 'package:flutter_crm_prove/domain/project/project_formated.dart';
+
 import '../../../../../domain/project/project.dart';
 
 class ProjectEditEvent {}
 
 class UpdatePjt extends ProjectEditEvent {
-  final Project project;
-  UpdatePjt({required this.project});
+  final ProjectFormated projectF;
+  UpdatePjt({required this.projectF});
 }
 
 class ErrorEvent extends ProjectEditEvent {

@@ -37,11 +37,35 @@ class ProjectEditBloc extends Bloc<ProjectEditEvent, ProjectEditStates> {
     }
   }
 
-  updateProject(UpdatePjt state, Emitter emit) {
+  updateProject(UpdatePjt state, Emitter emit) async {
     try {
+      emit(ProjectEditLoading());
+
+      ProjectFormated projectFormated = state.projectF;
+
+      dynamic ids = await Future.wait([
+        _getIdByNameOrNull('res.partner', projectFormated.partnerName),
+        _getIdByNameOrNull('res.company', projectFormated.companyName),
+        _getIdByNameOrNull('res.users', projectFormated.userName),
+        _getIdByNameOrNull('project.project.stage', projectFormated.stageName),
+        _getIdsByNames('project.project.tag', projectFormated.tagNames),
+      ]);
+
+      projectFormated.partnerId = ids[0];
+      projectFormated.companyId = ids[1];
+      projectFormated.userId = ids[2];
+      projectFormated.stageId = ids[3];
+      projectFormated.tagIds = ids[4];
+
+      Project projectFromFormated = projectFormated.projectFormatedToProject(projectFormated);
+
+      var response = await projectRepository.updateProject('project.project', project.id, projectFromFormated);
+
+      if (response.success) {
+        emit(ProjectEditUpdate(projectFromFormated));
+      }
+
       // emit(ProjectEditUpdate(state.data));
-
-
     } catch (e) {
       emit(ProjectEditError('Error'));
     }
@@ -117,5 +141,18 @@ class ProjectEditBloc extends Bloc<ProjectEditEvent, ProjectEditStates> {
     } catch (e) {
       throw Exception('Failed to translate tags: $e');
     }
+  }
+
+  Future<int?> _getIdByNameOrNull(String objectType, String? name) async {
+    if (name == null) return null;
+    if (name == 'Ninguno') return null;
+    return projectRepository.getIdByName(objectType, name);
+  }
+
+  Future<List<int>> _getIdsByNames(String objectType, List<String>? names) async {
+    if (names == null) return [];
+    if (names.contains('Ninguno')) return [];
+    var ids = await Future.wait(names.map((name) => projectRepository.getIdByName(objectType, name)));
+    return ids;
   }
 }

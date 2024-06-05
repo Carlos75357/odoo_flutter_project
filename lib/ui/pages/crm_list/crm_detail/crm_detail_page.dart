@@ -107,29 +107,29 @@ class _CrmDetailState extends State<CrmDetail> {
     try {
       _setText();
 
-      Map<String, List<int>> allIds = {
-        'stage': [],
-        'user': [],
-        'company': [],
-        'client': [],
-        'tags': widget.lead.tagIds ?? [],
-        'team': [],
-      };
-      if (widget.lead.stageId != null) {
-        allIds['stage']?.add(widget.lead.stageId!);
-      }
-      if (widget.lead.userId != null) {
-        allIds['user']?.add(widget.lead.userId!);
-      }
-      if (widget.lead.companyId != null) {
-        allIds['company']?.add(widget.lead.companyId!);
-      }
-      if (widget.lead.clientId != null) {
-        allIds['client']?.add(widget.lead.clientId!);
-      }
-      if (widget.lead.teamId != null) {
-        allIds['team']?.add(widget.lead.teamId!);
-      }
+      // Map<String, List<int>> allIds = {
+      //   'stage': [],
+      //   'user': [],
+      //   'company': [],
+      //   'client': [],
+      //   'tags': widget.lead.tagIds ?? [],
+      //   'team': [],
+      // };
+      // if (widget.lead.stageId != null) {
+      //   allIds['stage']?.add(widget.lead.stageId!);
+      // }
+      // if (widget.lead.userId != null) {
+      //   allIds['user']?.add(widget.lead.userId!);
+      // }
+      // if (widget.lead.companyId != null) {
+      //   allIds['company']?.add(widget.lead.companyId!);
+      // }
+      // if (widget.lead.clientId != null) {
+      //   allIds['client']?.add(widget.lead.clientId!);
+      // }
+      // if (widget.lead.teamId != null) {
+      //   allIds['team']?.add(widget.lead.teamId!);
+      // }
 
       currentValue = widget.lead.probability ?? 0;
     } catch (e) {

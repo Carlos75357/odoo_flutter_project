@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/domain/project/project_formated.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_events.dart';
@@ -34,11 +35,14 @@ class _EditPopupPageState extends State<EditPopupPage> {
   late String _responsibleValue;
   late String _projectStageValue;
   late ValueNotifier<bool> _isEdited;
+  late ProjectFormated projectFormated;
+  late Map<String, dynamic> initialData = {};
 
   Map<String, List<String>> fieldOptions = {
     'tags': [],
     'responsible': [],
     'project_stage': [],
+    'status': [],
     'client': [],
     'company': [],
   };
@@ -47,6 +51,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
     'tags': [],
     'responsible': [],
     'project_stage': [],
+    'status': [],
     'client': [],
     'company': [],
   };
@@ -80,12 +85,19 @@ class _EditPopupPageState extends State<EditPopupPage> {
   Future<void> configData() async {
     BlocProvider.of<ProjectEditBloc>(context).add(SetState(project: widget.project));
     // los tipos seleciconados
-    selectedItems['tags'] = widget.project.tagIds?.map((e) => e.toString()).toList() ?? [];
-    selectedItems['responsible'] = [widget.project.userId ?? 0];
-    selectedItems['project_stage'] = [widget.project.status ?? ''];
-    selectedItems['client'] = [widget.project.partnerId ?? ''];
-    selectedItems['company'] = [widget.project.companyId ?? ''];
-
+    BlocProvider.of<ProjectEditBloc>(context).getProjectFormated(widget.project).then((projectF) {
+      setState(() {
+        projectFormated = projectF;
+        initialData = projectFormated.toJson();
+        selectedItems['tags'] = projectFormated.tagNames ?? [];
+        selectedItems['responsible'] = [projectFormated.userName ?? ''];
+        selectedItems['project_stage'] = [projectFormated.stageName ?? ''];
+        selectedItems['status'] = [projectFormated.status ?? ''];
+        selectedItems['client'] = [projectFormated.userName ?? ''];
+        selectedItems['company'] = [projectFormated.companyName ?? ''];
+      });
+    });
+    
     // todos los valores que se pueden seleccionar
     BlocProvider.of<ProjectDetailBloc>(context).getDataList().then((data) {
       fieldOptions['tags'] = data['tags'] ?? [];
@@ -175,17 +187,18 @@ class _EditPopupPageState extends State<EditPopupPage> {
                   return ElevatedButton(
                     onPressed: isEdited
                         ? () {
-                      widget.onSave(Project(
+                      final updatedProject = ProjectFormated(
                         id: widget.project.id,
                         name: _nameController.text,
                         taskName: _taskNameController.text,
-                        partnerId: _clientController.text,
+                        partnerName: _clientController.text,
                         tagIds: _tagsController.text.split(',').map((tag) => int.parse(tag)).toList(),
-                        userId: _responsibleValue,
-                        companyId: _companyController.text,
+                        userName: _responsibleValue,
+                        companyName: _companyController.text,
                         status: _projectStageValue,
-                      ));
-                      Navigator.of(context).pop();
+                      );
+                      
+                      BlocProvider.of<ProjectEditBloc>(context).add(UpdatePjt(projectF: updatedProject));
                     }
                         : null,
                     child: const Text("Save"),

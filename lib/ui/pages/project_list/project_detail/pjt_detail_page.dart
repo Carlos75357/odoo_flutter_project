@@ -40,6 +40,13 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
     });
   }
 
+  void _onProjectSave(Project updateProject) {
+    setState(() {
+      widget.project = updateProject;
+    });
+    BlocProvider.of<ProjectDetailBloc>(context).add(ReloadDetail(updateProject.id));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,10 +142,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
       builder: (BuildContext context) {
         return EditPopupPage(
           project: widget.project,
-          onSave: (newName) {
-            BlocProvider.of<ProjectDetailBloc>(context).add(SaveProjectButtonPressed(newName.toJson()));
-            BlocProvider.of<ProjectDetailBloc>(context).add(ReloadDetail(widget.project.id));
-          },
+          onSave: _onProjectSave,
         );
       },
     );
