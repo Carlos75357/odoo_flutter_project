@@ -1,7 +1,7 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_crm_prove/domain/lead.dart';
+import 'package:flutter_crm_prove/domain/crm/lead.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_events.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_states.dart';

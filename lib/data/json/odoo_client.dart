@@ -1,6 +1,6 @@
 import 'package:flutter_crm_prove/data/odoo_config.dart';
 import 'package:flutter_crm_prove/data/repository/data_source.dart';
-import '../../domain/lead.dart';
+import '../../domain/crm/lead.dart';
 
 import 'json_client.dart';
 import 'json_rpc.dart';
@@ -124,7 +124,7 @@ class OdooClient extends OdooDataSource{
         'kwargs': {'context': []},
       });
 
-      var response = await call('$url/web/dataset/call_kw/crm/unlink', jsonRequest);
+      var response = await call('$url/web/dataset/call_kw', jsonRequest);
       bool result = response['result'];
 
       return result;
@@ -136,7 +136,7 @@ class OdooClient extends OdooDataSource{
 
   /// [write] method, update the record with the given id.
   @override
-  Future<bool> write(String model, int id, Lead values) async {
+  Future<bool> write(String model, int id, dynamic values) async {
     Map<String, dynamic> valuesMap = values.toJson();
     var jsonRequest = JsonRequest({
       'model': model,
@@ -146,7 +146,7 @@ class OdooClient extends OdooDataSource{
     });
 
     try {
-      var response = await call('$url/web/dataset/call_kw/crm/write', jsonRequest);
+      var response = await call('$url/web/dataset/call_kw', jsonRequest);
 
       dynamic result = response['result'];
 
@@ -168,7 +168,7 @@ class OdooClient extends OdooDataSource{
     });
 
     try {
-      var response = await call('$url/web/dataset/call_kw/crm/create', jsonRequest);
+      var response = await call('$url/web/dataset/call_kw', jsonRequest);
       return response;
     } catch (e) {
       throw Exception('Failed to create record: $e');

@@ -1,5 +1,6 @@
-import 'package:flutter_crm_prove/domain/lead.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_states.dart';
+
+import '../../../../domain/crm/lead.dart';
 
 /// [CrmDetailEvents] is an abstract class that defines events related to the [CrmDetailPage].
 abstract class CrmDetailEvents {}

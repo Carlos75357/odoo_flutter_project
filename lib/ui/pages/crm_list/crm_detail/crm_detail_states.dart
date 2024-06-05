@@ -1,4 +1,5 @@
-import '../../../../domain/lead.dart';
+import '../../../../domain/crm/lead.dart';
+
 /// [CrmDetailStates] is an abstract class that represents the various states of the [CrmDetailPage].
 abstract class CrmDetailStates {}
 /// [CrmDetailPage] is an implementation of [CrmDetailStates] that represents the detail state of the [CrmDetailPage].

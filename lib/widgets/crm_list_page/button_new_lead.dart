@@ -6,18 +6,18 @@ import '../../ui/pages/crm_list/crm_list_bloc.dart';
 import '../../ui/pages/crm_list/crm_list_events.dart';
 
 /// [buildButton] method to create the button.
-Widget buildButton(BuildContext context) {
-  return RemoteConfigService.instance.canCreateCrmLeads ? _buildNewLeadButton(context) : _buildErrorNewLeadButton(context);
+Widget buildButton(BuildContext context, Bloc bloc, dynamic event) {
+  return RemoteConfigService.instance.canCreateCrmLeads ? _buildNewLeadButton(context, bloc, event) : _buildErrorNewLeadButton(context);
 }
 
-Widget _buildNewLeadButton(BuildContext context) {
+Widget _buildNewLeadButton(BuildContext context, Bloc bloc, dynamic event) {
   return Positioned(
     bottom: 20,
     right: 20,
     child: FloatingActionButton(
       backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
       onPressed: () {
-        BlocProvider.of<CrmListBloc>(context).add(NewLeadButtonPressed());
+        bloc.add(event);
       },
       child: const Icon(Icons.add),
     ),
@@ -33,7 +33,7 @@ Widget _buildErrorNewLeadButton(BuildContext context) {
       onPressed: () {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("No tienes permisos para crear nuevas oportunidades"),
+            content: Text("No tienes permisos para crear uno nuevo"),
           )
         );
       },

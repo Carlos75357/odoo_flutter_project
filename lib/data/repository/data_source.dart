@@ -1,5 +1,6 @@
-import '../../domain/lead.dart';
-import 'repository_response.dart';
+import '../../domain/crm/lead.dart';
+import '../../domain/project/project.dart';
+import 'crm/crm_repository_response.dart';
 
 /// [RepositoryDataSource] is an abstract class that defines the contract for a data source.
 /// It includes methods for logging in, listing leads, creating, updating, and deleting leads,
@@ -40,6 +41,21 @@ abstract class RepositoryDataSource {
 
   /// Retrieves all names for the given [modelName].
   Future<List<String>> getAllNames(String modelName, List<String> fields);
+}
+
+abstract class ProjectRepositoryDataSource {
+  // listProject, listProjects, createProject, updateProject, unlinkProject, getIdByName, gerIdsByName, getNameById, getNamesByIds, getAllNames
+  Future<List<Project>> listProjects(String modelName, List<dynamic> domain, Map<String, dynamic> kwargs);
+  Future<Project> listProject(String modelName, int id);
+  Future<CreateResponse> createProject(String model, Map<String, dynamic> values);
+  Future<WriteResponse> updateProject(String model, int id, Project values);
+  Future<UnlinkResponse> unlinkProject(String model, int id);
+  Future<int> getIdByName(String modelName, String name);
+  Future<List<int>> getIdsByName(String modelName, List<String> names);
+  Future<String> getNameById(String modelName, int id);
+  Future<List<String>> getNamesByIds(String modelName, List<int>? ids);
+  Future<List<String>> getAllNames(String modelName, List<String> fields);
+  Future<Map<String, dynamic>> getAll(String modelName, List<String> fields, List<dynamic> domain);
 }
 
 /// [OdooDataSource] is an abstract class that defines the contract for an Odoo data source.

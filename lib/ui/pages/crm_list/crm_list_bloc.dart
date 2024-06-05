@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:flutter_crm_prove/data/odoo_config.dart';
-import 'package:flutter_crm_prove/domain/lead.dart';
 import 'package:flutter_crm_prove/remote_config_service.dart';
 
-import '../../../data/repository/repository.dart';
+import '../../../data/repository/crm/crm_repository.dart';
+import '../../../domain/crm/lead.dart';
 import 'crm_list_events.dart';
 import 'crm_list_states.dart';
 /// [CrmListBloc] is a bloc class, works with [CrmListEvents] and [CrmListStates],
@@ -22,7 +22,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
   }
 
   OdooClient odooClient = OdooClient();
-  late Repository repository = Repository(odooClient: odooClient);
+  late RepositoryCrm repository = RepositoryCrm(odooClient: odooClient);
   List<Lead> leads = [];
 
   // void getLeads() async {
@@ -56,10 +56,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
       final response = await repository.listLead('crm.lead', event.lead.id);
 
-      Map<String, dynamic> data = {
-        'lead': response
-      };
-      emit(CrmListDetail(data['lead']));
+      emit(CrmListDetail(response));
     } catch (e) {
       emit(CrmListError('Hubo un error al cargar las oportunidades'));
     }

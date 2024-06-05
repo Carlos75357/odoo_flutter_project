@@ -1,12 +1,12 @@
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_crm_prove/data/odoo_config.dart';
-import 'package:flutter_crm_prove/data/repository/repository.dart';
-import 'package:flutter_crm_prove/domain/lead.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_states.dart';
 
-import '../../../../data/repository/repository_response.dart';
-import '../../../../domain/lead_formated.dart';
+import '../../../../data/repository/crm/crm_repository.dart';
+import '../../../../data/repository/crm/crm_repository_response.dart';
+import '../../../../domain/crm/lead.dart';
+import '../../../../domain/crm/lead_formated.dart';
 import 'crm_create_events.dart';
 
 /// [CrmCreateBloc] is a bloc class, works with [CrmCreateEvents] and [CrmCreateStates],
@@ -18,7 +18,7 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     on<SetLoadingState>((event, emit) => setLoadingState(event, emit));
   }
   OdooClient odooClient = OdooClient();
-  late Repository repository = Repository(odooClient: odooClient);
+  late RepositoryCrm repository = RepositoryCrm(odooClient: odooClient);
   List<Lead> leads = [];
 
   /// [setLoadingState] method to set the [CrmCreateStates] to [CrmCreateLoading].

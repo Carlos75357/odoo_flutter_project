@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
-import 'package:flutter_crm_prove/data/repository/repository.dart';
-import 'package:flutter_crm_prove/domain/lead.dart';
+import 'package:flutter_crm_prove/data/repository/crm/crm_repository.dart';
+import 'package:flutter_crm_prove/data/repository/crm/crm_repository_response.dart';
+import 'package:flutter_crm_prove/data/repository/project/pjt_repository.dart';
+import 'package:flutter_crm_prove/domain/crm/lead.dart';
+import 'package:flutter_crm_prove/domain/Task/task.dart';
 import 'package:test/test.dart';
 
 class RespositoryTest {
@@ -9,13 +12,15 @@ class RespositoryTest {
 
 void main() {
   group('Respository test', () {
-    late Repository repository;
+    late RepositoryCrm repository;
+    late RepositoryProject repositoryProject;
     late OdooClient odooClient;
-    int id = 20; //174
+    int id = 47; //174
 
     setUpAll(() async {
       odooClient = OdooClient();
-      repository = Repository(odooClient: odooClient);
+      repository = RepositoryCrm(odooClient: odooClient);
+      repositoryProject = RepositoryProject(odooClient: odooClient);
       // await repository.login('https://testcoimasa15.aurestic.com', 'marketing@coimasa.com', 'marketing@coimasa.com', 'coimasa15.0_migrated_pruebas');
       await repository.login('https://demos15.aurestic.com', 'admin', 'admin', 'demos_demos15');
     });
@@ -51,48 +56,48 @@ void main() {
       }
     });
 
-    // test('Create lead test', () async {
-    //   // CreateResponse createResponse = await repository.createLead('crm.lead', {'name': 'Prueba2', 'description': 'Prueba2', 'expected_revenue': 100000});
-    //   CreateResponse createResponse = await repository.createLead('crm.lead', {
-    //     'name': 'PruebaParaProbarEditar',
-    //     'description': 'Prueba2',
-    //     'partner_id': 1,
-    //     'phone': '+123456789',
-    //     'email_from': 'correo@example.com',
-    //     'company_id': 1,
-    //     'user_id': 2,
-    //     'date_deadline': '2024-12-31',
-    //     'team_id': 1,
-    //     'expected_revenue': 100000,
-    //     'tag_ids': [1, 2, 3],
-    //     'priority': '1',
-    //     'probability': 90,
-    //     'create_date': '2024-03-25',
-    //     'stage_id': 1,
-    //   });
+    test('Create lead test', () async {
+      // CreateResponse createResponse = await repository.createLead('crm.lead', {'name': 'Prueba2', 'description': 'Prueba2', 'expected_revenue': 100000});
+      CreateResponse createResponse = await repository.createLead('crm.lead', {
+        'name': 'PruebaParaProbarEditar',
+        'description': 'Prueba2',
+        'partner_id': 1,
+        'phone': '+123456789',
+        'email_from': 'correo@example.com',
+        'company_id': 1,
+        'user_id': 2,
+        'date_deadline': '2024-12-31',
+        'team_id': 1,
+        'expected_revenue': 100000,
+        'tag_ids': [1, 2, 3],
+        'priority': '1',
+        'probability': 90,
+        'create_date': '2024-03-25',
+        'stage_id': 1,
+      });
+
+      expect(createResponse.success, true);
+      if (kDebugMode) {
+        print(createResponse.success);
+      }
+    });
     //
-    //   expect(createResponse.success, true);
-    //   if (kDebugMode) {
-    //     print(createResponse.success);
-    //   }
-    // });
+    test('Unlink lead test', () async {
+      UnlinkResponse unlinkResponse = await repository.unlinkLead('crm.lead', id);
+      expect(unlinkResponse.records, true);
+      if (kDebugMode) {
+        print(unlinkResponse.records);
+      }
+    });
     //
-    // test('Unlink lead test', () async {
-    //   UnlinkResponse unlinkResponse = await repository.unlinkLead('crm.lead', id);
-    //   expect(unlinkResponse.records, true);
-    //   if (kDebugMode) {
-    //     print(unlinkResponse.records);
-    //   }
-    // });
-    //
-    // test('Update lead test', () async {
-    //   Lead lead = Lead(id: id, name: 'EDITADODENUEVo', stageId: 2, priority: '3', expectedRevenue: 65359, tagIds: [1], probability: 95);
-    //   WriteResponse updateResponse = await repository.updateLead('crm.lead', id, lead);
-    //   expect(updateResponse.success, true);
-    //   if (kDebugMode) {
-    //     print(updateResponse.success);
-    //   }
-    // });
+    test('Update lead test', () async {
+      Lead lead = Lead(id: id, name: 'EDITADODENUEVo', stageId: 2, priority: '3', expectedRevenue: 65359, tagIds: [1], probability: 95);
+      WriteResponse updateResponse = await repository.updateLead('crm.lead', id, lead);
+      expect(updateResponse.success, true);
+      if (kDebugMode) {
+        print(updateResponse.success);
+      }
+    });
 
     test('tagName test', () async {
       List<String> tagNames = await repository.getNamesByIds('crm.tag', [1,2,3,4,5,6,7,8]);
@@ -174,15 +179,21 @@ void main() {
       //   print('e: $e');
       // }
 
-      String name = await repository.getNameById('res.partner', id);
-      if (kDebugMode) {
-        print('Name: $name');
-      }
+      // String name = await repository.getNameById('res.partner', id);
+      // if (kDebugMode) {
+      //   print('Name: $name');
+      // }
+      //
+      // List<Map<String, dynamic>> clients = await repository.getAllForModel('res.partner', ['id', 'name']);
+      //
+      // if (kDebugMode) {
+      //   print('Clients: $clients');
+      // }
 
-      List<Map<String, dynamic>> clients = await repository.getAllForModel('res.partner', ['id', 'name']);
-
+      Map<String, dynamic> a = await repositoryProject.getAll('project.task', [], ['project_id', '=', 8]);
+      List<Task> tasks = a['records'].map<Task>((task) => Task.fromJson(task)).toList();
       if (kDebugMode) {
-        print('Clients: $clients');
+        print('a: $a');
       }
 
       // List<String> clients = (await repository.getAllNames('res.partner', ['name'])).cast<String>();

@@ -9,11 +9,12 @@ import 'package:flutter_crm_prove/remote_config_service.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_states.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
-import '../../../../domain/lead.dart';
-import '../../../../domain/lead_formated.dart';
+import '../../../../domain/crm/lead.dart';
+import '../../../../domain/crm/lead_formated.dart';
 import '../crm_list_page.dart';
 import 'crm_detail_bloc.dart';
 import 'crm_detail_events.dart';
+
 /// [CrmDetailPage] is a statefulwidget class, build the page to see the detail
 /// of one lead, it can also unlink or edit the lead.
 class CrmDetail extends StatefulWidget {

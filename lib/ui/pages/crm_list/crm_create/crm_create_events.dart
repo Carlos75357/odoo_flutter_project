@@ -1,4 +1,5 @@
-import '../../../../domain/lead.dart';
+
+import '../../../../domain/crm/lead.dart';
 
 /// [CrmCreateEvents] is an abstract class that defines events related to the [CrmCreatePage].
 abstract class CrmCreateEvents {}
