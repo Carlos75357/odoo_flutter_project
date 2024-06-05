@@ -60,10 +60,10 @@ class Lead {
       userId: parseIntField(json['user_id']),
       dateDeadline: parseStringField(json['date_deadline']),
       teamId: parseIntField(json['team_id']),
-      expectedRevenue: parseDoublefield(json['expected_revenue']),
+      expectedRevenue: parseDoubleField(json['expected_revenue']),
       tagIds: tagIds,
       priority: parseStringField(json['priority']),
-      probability: parseDoublefield(json['probability']),
+      probability: parseDoubleField(json['probability']),
       createDate: parseStringField(json['create_date']),
       stageId: stagesIds,
     );

@@ -124,7 +124,7 @@ class OdooClient extends OdooDataSource{
         'kwargs': {'context': []},
       });
 
-      var response = await call('$url/web/dataset/call_kw/crm/unlink', jsonRequest);
+      var response = await call('$url/web/dataset/call_kw', jsonRequest);
       bool result = response['result'];
 
       return result;
@@ -146,7 +146,7 @@ class OdooClient extends OdooDataSource{
     });
 
     try {
-      var response = await call('$url/web/dataset/call_kw/crm/write', jsonRequest);
+      var response = await call('$url/web/dataset/call_kw', jsonRequest);
 
       dynamic result = response['result'];
 
@@ -168,7 +168,7 @@ class OdooClient extends OdooDataSource{
     });
 
     try {
-      var response = await call('$url/web/dataset/call_kw/crm/create', jsonRequest);
+      var response = await call('$url/web/dataset/call_kw', jsonRequest);
       return response;
     } catch (e) {
       throw Exception('Failed to create record: $e');

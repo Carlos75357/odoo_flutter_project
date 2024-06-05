@@ -1,5 +1,13 @@
 /// Check if the field is null or bool, if so, return null else return the value
 dynamic parseStringField(dynamic value) {
+  if (value is List) {
+    for (var item in value) {
+      if (item is String) {
+        return item;
+      }
+    }
+    return null;
+  }
   return (value is bool) ? null : value as String?;
 }
 
@@ -15,7 +23,7 @@ int? parseIntField(dynamic value) {
 }
 
 /// Check if the field is bool, if so, return null else return the value parsed to double
-double? parseDoublefield(dynamic value) {
+double? parseDoubleField(dynamic value) {
   if (value is int || value is double) {
     return value.toDouble();
   } else {

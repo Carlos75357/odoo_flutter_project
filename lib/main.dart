@@ -11,6 +11,8 @@ import 'package:flutter_crm_prove/ui/pages/login/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_crm_prove/ui/pages/login/select_module/select_module_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_bloc.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -52,6 +54,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<PjtListBloc>(
           create: (context) => PjtListBloc(),
+        ),
+        BlocProvider<ProjectDetailBloc>(
+          create: (context) => ProjectDetailBloc(),
+        ),
+        BlocProvider<ProjectEditBloc>(
+          create: (context) => ProjectEditBloc(),
         )
       ],
       child: MaterialApp(

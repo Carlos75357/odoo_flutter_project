@@ -94,6 +94,30 @@ class RepositoryProject extends ProjectRepositoryDataSource {
   }
 
   @override
+  Future<Map<String, dynamic>> getAll(String modelName, List<String> fields, List<dynamic> domain) async {
+    try {
+      var context = {
+        'lang': 'es_ES',
+      };
+
+      var kwargs = {
+        'context': context,
+        'fields': fields
+      };
+
+      var response = await odooClient.searchRead(modelName, [domain], kwargs);
+      Map<String, dynamic> records = {
+        'records': response
+      };
+      return records;
+
+    } catch (e) {
+      throw Exception('Failed to get names: $e');
+    }
+  }
+
+
+  @override
   Future<int> getIdByName(String modelName, String name) async {
     try {
       int offset = 0;
