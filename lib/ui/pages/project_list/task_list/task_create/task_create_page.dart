@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class TaskCreatePage extends StatefulWidget {
-  const TaskCreatePage({Key? key}) : super(key: key);
+  final String projectName;
+  const TaskCreatePage({Key? key, required this.projectName}) : super(key: key);
 
   @override
   TaskCreatePageState createState() => TaskCreatePageState();
@@ -23,6 +25,11 @@ class TaskCreatePageState extends State<TaskCreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Crear Tarea para el proyecto ${widget.projectName}'),
+      ),
+      body: Container(),
+    );
   }
 }

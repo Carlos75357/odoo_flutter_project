@@ -12,7 +12,10 @@ class TaskListBloc extends Bloc<TaskListEvents, TaskListStates> {
   TaskListBloc() : super(TaskListInitial()) {
     on<TaskListEvents>((event, emit) {
       odooClient.setSettings(OdooConfig.getBaseUrl(), OdooConfig.getSessionId());
-      // TODO: implement event handler
+      on<TaskListLoad>(listTasks);
+      on<TaskSelected>(selectTask);
+      on<TaskListNewButtonPressed>(newTask);
+      on<TaskListReloadEvent>(reloadAll);
     });
   }
 

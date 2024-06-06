@@ -54,6 +54,8 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
             taskWidgets = _buildTaskWidget();
           } else if (state is ProjectReloaded) {
             widget.project = state.project;
+            taskWidgets.clear();
+            taskWidgets = _buildTaskWidget();
           } else if (state is ProjectDetailLoaded) {
             BlocProvider.of<ProjectDetailBloc>(context).fetchProjectTaskStages().then((stages) {
               setState(() {

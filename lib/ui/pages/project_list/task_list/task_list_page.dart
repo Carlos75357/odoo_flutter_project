@@ -2,6 +2,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_create/task_create_page.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_list_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_list_events.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_list_states.dart';
@@ -90,7 +91,10 @@ class _TaskListPageState extends State<TaskListPage> {
           } else if (state is TaskListReload) {
             BlocProvider.of<TaskListBloc>(context).add(TaskListReloadEvent());
           } else if (state is TaskListNew) {
-            BlocProvider.of<TaskListBloc>(context).add(TaskListNewButtonPressed());
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const TaskCreatePage())
+            );
           } else if (state is TaskListSort) {
             taskWidgets.clear();
             taskWidgets = _buildTaskWidgets(state);
