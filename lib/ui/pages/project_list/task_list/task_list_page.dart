@@ -8,6 +8,7 @@ import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_list_stat
 import 'package:provider/provider.dart';
 
 import '../../../../theme_provider.dart';
+import '../../../../widgets/crm_list_page/button_new_lead.dart';
 import '../../../../widgets/crm_list_page/menu.dart';
 import '../../../../widgets/project_list/project_detail/task_widget.dart';
 
@@ -43,8 +44,7 @@ class _TaskListPageState extends State<TaskListPage> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: taskStages != null
-                ? buildMenu(context, taskStages)
-                : const Center(child: CircularProgressIndicator()),
+                ? buildMenu(context, taskStages, BlocProvider.of<TaskListBloc>(context)) : const Center(child: CircularProgressIndicator()),
           ),
         ),
         actions: [
@@ -81,12 +81,12 @@ class _TaskListPageState extends State<TaskListPage> {
             Navigator.push(
               context,
               // TaskDetailPage(task: state.task)
-              MaterialPageRoute(builder: (context) => Placeholder()),
+              MaterialPageRoute(builder: (context) => const Placeholder()),
             );
           } else if (state is TaskListReload) {
-
+            BlocProvider.of<TaskListBloc>(context).add(TaskListReloadEvent());
           } else if (state is TaskListNew) {
-
+            BlocProvider.of<TaskListBloc>(context).add(TaskListNewButtonPressed());
           } else if (state is TaskListSort) {
             taskWidgets.clear();
             taskWidgets = _buildTaskWidgets(state);
@@ -95,12 +95,24 @@ class _TaskListPageState extends State<TaskListPage> {
         child: BlocBuilder<TaskListBloc, TaskListStates>(
           builder: (context, state) {
             if (state is TaskListLoading) {
-              taskStages = state.taskStages;
-              return ListView.builder(
-                itemCount: state.tasks.length,
-                itemBuilder: (context, index) {
-                  return TaskWidget(task: state.tasks[index]);
-                },
+              return Stack(
+                children: [
+                  Container(
+                    color: Theme.of(context).colorScheme.primary,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: taskWidgets,
+                      ),
+                    ),
+                  ),
+                  buildButton(
+                      context,
+                    BlocProvider.of<TaskListBloc>(context),
+                    TaskListNewButtonPressed()
+                  ),
+                ],
               );
             } else if (state is TaskListLoading) {
               return const Center(child: CircularProgressIndicator());

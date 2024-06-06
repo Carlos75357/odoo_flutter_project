@@ -5,7 +5,7 @@ import '../../ui/pages/crm_list/crm_list_bloc.dart';
 import '../../ui/pages/crm_list/crm_list_events.dart';
 
 /// [buildMenu] is a function that builds the menu of the [CrmListPage]
-Widget buildMenu(BuildContext context, List<String>? statuses, Bloc bloc, dynamic event) {
+Widget buildMenu(BuildContext context, List<String>? statuses, Bloc bloc) {
   final screenWidth = MediaQuery.of(context).size.width;
   const minItemWidth = 70.0;
   const defaultItemWidth = 120.0;
@@ -31,7 +31,7 @@ Widget buildMenu(BuildContext context, List<String>? statuses, Bloc bloc, dynami
               width: itemWidth,
               child: GestureDetector(
                 onTap: () {
-                  bloc.add(event);
+                  bloc.add(ChangeFilter(filter: statuses[index]));
                   // BlocProvider.of<bloc>(context).add(ChangeFilter(filter: statuses[index]));
                 },
                 child: Container(

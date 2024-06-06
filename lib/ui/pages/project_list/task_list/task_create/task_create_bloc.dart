@@ -11,7 +11,9 @@ import '../../../../../domain/Task/task.dart';
 class TaskCreateBloc extends Bloc<TaskCreateEvents, TaskCreateStates> {
   TaskCreateBloc() : super(TaskCreateInitial()) {
     odooClient.setSettings(OdooConfig.getBaseUrl(), OdooConfig.getSessionId());
-
+    on<SetLoadingState>(setLoadingState);
+    on<SetSuccessState>(setSuccessState);
+    on<CreateEvent>(createTask);
   }
 
   OdooClient odooClient = OdooClient();
@@ -39,7 +41,11 @@ class TaskCreateBloc extends Bloc<TaskCreateEvents, TaskCreateStates> {
 
     Map<String, dynamic> data = event.values;
 
-    // TODO: Hacer todo el proceso para crear una tarea en odoo
+    dynamic ids = await Future.wait([
+
+    ]);
+
+
 
     CreateResponse response = await repository.createTask('project.task', data);
 

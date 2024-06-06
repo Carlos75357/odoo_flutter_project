@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     // datos para inciar sesión en demos16
-    // TODO: tengo que crear una base de dats en local porque la base de datos no es accesible desde fuera
+    // TODO: tengo que crear una base de dats en local porque la base de datos no es accesible desde fuera, mentira si es
     urlController.text = "https://demos15.aurestic.com";
     usernameController.text = "admin";
     passwordController.text = "admin";

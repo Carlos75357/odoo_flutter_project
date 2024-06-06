@@ -13,9 +13,9 @@ import 'crm_create_events.dart';
 class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
   CrmCreateBloc() : super(CrmCreateInitial()) {
     odooClient.setSettings(OdooConfig.getBaseUrl(), OdooConfig.getSessionId());
-    on<CreateEvents>((event, emit) => createLead(event, emit));
-    on<SetSuccessState>((event, emit) => setSuccessState(event, emit));
-    on<SetLoadingState>((event, emit) => setLoadingState(event, emit));
+    on<CreateEvents>(createLead);
+    on<SetSuccessState>(setSuccessState);
+    on<SetLoadingState>(setLoadingState);
   }
   OdooClient odooClient = OdooClient();
   late RepositoryCrm repository = RepositoryCrm(odooClient: odooClient);

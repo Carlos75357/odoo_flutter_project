@@ -50,7 +50,7 @@ class _CrmListPageState extends State<CrmListPage> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: leadStatuses != null
-                ? buildMenu(context, leadStatuses)
+                ? buildMenu(context, leadStatuses, BlocProvider.of<CrmListBloc>(context))
                 : const Center(child: CircularProgressIndicator()),
           ),
         ),

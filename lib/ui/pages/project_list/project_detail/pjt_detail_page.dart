@@ -5,6 +5,7 @@ import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detai
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_states.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_page.dart';
 
+import '../../../../domain/Task/task_formated.dart';
 import '../../../../domain/project/project.dart';
 import '../../../../domain/Task/task.dart';
 import '../../../../widgets/crm_list_page/button_new_lead.dart';
@@ -22,6 +23,7 @@ class ProjectDetailPage extends StatefulWidget {
 class _ProjectDetailPageState extends State<ProjectDetailPage> {
   List<String>? stages;
   List<Task> tasks = [];
+  late List<TaskFormated> taskFormatedList;
 
   @override
   void initState() {
@@ -77,7 +79,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: stages != null
-                          ? buildMenu(context, stages)
+                          ? buildMenu(context, stages, BlocProvider.of<ProjectDetailBloc>(context))
                           : const Center(child: CircularProgressIndicator()),
                     ),
                   ),
@@ -94,16 +96,6 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                       },
                       icon: const Icon(Icons.edit, color: Colors.white,),
                     ),
-                    // IconButton(
-                    //   onPressed: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(builder: (context) => const Placeholder()),
-                    //     );
-                    //   }, // crear etiqueta,
-                    //   icon: const Icon(Icons.create_new_folder, color: Colors.white,),
-                    //   tooltip: 'Crear nueva tarea',
-                    // )
                   ],
                 ),
                 body: Stack(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../domain/Task/task.dart';
+import '../../../domain/Task/task_formated.dart';
 
 class TaskWidget extends StatelessWidget {
-  final Task task;
+  final TaskFormated task;
 
   const TaskWidget({Key? key, required this.task}) : super(key: key);
 
@@ -37,7 +37,7 @@ class TaskWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Asignados: ${task.assigned?.join(', ') ?? 'Sin asignar'}',
+                  'Asignados: ${task.assignedNames?.join(', ') ?? 'Sin asignar'}',
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 Text(
@@ -45,7 +45,7 @@ class TaskWidget extends StatelessWidget {
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 Text(
-                  'ID de etapa: ${task.stageId?.toString() ?? 'Sin etapa'}',
+                  'ID de etapa: ${task.stageName?.toString() ?? 'Sin etapa'}',
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 Text(
