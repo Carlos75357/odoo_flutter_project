@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/theme_provider.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_page.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_detail/crm_detail_page.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_events.dart';
 import 'package:provider/provider.dart';
 
 import '../../../widgets/crm_list_page/button_new_lead.dart';
@@ -50,8 +51,14 @@ class _CrmListPageState extends State<CrmListPage> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: leadStatuses != null
-                ? buildMenu(context, leadStatuses, BlocProvider.of<CrmListBloc>(context))
-                : const Center(child: CircularProgressIndicator()),
+                ? buildMenu(
+                context,
+                leadStatuses,
+                BlocProvider.of<CrmListBloc>(context),
+                    (String filter) {
+                  BlocProvider.of<CrmListBloc>(context).add(ChangeFilterCrm(filter: filter));
+                }
+            ) : const Center(child: CircularProgressIndicator()),
           ),
         ),
         actions: [

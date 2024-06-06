@@ -14,7 +14,7 @@ import 'crm_list_states.dart';
 class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
   CrmListBloc() : super(CrmListInitial()) {
     odooClient.setSettings(OdooConfig.getBaseUrl(), OdooConfig.getSessionId());
-    on<ChangeFilter>(listCrm);
+    on<ChangeFilterCrm>(listCrm);
     on<LeadSelected>(selectLead);
     on<LoadAllLeads>(loadLeads);
     on<ReloadLeads>(reloadLeads);
@@ -32,7 +32,7 @@ class CrmListBloc extends Bloc<CrmListEvents, CrmListStates> {
 
   /// [listCrm] is a function that loads the leads, depending on the filter,
   /// when [ChangeFilter] is emitted, then this function is called
-  listCrm(ChangeFilter event, Emitter<CrmListStates> emit) async {
+  listCrm(ChangeFilterCrm event, Emitter<CrmListStates> emit) async {
     try {
       emit(CrmListLoading());
       String? filter = event.filter;

@@ -65,7 +65,14 @@ List<int>? parseListInt(dynamic list) {
   final List<dynamic>? listJson = list;
   List<int>? parse;
   if (listJson != null) {
-    parse = listJson.map<int>((dynamic id) => id as int).toList();
+    parse = [];
+    for (var id in listJson) {
+      if (id is int) {
+        parse.add(id);
+      } else {
+        print('Skipping non-integer value: $id');
+      }
+    }
   }
-  return null;
+  return parse;
 }

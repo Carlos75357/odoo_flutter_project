@@ -48,7 +48,7 @@ class ProjectEditBloc extends Bloc<ProjectEditEvent, ProjectEditStates> {
         _getIdByNameOrNull('res.company', projectFormated.companyName),
         _getIdByNameOrNull('res.users', projectFormated.userName),
         _getIdByNameOrNull('project.project.stage', projectFormated.stageName),
-        _getIdsByNames('project.project.tag', projectFormated.tagNames),
+        _getIdsByNames('project.tags', projectFormated.tagNames),
       ]);
 
       projectFormated.partnerId = ids[0];

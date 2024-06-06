@@ -8,10 +8,10 @@ abstract class CrmListEvents {}
 class LoadLeads extends CrmListEvents {}
 
 /// [ChangeFilter] event when the filter is changed.
-class ChangeFilter extends CrmListEvents {
+class ChangeFilterCrm extends CrmListEvents {
   final String filter;
 
-  ChangeFilter({required this.filter});
+  ChangeFilterCrm({required this.filter});
 }
 /// [LeadSelected] event when a lead is selected.
 class LeadSelected extends CrmListEvents {

@@ -70,9 +70,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<TaskCreateBloc>(
           create: (context) => TaskCreateBloc(),
         ),
-        BlocProvider<TaskDetailBloc>(
-          create: (context) => TaskDetailBloc(),
-        ),
+        // BlocProvider<TaskDetailBloc>(
+        //   create: (context) => TaskDetailBloc(),
+        // ),
       ],
       child: MaterialApp(
         theme: Provider.of<ThemeProvider>(context).themeData,

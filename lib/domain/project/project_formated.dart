@@ -6,6 +6,7 @@ class ProjectFormated {
   String? taskName;
   int? partnerId;
   String? partnerName;
+  List<int>? typeIds; // type_ids
   int? companyId;
   String? companyName;
   int? userId;
@@ -26,6 +27,7 @@ class ProjectFormated {
     this.taskName,
     this.partnerId,
     this.partnerName,
+    this.typeIds,
     this.companyId,
     this.companyName,
     this.userId,
@@ -47,6 +49,7 @@ class ProjectFormated {
         name: projectFormated.name,
         taskName: projectFormated.taskName,
         partnerId: projectFormated.partnerId,
+        typeIds: projectFormated.typeIds,
         companyId: projectFormated.companyId,
         userId: projectFormated.userId,
         tagIds: projectFormated.tagIds,
@@ -65,6 +68,7 @@ class ProjectFormated {
       taskName: json['task_name'],
       partnerId: json['partner_id'],
       partnerName: json['partner_name'],
+      typeIds: json['type_ids'],
       companyId: json['company_id'],
       companyName: json['company_name'],
       userId: json['user_id'],
@@ -88,6 +92,7 @@ class ProjectFormated {
     data['task_name'] = taskName;
     data['partner_id'] = partnerId;
     data['partner_name'] = partnerName;
+    data['type_ids'] = typeIds;
     data['company_id'] = companyId;
     data['company_name'] = companyName;
     data['user_id'] = userId;

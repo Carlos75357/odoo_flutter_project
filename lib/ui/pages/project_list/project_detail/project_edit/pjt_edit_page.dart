@@ -192,7 +192,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
                         name: _nameController.text,
                         taskName: _taskNameController.text,
                         partnerName: _clientController.text,
-                        tagIds: _tagsController.text.split(',').map((tag) => int.parse(tag)).toList(),
+                        tagNames: _tagsController.text.split(',').map((tag) => tag.toString()).toList(),
                         userName: _responsibleValue,
                         companyName: _companyController.text,
                         status: _projectStageValue,
@@ -299,6 +299,9 @@ class _EditPopupPageState extends State<EditPopupPage> {
   Widget _buildDropdownField(TextEditingController controller, String label, String type) {
 
     fieldOptions[type]!.add('Ninguno');
+    if (type == 'project_stage') {
+      print('Project Stage: ${fieldOptions[type]}');
+    }
     List<String> options = fieldOptions[type] ?? [];
     print('FieldOptions: $options');
 
@@ -308,11 +311,13 @@ class _EditPopupPageState extends State<EditPopupPage> {
       selectedValue = 'Ninguno';
     } else {
       if (selectedItems[type]?.first != '') {
-        if (type == 'project_stage') {
-          selectedValue = stageTr;
-        } else {
-          selectedValue = selectedItems[type]?.first;
-        }
+        // if (type == 'project_stage') {
+        //   selectedValue = stageTr;
+        // } else {
+        //   selectedValue = selectedItems[type]?.first;
+        // }
+        selectedValue = selectedItems[type]?.first;
+
       } else {
         selectedValue = 'Ninguno';
       }

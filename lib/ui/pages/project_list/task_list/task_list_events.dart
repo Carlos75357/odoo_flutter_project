@@ -18,7 +18,7 @@ class TaskListReloadEvent extends TaskListEvents {}
 
 class TaskListNewButtonPressed extends TaskListEvents {}
 
-class ChangeFilter extends TaskListEvents {
+class ChangeFilterTask extends TaskListEvents {
   final String filter;
-  ChangeFilter(this.filter);
+  ChangeFilterTask(this.filter);
 }

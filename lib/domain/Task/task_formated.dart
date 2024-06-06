@@ -49,7 +49,7 @@ class TaskFormated {
       id: taskFormated.id,
       name: taskFormated.name,
       description: taskFormated.description,
-      assignedId: taskFormated.assignedIds,
+      assignedIds: taskFormated.assignedIds,
       clientId: taskFormated.clientId,
       milestone: taskFormated.milestone,
       dateEnd: taskFormated.dateEnd,

@@ -68,7 +68,11 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (BuildContext context) {
-                return buildMenu(context, leadStatuses, BlocProvider.of<CrmListBloc>(context));
+                return buildMenu(context, leadStatuses, BlocProvider.of<CrmListBloc>(context),
+                    (String filter) {
+                  BlocProvider.of<CrmListBloc>(context).add(ChangeFilterCrm(filter: filter));
+                    }
+                );
               },
             ),
           ),

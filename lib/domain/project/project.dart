@@ -5,6 +5,7 @@ class Project {
   String? name;
   String? taskName;
   int? partnerId;
+  List<int>? typeIds; // type_ids
   int? companyId;
   int? userId; // responsable del proyecto
   List<int>? tagIds;
@@ -22,6 +23,7 @@ class Project {
     this.name,
     this.taskName,
     this.partnerId,
+    this.typeIds,
     this.companyId,
     this.userId,
     this.tagIds,
@@ -47,12 +49,19 @@ class Project {
     if (tasksJson != null) {
       tasks = tasksJson.map<int>((dynamic id) => id as int).toList();
     }
+
+    final List<dynamic>? typeIdsJson = json['type_ids'];
+    List<int>? typeIds;
+    if (typeIdsJson != null) {
+      typeIds = typeIdsJson.map<int>((dynamic id) => id as int).toList();
+    }
     
     return Project(
       id: json['id'] ?? 0,
       name: parseStringField(json['name']),
       taskName: parseStringField(json['label_tasks']),
       partnerId: parseListToInt(json['partner_id']),
+      typeIds: typeIds,
       companyId: parseListToInt(json['company_id']),
       userId: parseListToInt(json['user_id']),
       tagIds: tagIds,
@@ -72,6 +81,7 @@ class Project {
     data['id'] = id;
     if (name != null) data['name'] = name;
     if (partnerId != null) data['partner_id'] = partnerId;
+    if (typeIds != null) data['type_ids'] = typeIds;
     if (companyId != null) data['company_id'] = companyId;
     if (userId != null) data['user_id'] = userId;
     if (tagIds != null) data['tag_ids'] = tagIds;

@@ -30,3 +30,11 @@ class PjtListError extends PjtListStates {
 class PjtNew extends PjtListStates {}
 
 class PjtReload extends PjtListStates {}
+
+class ProjectListSort extends PjtListStates {
+  final String sortBy;
+  @override
+  final Map<String, dynamic> data;
+
+  ProjectListSort(this.sortBy, this.data);
+}

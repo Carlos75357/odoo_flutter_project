@@ -44,7 +44,11 @@ class _TaskListPageState extends State<TaskListPage> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: taskStages != null
-                ? buildMenu(context, taskStages, BlocProvider.of<TaskListBloc>(context)) : const Center(child: CircularProgressIndicator()),
+                ? buildMenu(context, taskStages, BlocProvider.of<TaskListBloc>(context),
+                (String filter) {
+                  BlocProvider.of<TaskListBloc>(context).add(ChangeFilterTask(filter));
+                }
+            ) : const Center(child: CircularProgressIndicator()),
           ),
         ),
         actions: [

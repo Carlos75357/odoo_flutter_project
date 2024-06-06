@@ -32,6 +32,8 @@ class SetState extends ProjectDetailEvents {
 
 }
 
+class SetSuccessState extends ProjectDetailEvents {}
+
 class ErrorEvent extends ProjectDetailEvents {
   final String message;
 
@@ -39,3 +41,8 @@ class ErrorEvent extends ProjectDetailEvents {
 }
 
 class NewProjectButtonPressed extends ProjectDetailEvents {}
+
+class ChangeFilter extends ProjectDetailEvents {
+  final String filter;
+  ChangeFilter(this.filter);
+}

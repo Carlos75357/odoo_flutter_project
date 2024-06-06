@@ -72,6 +72,7 @@ class RepositoryProject extends ProjectRepositoryDataSource {
     try {
       var context = {
         'lang': 'es_ES',
+        "active_test": false,
       };
 
       var kwargs = {
@@ -98,11 +99,13 @@ class RepositoryProject extends ProjectRepositoryDataSource {
     try {
       var context = {
         'lang': 'es_ES',
+        "active_test": false,
       };
 
       var kwargs = {
         'context': context,
         'fields': fields
+
       };
 
       var response = await odooClient.searchRead(modelName, [domain], kwargs);
@@ -125,6 +128,7 @@ class RepositoryProject extends ProjectRepositoryDataSource {
       while (true) {
         var context = {
           'lang': 'es_ES',
+          "active_test": false,
         };
 
         var kwargs = {
@@ -154,6 +158,42 @@ class RepositoryProject extends ProjectRepositoryDataSource {
     }
   }
 
+  Future<int> getStageIdByName(String modelName, String name, List<int> allowedIds) async {
+    try {
+      int offset = 0;
+      int limit = 10;
+      while (true) {
+        var context = {
+          'lang': 'es_ES',
+          "active_test": false,
+        };
+
+        var kwargs = {
+          'context': context,
+          'offset': offset,
+          'limit': limit,
+          'fields': ['id', 'name']
+        };
+
+        var response = await odooClient.searchRead(modelName, [['name', '=', name]], kwargs);
+        if (response.isEmpty) {
+          return 0;
+        }
+
+        var record = response.firstWhere((record) => record['name'] == name && allowedIds.contains(record['id']));
+
+        if (record != null) {
+          return record['id'] as int;
+        }
+
+        offset += limit;
+      }
+    } catch (e) {
+      return 0;
+    }
+  }
+
+
   @override
   Future<List<int>> getIdsByName(String modelName, List<String> names) async {
     try {
@@ -165,6 +205,7 @@ class RepositoryProject extends ProjectRepositoryDataSource {
       while (true) {
         var context = {
           'lang': 'es_ES',
+          "active_test": false,
         };
 
         var kwargs = {
@@ -199,6 +240,7 @@ class RepositoryProject extends ProjectRepositoryDataSource {
 
       var context = {
         'lang': 'es_ES',
+        "active_test": false,
       };
 
       var kwargs = {
@@ -226,6 +268,7 @@ class RepositoryProject extends ProjectRepositoryDataSource {
         try {
           var context = {
             'lang': 'es_ES',
+            "active_test": false,
           };
 
           var kwargs = {

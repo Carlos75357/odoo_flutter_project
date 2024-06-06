@@ -1,6 +1,8 @@
 import '../../../../domain/project/project.dart';
 
-abstract class ProjectDetailStates {}
+abstract class ProjectDetailStates {
+  get data => null;
+}
 
 class ProjectDetailInitial extends ProjectDetailStates {}
 
@@ -12,6 +14,21 @@ class ProjectDetailSuccess extends ProjectDetailStates {
   final Project project;
 
   ProjectDetailSuccess(this.project);
+}
+
+class ProjectDetailSort extends ProjectDetailStates {
+  final String sortBy;
+
+  @override
+  final Map<String, dynamic> data;
+
+  ProjectDetailSort(this.sortBy, this.data);
+}
+
+class ProjectDetailLoaded extends ProjectDetailStates{
+  final Project project;
+
+  ProjectDetailLoaded(this.project);
 }
 
 class ProjectDetailSave extends ProjectDetailStates {

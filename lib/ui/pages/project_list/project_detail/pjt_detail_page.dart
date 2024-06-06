@@ -13,7 +13,7 @@ import '../../../../widgets/crm_list_page/menu.dart';
 import '../../../../widgets/project_list/project_detail/task_widget.dart';
 
 class ProjectDetailPage extends StatefulWidget {
-  late Project project;
+  Project project;
   ProjectDetailPage({super.key, required this.project});
 
   @override
@@ -23,7 +23,8 @@ class ProjectDetailPage extends StatefulWidget {
 class _ProjectDetailPageState extends State<ProjectDetailPage> {
   List<String>? stages;
   List<Task> tasks = [];
-  late List<TaskFormated> taskFormatedList;
+  List<TaskFormated> taskFormatedList = [];
+  List<Widget> taskWidgets = [];
 
   @override
   void initState() {
@@ -33,13 +34,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
 
   void configData() async {
     BlocProvider.of<ProjectDetailBloc>(context).add(SetState());
-    BlocProvider.of<ProjectDetailBloc>(context).fetchProjectTaskStages().then((stages) {
-      setState(() {
-        this.stages = stages;
-      });
-    }).then((_) {
-      BlocProvider.of<ProjectDetailBloc>(context).add(LoadProject(widget.project));
-    });
+    BlocProvider.of<ProjectDetailBloc>(context).add(LoadProject(widget.project));
   }
 
   void _onProjectSave(Project updateProject) {
@@ -55,13 +50,41 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
             body: BlocListener<ProjectDetailBloc, ProjectDetailStates>(
         listener: (context, state) {
           if (state is ProjectDetailSuccess) {
-            BlocProvider.of<ProjectDetailBloc>(context).tasks().then((tasks) {
-              setState(() {
-                this.tasks = tasks;
-              });
-            });
+            taskWidgets.clear();
+            taskWidgets = _buildTaskWidget();
           } else if (state is ProjectReloaded) {
             widget.project = state.project;
+          } else if (state is ProjectDetailLoaded) {
+            BlocProvider.of<ProjectDetailBloc>(context).fetchProjectTaskStages().then((stages) {
+              setState(() {
+                this.stages = stages;
+              });
+            }).then((_) {
+              BlocProvider.of<ProjectDetailBloc>(context).tasks().then((tasks) {
+                setState(() {
+                  this.tasks = tasks;
+                });
+              }).then((_) {
+                BlocProvider.of<ProjectDetailBloc>(context).getTaskFormated(tasks).then((taskFormatedList) {
+                  setState(() {
+                    this.taskFormatedList = taskFormatedList;
+                  });
+                }).then((_) {
+                  BlocProvider.of<ProjectDetailBloc>(context).add(SetSuccessState());
+                });
+              });
+            });
+          } else if ( state is ProjectDetailSort) {
+            taskWidgets.clear();
+            taskFormatedList.clear();
+            BlocProvider.of<ProjectDetailBloc>(context).getTaskFormated(state.data['tasks']).then((taskFormatedList) {
+              setState(() {
+                this.taskFormatedList = taskFormatedList;
+              });
+            }).then((_) {
+              taskWidgets = _buildTaskWidget();
+              BlocProvider.of<ProjectDetailBloc>(context).add(SetSuccessState());
+            });
           }
         },
         child: BlocBuilder<ProjectDetailBloc, ProjectDetailStates> (
@@ -79,8 +102,14 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: stages != null
-                          ? buildMenu(context, stages, BlocProvider.of<ProjectDetailBloc>(context))
-                          : const Center(child: CircularProgressIndicator()),
+                          ? buildMenu(
+                          context,
+                          stages,
+                          BlocProvider.of<ProjectDetailBloc>(context),
+                              (String filter) {
+                            BlocProvider.of<ProjectDetailBloc>(context).add(ChangeFilter(filter));
+                          }
+                      ) : const Center(child: CircularProgressIndicator()),
                     ),
                   ),
                   actions: [
@@ -105,7 +134,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                       child: SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: _buildTaskWidget(),
+                          children: taskWidgets,
                         ),
                       ),
                     ),
@@ -143,7 +172,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
   List<Widget> _buildTaskWidget() {
     List<Widget> taskWidgets = [];
 
-    for (var taskData in tasks) {
+    for (var taskData in taskFormatedList) {
       taskWidgets.add(
         TaskWidget(
           task: taskData,

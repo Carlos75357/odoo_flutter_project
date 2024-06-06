@@ -8,6 +8,7 @@ import 'package:flutter_crm_prove/widgets/crm_list_page/button_new_lead.dart';
 import 'package:provider/provider.dart';
 
 import '../../../domain/project/project.dart';
+import '../../../domain/project/project_formated.dart';
 import '../../../theme_provider.dart';
 import '../../../widgets/project_list/project_widget.dart';
 
@@ -20,6 +21,8 @@ class ProjectListPage extends StatefulWidget {
 
 class _ProjectListPageState extends State<ProjectListPage> {
   List<Project> projects = [];
+  List<ProjectFormated> projectsFormated = [];
+
 
   @override
   void initState() {
