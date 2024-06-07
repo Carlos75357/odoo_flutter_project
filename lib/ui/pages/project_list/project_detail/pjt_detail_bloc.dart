@@ -115,41 +115,55 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvents, ProjectDetailStates> {
 
   Future<List<TaskFormated>> getTaskFormated(List<Task> tasks) async {
     try {
-      while (true) {
-        List<TaskFormated> tasksFormated = [];
-        for (var task in tasks) {
+      List<TaskFormated> tasksFormated = [];
 
-          TaskFormated taskFormated = TaskFormated(
-            id: task.id,
-            name: task.name,
-            description: task.description,
-            assignedIds: task.assignedIds,
-            assignedNames: await taskRepository.getNamesByIds('res.partner', task.assignedIds),
-            clientId: task.clientId,
-            clientName: await taskRepository.getNameById('res.partner', task.clientId ?? 0),
-            milestone: task.milestone,
-            dateEnd: task.dateEnd,
-            tagIds: task.tagIds,
-            tagNames: await taskRepository.getNamesByIds('project.tags', task.tagIds),
-            companyId: task.companyId,
-            companyName: await taskRepository.getNameById('res.company', task.companyId ?? 0),
-            plannedHours: task.plannedHours,
-            stageId: task.stageId,
-            stageName: await taskRepository.getNameById('project.task.type', task.stageId ?? 0),
-            priority: task.priority,
-            totalHoursSpent: task.totalHoursSpent,
-            remainingHours: task.remainingHours
-          );
-          tasksFormated.add(taskFormated);
-        }
-        if (tasksFormated.length == tasks.length) {
-          return tasksFormated;
-        }
+      for (var task in tasks) {
+        List<Future> futures = [
+          taskRepository.getNamesByIds('res.partner', task.assignedIds),
+          taskRepository.getNameById('res.partner', task.clientId ?? 0),
+          taskRepository.getNamesByIds('project.tags', task.tagIds),
+          taskRepository.getNameById('res.company', task.companyId ?? 0),
+          taskRepository.getNameById('project.task.type', task.stageId ?? 0),
+        ];
+
+        List results = await Future.wait(futures);
+
+        List<String> assignedNames = results[0];
+        String clientName = results[1];
+        List<String> tagNames = results[2];
+        String companyName = results[3];
+        String stageName = results[4];
+
+        TaskFormated taskFormated = TaskFormated(
+          id: task.id,
+          name: task.name,
+          description: task.description,
+          assignedIds: task.assignedIds,
+          assignedNames: assignedNames,
+          clientId: task.clientId,
+          clientName: clientName,
+          dateEnd: task.dateEnd,
+          tagIds: task.tagIds,
+          tagNames: tagNames,
+          companyId: task.companyId,
+          companyName: companyName,
+          plannedHours: task.plannedHours,
+          stageId: task.stageId,
+          stageName: stageName,
+          priority: task.priority,
+          totalHoursSpent: task.totalHoursSpent,
+          remainingHours: task.remainingHours,
+        );
+
+        tasksFormated.add(taskFormated);
       }
+
+      return tasksFormated;
     } catch (e) {
-      throw Exception('Failed to get task formated: $e');
+      throw Exception('Failed to get task formatted: $e');
     }
   }
+
 
   Future<List<String>> fetchProjectTaskStages() async {
     try {

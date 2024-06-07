@@ -55,4 +55,29 @@ class TaskCreateBloc extends Bloc<TaskCreateEvents, TaskCreateStates> {
       emit(TaskCreateError("Ha ocurrido un error al crear la tarea"));
     }
   }
+
+  Future<Map<String, List<String>>> getFieldsOptions() async {
+
+    List<String> tagNames = await repository.getAllNames('project.tags', ['name']);
+    List<String> stageNames = await repository.getAllNames('project.task.type', ['name']);
+    List<String> assignedNames = await repository.getAllNames('res.users', ['name']);
+    List<String> companyNames = await repository.getAllNames('res.company', ['name']);
+    List<String> clientNames = await repository.getAllNames('res.partner', ['name']);
+
+    Map<String, List<String>> fieldOptions = {
+      'assigned_name': [],
+      'client_name': [],
+      'tag_names': [],
+      'company_names': [],
+      'stage_names': [],
+    };
+
+    fieldOptions['assigned_name'] = assignedNames;
+    fieldOptions['client_name'] = clientNames;
+    fieldOptions['tag_names'] = tagNames;
+    fieldOptions['company_names'] = companyNames;
+    fieldOptions['stage_names'] = stageNames;
+
+    return fieldOptions;
+  }
 }

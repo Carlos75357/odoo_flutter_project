@@ -4,16 +4,18 @@ import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_events.dart';
 
 import '../../domain/project/project.dart';
+import '../../domain/project/project_formated.dart';
 
 class ProjectWidget extends StatelessWidget {
-  final Project project;
+  final ProjectFormated projectFormated;
 
-  const ProjectWidget({Key? key, required this.project}) : super(key: key);
+  const ProjectWidget({Key? key, required this.projectFormated}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        Project project = projectFormated.projectFormatedToProject(projectFormated);
         BlocProvider.of<PjtListBloc>(context).add(PjtSelected(project: project));
       },
       child: Padding(
@@ -33,30 +35,30 @@ class ProjectWidget extends StatelessWidget {
           ),
           child: ListTile(
             title: Text(
-              project.name ?? 'Sin nombre',
+              projectFormated.name ?? 'Sin nombre',
               style: const TextStyle(color: Colors.white, fontSize: 14),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Responsable: ${project.userId ?? 'Sin responsable'}',
+                  'Responsable: ${projectFormated.userId ?? 'Sin responsable'}',
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 Text(
-                  'Fecha de creación: ${project.dateStart != null ? project.dateStart! : 'Sin fecha'}',
+                  'Fecha de creación: ${projectFormated.dateStart != null ? projectFormated.dateStart! : 'Sin fecha'}',
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 Text(
-                  'Fecha límite: ${project.date != null ? project.date! : 'Sin fecha'}',
+                  'Fecha límite: ${projectFormated.date != null ? projectFormated.date! : 'Sin fecha'}',
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 Text(
-                  'Cantidad de tareas: ${project.tasks?.length ?? 0}', // Assuming `tagIds` represents tasks
+                  'Cantidad de tareas: ${projectFormated.tasks?.length ?? 0}', // Assuming `tagIds` represents tasks
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 Text(
-                  'Estado: ${project.status ?? 'Sin estado'}',
+                  'Estado: ${projectFormated.status ?? 'Sin estado'}',
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 // Text(

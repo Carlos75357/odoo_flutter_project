@@ -24,7 +24,6 @@ class PjtListBloc extends Bloc<PjtListEvents, PjtListStates> {
   listProjects(LoadAll event, Emitter<PjtListStates> emit) async {
     try {
       emit(PjtListLoading());
-      List<ProjectFormated> projectsFormated = [];
       final response = await repository.listProjects("project.project", [], {});
       projects = response;
       Map<String, dynamic> data = {
@@ -33,35 +32,53 @@ class PjtListBloc extends Bloc<PjtListEvents, PjtListStates> {
 
       // obtener project formated
 
+      List<ProjectFormated> formattedProjects = [];
+
       for (var project in projects) {
+        List<Future> futures = [
+          repository.getNameById('res.partner', project.partnerId ?? 0),
+          repository.getNameById('res.company', project.companyId ?? 0),
+          repository.getNameById('res.users', project.userId ?? 0),
+          repository.getNamesByIds('project.tags', project.tagIds ?? []),
+          repository.getNameById('project.task.type', project.stageId ?? 0),
+        ];
+
+        List results = await Future.wait(futures);
+
+        String partnerName = results[0];
+        String companyName = results[1];
+        String userName = results[2];
+        List<String> tagNames = results[3];
+        String stageName = results[4];
 
         ProjectFormated projectFormated = ProjectFormated(
           id: project.id,
           name: project.name,
           taskName: project.taskName,
           partnerId: project.partnerId,
-          partnerName: await repository.getNameById('res.partner', project.partnerId ?? 0),
+          partnerName: partnerName,
           typeIds: project.typeIds,
           companyId: project.companyId,
-          companyName: await repository.getNameById('res.company', project.companyId ?? 0),
+          companyName: companyName,
           userId: project.userId,
-          userName: await repository.getNameById('res.users', project.userId ?? 0),
+          userName: userName,
           tagIds: project.tagIds,
-          tagNames: await repository.getNamesByIds('project.tags', project.tagIds ?? []),
+          tagNames: tagNames,
           status: project.status,
           stageId: project.stageId,
-          stageName: await repository.getNameById('project.task.type', project.stageId ?? 0),
+          stageName: stageName,
           dateStart: project.dateStart,
           date: project.date,
-          tasks: project.tasks
+          tasks: project.tasks,
         );
 
-        projectsFormated.add(projectFormated);
+        formattedProjects.add(projectFormated);
       }
 
 
+
       data = {
-        'projects_formated': response,
+        'projects_formated': formattedProjects,
       };
 
       emit(PjtListSuccess(data));

@@ -61,7 +61,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
         listener: (context, state) {
           if (state is PjtListSuccess) {
             setState(() {
-              projects = state.data['projects'];
+              projectsFormated = state.data['projects_formated'];
             });
           } else if (state is PjtNew) {
             Navigator.push(
@@ -116,10 +116,10 @@ class _ProjectListPageState extends State<ProjectListPage> {
   List<Widget> _buildProjectWidget() {
     List<Widget> projectWidgets = [];
 
-    for (var projectData in projects) {
+    for (var projectData in projectsFormated) {
       projectWidgets.add(
         ProjectWidget(
-          project: projectData,
+          projectFormated: projectData,
         ),
       );
     }

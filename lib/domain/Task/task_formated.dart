@@ -9,7 +9,6 @@ class TaskFormated {
   List<String>? assignedNames;
   int? clientId;
   String? clientName;
-  int? milestone; // milestone_id
   String? dateEnd; // date_end
   List<int>? tagIds;
   List<String>? tagNames;
@@ -30,7 +29,6 @@ class TaskFormated {
     this.assignedNames,
     this.clientId,
     this.clientName,
-    this.milestone,
     this.dateEnd,
     this.tagIds,
     this.tagNames,
@@ -51,7 +49,6 @@ class TaskFormated {
       description: taskFormated.description,
       assignedIds: taskFormated.assignedIds,
       clientId: taskFormated.clientId,
-      milestone: taskFormated.milestone,
       dateEnd: taskFormated.dateEnd,
       tagIds: taskFormated.tagIds,
       companyId: taskFormated.companyId,
@@ -72,7 +69,6 @@ class TaskFormated {
       assignedNames: json['assigned_names'] != null ? List<String>.from(json['assigned_names']) : null,
       clientId: parseIntField(json['partner_id']),
       clientName: parseStringField(json['partner_name']),
-      milestone: parseStringField(json['milestone']),
       dateEnd: parseStringField(json['date_end']),
       tagIds: json['tag_ids'] != null ? List<int>.from(json['tag_ids']) : null,
       tagNames: json['tag_names'] != null ? List<String>.from(json['tag_names']) : null,
@@ -96,7 +92,6 @@ class TaskFormated {
       'assigned_name': assignedNames,
       'client_id': clientId,
       'client_name': clientName,
-      'milestone': milestone,
       'date_end': dateEnd,
       'tag_ids': tagIds,
       'tag_names': tagNames,

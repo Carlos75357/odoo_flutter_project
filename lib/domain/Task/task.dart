@@ -6,7 +6,6 @@ class Task {
   String? description;
   List<int>? assignedIds; // user_ids
   int? clientId;
-  int? milestone; // milestone_id
   String? dateEnd; // date_end
   List<int>? tagIds;
   int? companyId; // company_id
@@ -22,7 +21,6 @@ class Task {
     this.description,
     this.assignedIds,
     this.clientId,
-    this.milestone,
     this.dateEnd,
     this.tagIds,
     this.companyId,
@@ -40,7 +38,6 @@ class Task {
       description: parseStringField(json['description']),
       assignedIds: parseListInt(json['manager_id']),
       clientId: parseIntField(json['partner_id']),
-      milestone: parseStringField(json['milestone']),
       dateEnd: parseStringField(json['date_end']),
       tagIds: parseListInt(json['tag_ids']),
       companyId: parseIntField(json['company_id']),
@@ -59,7 +56,6 @@ class Task {
       'description': description,
       'assigned_ids': assignedIds,
       'client': clientId,
-      'milestone': milestone,
       'date_end': dateEnd,
       'tag_ids': tagIds,
       'company_id': companyId,

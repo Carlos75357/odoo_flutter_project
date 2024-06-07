@@ -15,7 +15,8 @@ import '../../../../widgets/project_list/project_detail/task_widget.dart';
 
 class TaskListPage extends StatefulWidget {
   final String? projectName;
-  const TaskListPage({super.key, this.projectName});
+  final int projectId;
+  const TaskListPage({super.key, this.projectName, required this.projectId});
 
   @override
   _TaskListPageState createState() => _TaskListPageState();
@@ -93,7 +94,7 @@ class _TaskListPageState extends State<TaskListPage> {
           } else if (state is TaskListNew) {
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const TaskCreatePage())
+                MaterialPageRoute(builder: (context) => TaskCreatePage(projectName: widget.projectName ?? 'Sin nombre', projectId: widget.projectId,))
             );
           } else if (state is TaskListSort) {
             taskWidgets.clear();
