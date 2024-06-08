@@ -7,8 +7,8 @@ import '../../ui/pages/crm_list/crm_list_events.dart';
 
 /// [buildButton] method to create the button.
 Widget buildButton(BuildContext context, Bloc bloc, dynamic event) {
-  // return RemoteConfigService.instance.canCreateCrmLeads ? _buildNewLeadButton(context, bloc, event) : _buildErrorNewLeadButton(context);
-  return _buildNewLeadButton(context, bloc, event);
+  return RemoteConfigService.instance.canCreateCrmLeads ? _buildNewLeadButton(context, bloc, event) : _buildErrorNewLeadButton(context);
+  // return _buildNewLeadButton(context, bloc, event);
 }
 
 Widget _buildNewLeadButton(BuildContext context, Bloc bloc, dynamic event) {

@@ -289,7 +289,7 @@ class _CrmDetailState extends State<CrmDetail> {
                   ),
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   leading: canPop ? IconButton(
-                    icon: const Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () {
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
                     },

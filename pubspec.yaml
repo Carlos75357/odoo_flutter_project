@@ -40,8 +40,6 @@ dependencies:
   firebase_remote_config: ^4.4.2
   firebase_analytics: ^10.10.2
   firebase_crashlytics: ^3.3.0
-  image_picker: ^0.8.7+5
-  flutter_quill: ^9.3.11
   provider:
 
 dev_dependencies:

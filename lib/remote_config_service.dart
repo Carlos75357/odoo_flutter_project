@@ -25,8 +25,8 @@ class RemoteConfigService {
 
   Future<void> setDefaults() async {
     await remoteConfig.setDefaults(const {
-      "can_create_crm_leads": false,
-      "can_delete_crm_leads": false,
+      "can_create_crm_leads": true,
+      "can_delete_crm_leads": true,
       "crm_leads_limit": 10,
     });
   }

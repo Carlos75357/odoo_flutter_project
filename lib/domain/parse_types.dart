@@ -1,4 +1,3 @@
-/// Check if the field is null or bool, if so, return null else return the value
 dynamic parseStringField(dynamic value) {
   if (value is List) {
     for (var item in value) {
@@ -11,7 +10,6 @@ dynamic parseStringField(dynamic value) {
   return (value is bool) ? null : value as String?;
 }
 
-/// Check if the field is bool, if so, return null else return the value parsed to int
 int? parseIntField(dynamic value) {
   if (value is double) {
     return value.toInt();
@@ -22,7 +20,6 @@ int? parseIntField(dynamic value) {
   }
 }
 
-/// Check if the field is bool, if so, return null else return the value parsed to double
 double? parseDoubleField(dynamic value) {
   if (value is int || value is double) {
     return value.toDouble();
@@ -70,7 +67,7 @@ List<int>? parseListInt(dynamic list) {
       if (id is int) {
         parse.add(id);
       } else {
-        print('Skipping non-integer value: $id');
+        print('No hay int en la lista: $id');
       }
     }
   }

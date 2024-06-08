@@ -2,6 +2,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_page.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_create/task_create_page.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_list_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_list_events.dart';
@@ -53,6 +54,12 @@ class _TaskListPageState extends State<TaskListPage> {
             ) : const Center(child: CircularProgressIndicator()),
           ),
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ProjectListPage()));
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -84,7 +91,7 @@ class _TaskListPageState extends State<TaskListPage> {
             );
             FirebaseCrashlytics.instance.recordError(state, null, fatal: true);
           } else if (state is TaskListDetail) {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               // TaskDetailPage(task: state.task)
               MaterialPageRoute(builder: (context) => const Placeholder()),
@@ -92,7 +99,7 @@ class _TaskListPageState extends State<TaskListPage> {
           } else if (state is TaskListReload) {
             BlocProvider.of<TaskListBloc>(context).add(TaskListReloadEvent());
           } else if (state is TaskListNew) {
-            Navigator.push(
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => TaskCreatePage(projectName: widget.projectName ?? 'Sin nombre', projectId: widget.projectId,))
             );
@@ -103,7 +110,7 @@ class _TaskListPageState extends State<TaskListPage> {
         },
         child: BlocBuilder<TaskListBloc, TaskListStates>(
           builder: (context, state) {
-            if (state is TaskListLoading) {
+            if (state is TaskListSuccess) {
               return Stack(
                 children: [
                   Container(

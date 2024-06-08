@@ -64,14 +64,14 @@ class _ProjectListPageState extends State<ProjectListPage> {
               projectsFormated = state.data['projects_formated'];
             });
           } else if (state is PjtNew) {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => const Placeholder(),
               ),
             );
           } else if (state is PjtDetail) {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => ProjectDetailPage(project: state.project),

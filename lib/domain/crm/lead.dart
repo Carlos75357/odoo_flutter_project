@@ -1,6 +1,5 @@
 import '../parse_types.dart';
 
-/// [Lead] model class, contains the data of a lead
 class Lead {
   int id;
   String? name;
@@ -75,7 +74,6 @@ class Lead {
     return 'Id: $id - Nombre: $name - Contacto: $clientId - Email: $email - Teléfono: $phone - Cliente: $clientId - Compañía: $companyId - Usuario: $userId - Fecha límite: $dateDeadline - Sales Team: $teamId - Expected Income: $expectedRevenue - Tags: $tagIds - Priority: $priority - Probability: $probability - Fecha de Creación: $createDate - Etapa: $stageId';
   }
 
-  /// Convert a [Lead] into a [Map]
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;

@@ -69,7 +69,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
     _projectStageController = TextEditingController();
     _responsibleValue = '';
     _projectStageValue = '';
-    _isEdited = ValueNotifier<bool>(false);
+    _isEdited = ValueNotifier<bool>(true);
 
     _nameController.addListener(_updateEdited);
     _taskNameController.addListener(_updateEdited);

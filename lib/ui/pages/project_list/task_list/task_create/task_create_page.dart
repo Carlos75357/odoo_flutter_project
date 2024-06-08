@@ -1,11 +1,9 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_create/task_create_events.dart';
-import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_create/task_create_events.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_create/task_create_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_create/task_create_states.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 
@@ -22,7 +20,7 @@ class TaskCreatePage extends StatefulWidget {
 
 class TaskCreatePageState extends State<TaskCreatePage> {
   late TextEditingController _nameController;
-  late quill.QuillController _descriptionController;
+  late TextEditingController _descriptionController;
   late TextEditingController _assignedController;
   late TextEditingController _clientController;
   late TextEditingController _companyController;
@@ -37,7 +35,7 @@ class TaskCreatePageState extends State<TaskCreatePage> {
   void initState() {
     super.initState();
     _nameController = TextEditingController();
-    _descriptionController = quill.QuillController.basic();
+    _descriptionController = TextEditingController();
     _assignedController = TextEditingController();
     _clientController = TextEditingController();
     _companyController = TextEditingController();
@@ -82,8 +80,7 @@ class TaskCreatePageState extends State<TaskCreatePage> {
     });
   }
 
-  Map<String, dynamic> changes = {
-  };
+  Map<String, dynamic> changes = {};
 
   Map<String, List<String>> fieldOptions = {
     'assigned_name': [],
@@ -99,12 +96,18 @@ class TaskCreatePageState extends State<TaskCreatePage> {
       appBar: AppBar(
         title: Text('Crear Tarea para el proyecto ${widget.projectName}'),
         backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskListPage(projectId: widget.projectId, projectName: widget.projectName)));
+          },
+        ),
       ),
       body: BlocListener<TaskCreateBloc, TaskCreateStates>(
         listener: (context, state) {
           if (state is TaskCreateDone) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("Guardado con exito"),
+              content: Text("Guardado con éxito"),
             ));
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskListPage(projectId: widget.projectId)));
           }
@@ -115,36 +118,38 @@ class TaskCreatePageState extends State<TaskCreatePage> {
             FirebaseCrashlytics.instance.recordError(state, null, fatal: true);
           }
         },
-        child: BlocBuilder(
+        child: BlocBuilder<TaskCreateBloc, TaskCreateStates>(
           builder: (context, state) {
             if (state is TaskCreateLoading) {
               return const LinearProgressIndicator();
             }
             if (state is TaskCreateSuccess) {
               return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                      child: Column(
-                          children: [
-                            _buildField('Nombre', _nameController, 'Text', 'name'),
-                            _buildField('Asignado a', _assignedController, 'DropDown', 'assigned_name'),
-                            _buildField('Cliente', _clientController, 'DropDown', 'client_name'),
-                            _buildField('Etiquetas', _tagsController, 'MultiSelect', 'tag_names'),
-                            _buildField('Companias', _companyController, 'DropDown', 'company_names'),
-                            _buildField('Prioridad', _priorityController, 'Text', 'priority'),
-                            _buildField('Etapa', _stageController, 'DropDown', 'stage_names'),
-                            _buildField('Horas Planificadas', _plannedHoursController, 'Text', 'planned_hours'),
-                            _buildField('Horas Totales', _totalHoursSpentController, 'Text', 'total_hours'),
-                            _buildField('Horas Restantes', _remainingHoursController, 'Text', 'remaining_hours'),
-                          ]
-                      )
-                  )
-            );
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildField('Nombre', _nameController, 'Text', 'name'),
+                      _buildField('Descripción', _descriptionController, 'Description', 'description'),
+                      _buildField('Asignado a', _assignedController, 'DropDown', 'assigned_name'),
+                      _buildField('Cliente', _clientController, 'DropDown', 'client_name'),
+                      _buildField('Etiquetas', _tagsController, 'MultiSelect', 'tag_names'),
+                      _buildField('Compañías', _companyController, 'DropDown', 'company_names'),
+                      _buildField('Prioridad', _priorityController, 'Text', 'priority'),
+                      _buildField('Etapa', _stageController, 'DropDown', 'stage_names'),
+                      _buildField('Horas Planificadas', _plannedHoursController, 'Text', 'planned_hours'),
+                      _buildField('Horas Totales', _totalHoursSpentController, 'Text', 'total_hours'),
+                      _buildField('Horas Restantes', _remainingHoursController, 'Text', 'remaining_hours'),
+                      _buildButton(),
+                    ],
+                  ),
+                ),
+              );
             } else {
               return const RefreshProgressIndicator();
             }
           },
-        )
+        ),
       ),
     );
   }
@@ -162,22 +167,9 @@ class TaskCreatePageState extends State<TaskCreatePage> {
       case 'DropDown':
         fieldWidget = _buildDropDownField(controller, title);
         break;
-      case 'RichText':
-        final isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
-        fieldWidget = QuillEditor.basic(
-          configurations: QuillEditorConfigurations(
-            autoFocus: true,
-            expands: false,
-            padding: EdgeInsets.all(10),
-            keyboardAppearance: isDarkMode ? Brightness.dark : Brightness.light,
-            embedBuilders: [], // Asegúrate de que esto es una lista
-            controller: _descriptionController, // Asegúrate de que esto está definido
-          ),
-          focusNode: FocusNode(),
-          scrollController: ScrollController(),
-        );
+      case 'Description':
+        fieldWidget = _buildDescriptionField(controller, title);
         break;
-
       default:
         fieldWidget = _buildTextField(controller, title, type, caseType);
     }
@@ -200,15 +192,28 @@ class TaskCreatePageState extends State<TaskCreatePage> {
 
   Widget _buildTextField(TextEditingController controller, String title, String type, String caseType) {
     return TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          hintText: title,
-        ),
-        onChanged: (value) {
-          if (title.toLowerCase() != 'probabilidad') {
-            // addChanges(caseType, value);
-          }
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: title,
+      ),
+      onChanged: (value) {
+        if (title.toLowerCase() != 'probabilidad') {
+          // addChanges(caseType, value);
         }
+      },
+    );
+  }
+
+  Widget _buildDescriptionField(TextEditingController controller, String title) {
+    return TextField(
+      controller: controller,
+      maxLines: 10,
+      decoration: InputDecoration(
+        hintText: title,
+        border: OutlineInputBorder(),
+      ),
+      onChanged: (value) {
+      },
     );
   }
 
@@ -217,25 +222,25 @@ class TaskCreatePageState extends State<TaskCreatePage> {
     print('FieldOptions: $options');
 
     return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Colors.grey[400]!,
-            width: 1,
-          ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.grey[400]!,
+          width: 1,
         ),
-        child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: MultiSelectDialogField(
-                items: options.map((option) => MultiSelectItem(option, option)).toList(),
-                title: Text('Select $type'),
-                onConfirm: (results) {
-                  setState(() {
-                    controller.text = results.map((e) => e.toString()).join(', ');
-                  });
-                },
-            )
-        )
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: MultiSelectDialogField(
+          items: options.map((option) => MultiSelectItem(option, option)).toList(),
+          title: Text('Select $type'),
+          onConfirm: (results) {
+            setState(() {
+              controller.text = results.map((e) => e.toString()).join(', ');
+            });
+          },
+        ),
+      ),
     );
   }
 
@@ -290,12 +295,11 @@ class TaskCreatePageState extends State<TaskCreatePage> {
           changes['tag_names'] = _tagsController.text.split(',').map((tag) => tag.trim()).toList();
         }
 
-        // BlocProvider.of<TaskCreateBloc>(context).add(CreateTaskEvent(values: changes));
+        BlocProvider.of<TaskCreateBloc>(context).add(CreateEvent(values: changes));
       },
       child: const Text('Crear Tarea'),
     );
   }
-
 
   void _updateChangesIfNotEmpty(String key, dynamic value) {
     if (value.runtimeType == String) {

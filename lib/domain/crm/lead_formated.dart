@@ -1,7 +1,6 @@
 import '../parse_types.dart';
 import 'lead.dart';
 
-/// [LeadFormated] model class, contains the data of a lead, have names and the ids
 class LeadFormated {
   int id;
   String? name;
