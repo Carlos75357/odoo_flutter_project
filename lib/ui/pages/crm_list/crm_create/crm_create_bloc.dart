@@ -167,9 +167,9 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  Future<Map<String, int>> getClientsWithCompanyId() {
-    List<int> clientCompanyIds = await repository.getIdsByNames('res.partner', ['company_id']);
-  }
+  //Future<Map<String, int>> getClientsWithCompanyId() {
+    //List<int> clientCompanyIds = await repository.getIdsByNames('res.partner', ['company_id']);
+  //}
 
   /// [getNames] method to get names.
   Future<List<String>> getNames(String modelName) async {
