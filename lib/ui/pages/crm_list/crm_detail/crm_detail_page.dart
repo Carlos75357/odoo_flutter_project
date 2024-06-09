@@ -15,8 +15,6 @@ import '../crm_list_page.dart';
 import 'crm_detail_bloc.dart';
 import 'crm_detail_events.dart';
 
-/// [CrmDetailPage] is a statefulwidget class, build the page to see the detail
-/// of one lead, it can also unlink or edit the lead.
 class CrmDetail extends StatefulWidget {
   Lead lead;
 
@@ -27,7 +25,6 @@ class CrmDetail extends StatefulWidget {
 }
 
 class _CrmDetailState extends State<CrmDetail> {
-  /// [fieldOptions] contains the options of each combobox.
   Map<String, List<String>> fieldOptions = {
     'stage': [],
     'user': [],
@@ -36,7 +33,6 @@ class _CrmDetailState extends State<CrmDetail> {
     'tags': [],
     'team': [],
   };
-  /// [selectedItems] contains the selected item(s) of each combobox.
   Map <String, List<String>> selectedItems = {
     'stage': [],
     'user': [],
@@ -45,7 +41,6 @@ class _CrmDetailState extends State<CrmDetail> {
     'tags': [],
     'team': [],
   };
-  /// [changes] is a [Map<String, dynamic>] which contains the changes of each field.
   Map<String, dynamic> changes = {};
   late LeadFormated leadFormated;
   late TextEditingController _nameController;
@@ -77,7 +72,6 @@ class _CrmDetailState extends State<CrmDetail> {
     configData();
   }
 
-  /// [configData] configures the data of the page.
   void configData() {
     BlocProvider.of<CrmDetailBloc>(context).add(SetState());
     BlocProvider.of<CrmDetailBloc>(context).getLeadFormated(widget.lead).then((lead) {
@@ -106,30 +100,6 @@ class _CrmDetailState extends State<CrmDetail> {
 
     try {
       _setText();
-
-      // Map<String, List<int>> allIds = {
-      //   'stage': [],
-      //   'user': [],
-      //   'company': [],
-      //   'client': [],
-      //   'tags': widget.lead.tagIds ?? [],
-      //   'team': [],
-      // };
-      // if (widget.lead.stageId != null) {
-      //   allIds['stage']?.add(widget.lead.stageId!);
-      // }
-      // if (widget.lead.userId != null) {
-      //   allIds['user']?.add(widget.lead.userId!);
-      // }
-      // if (widget.lead.companyId != null) {
-      //   allIds['company']?.add(widget.lead.companyId!);
-      // }
-      // if (widget.lead.clientId != null) {
-      //   allIds['client']?.add(widget.lead.clientId!);
-      // }
-      // if (widget.lead.teamId != null) {
-      //   allIds['team']?.add(widget.lead.teamId!);
-      // }
 
       currentValue = widget.lead.probability ?? 0;
     } catch (e) {
@@ -184,14 +154,12 @@ class _CrmDetailState extends State<CrmDetail> {
     super.dispose();
   }
 
-  /// [onFieldChanged] method set the [isDataChanged] to true.
   void _onFieldChanged() {
     setState(() {
       isDataChanged = true;
     });
   }
 
-  /// [onUpdatePressed] method to update the lead, send the event [SaveLeadButtonPressed] and show a message.
   void _onUpdatePressed() {
     changes['id'] = widget.lead.id;
 
@@ -201,8 +169,6 @@ class _CrmDetailState extends State<CrmDetail> {
     ));
   }
 
-  /// [onResetPressed] method to reset the data of the page, set the [isDataChanged] and [isEditEnabled] to false
-  /// and call the method [configData].
   void _onResetPressed() {
     setState(() {
       isDataChanged = false;
@@ -211,7 +177,6 @@ class _CrmDetailState extends State<CrmDetail> {
     configData();
   }
 
-  /// [onUnlinkPressed] method to unlink the lead, send the event [UnlinkLeadButtonPressed] and show a message.
   void _onUnlinkPressed() {
     BlocProvider.of<CrmDetailBloc>(context).add(UnlinkLeadButtonPressed(widget.lead.id));
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -219,7 +184,6 @@ class _CrmDetailState extends State<CrmDetail> {
     ));
   }
 
-  /// [setText] method to set the text of the fields.
   void _setText() {
     _nameController = TextEditingController(text: widget.lead.name);
     _clientNameController = TextEditingController();
@@ -238,7 +202,6 @@ class _CrmDetailState extends State<CrmDetail> {
     getDataStringForId();
   }
 
-  /// [build] method to build the widget.
   @override
   Widget build(BuildContext context) {
     bool canPop = !isEditEnabled;

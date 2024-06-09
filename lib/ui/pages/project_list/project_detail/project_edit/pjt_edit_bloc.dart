@@ -12,7 +12,7 @@ class ProjectEditBloc extends Bloc<ProjectEditEvent, ProjectEditStates> {
   ProjectEditBloc() : super(ProjectEditInitial()) {
     odooClient.setSettings(OdooConfig.getBaseUrl(), OdooConfig.getSessionId());
     on<SetState>(setState);
-    // on<UpdateProject>(updateProject);
+    on<UpdatePjt>(updateProject);
     on<StateSuccess>(setStateSucces);
   }
 
@@ -64,8 +64,6 @@ class ProjectEditBloc extends Bloc<ProjectEditEvent, ProjectEditStates> {
       if (response.success) {
         emit(ProjectEditUpdate(projectFromFormated));
       }
-
-      // emit(ProjectEditUpdate(state.data));
     } catch (e) {
       emit(ProjectEditError('Error'));
     }

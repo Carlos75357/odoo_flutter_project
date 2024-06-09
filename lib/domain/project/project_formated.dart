@@ -75,7 +75,7 @@ class ProjectFormated {
       userName: json['user_name'],
       tagIds: json['tag_ids'],
       tagNames: json['tag_names'],
-      status: json['status'],
+      status: json['last_update_status'],
       stageId: json['stage_id'],
       stageName: json['stage_name'],
       dateStart: json['create_date'],
@@ -99,13 +99,12 @@ class ProjectFormated {
     data['user_name'] = userName;
     data['tag_ids'] = tagIds;
     data['tag_names'] = tagNames;
-    data['status'] = status;
+    data['last_update_status'] = status;
     data['stage_id'] = stageId;
     data['stage_name'] = stageName;
     data['create_date'] = dateStart;
     data['date_deadline'] = date;
     data['tasks'] = tasks;
-    // data['created_user'] = createdUser;
     return data;
   }
 }

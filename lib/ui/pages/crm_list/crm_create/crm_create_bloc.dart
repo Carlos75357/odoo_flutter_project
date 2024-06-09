@@ -148,6 +148,7 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
       List<String> userNames = await getNames('res.users');
       List<String> companyNames = await getNames('res.company');
       List<String> clientNames = await getNames('res.partner');
+      List<int> clientCompanyIds = await repository.getIdsByNames('res.partner', ['company_id']);
       List<String> teamNames = await getNames('crm.team');
 
       Map<String, List<String>> fieldsOptions = {
@@ -155,6 +156,7 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
         'user': userNames,
         'company': companyNames,
         'client': clientNames,
+        'client_company_id': clientCompanyIds.map((id) => id.toString()).toList(),
         'tags': tagNames,
         'team': teamNames
       };
@@ -163,6 +165,10 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     } catch (e) {
       throw Exception('Failed to get field options: $e');
     }
+  }
+
+  Future<Map<String, int>> getClientsWithCompanyId() {
+    List<int> clientCompanyIds = await repository.getIdsByNames('res.partner', ['company_id']);
   }
 
   /// [getNames] method to get names.
@@ -190,6 +196,15 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
       return await repository.getIdsByNames(modelName, names);
     } catch (e) {
       throw Exception('Failed to get ids by names: $e');
+    }
+  }
+
+  Future<int> getCompanyId(String? name) async {
+    try {
+      if (name == 'Ninguno' || name == null) return 0;
+      return await repository.getIdByName('res.company', name);
+    } catch (e) {
+      throw Exception('Failed to get id by name: $e');
     }
   }
 

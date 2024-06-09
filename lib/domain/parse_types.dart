@@ -15,13 +15,21 @@ int? parseIntField(dynamic value) {
     return value.toInt();
   } else if (value is bool) {
     return null;
-  } else {
+  } else if (value is List){
     return value[0] as int?;
+  } else {
+    return (value is int) ? value : null;
   }
 }
 
 double? parseDoubleField(dynamic value) {
-  if (value is int || value is double) {
+  if (value is String) {
+    try {
+      return double.parse(value);
+    } on FormatException {
+      return null;
+    }
+  } else if (value is num) {
     return value.toDouble();
   } else {
     return null;

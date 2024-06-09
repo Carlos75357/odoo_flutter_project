@@ -207,6 +207,47 @@ class RepositoryCrm extends RepositoryDataSource {
     }
   }
 
+  Future<List<int>> getIds(String modelName, List<String> fields) async {
+    try {
+      List<int> ids = [];
+      int offset = 0;
+      int limit = 10;
+
+      var fields = ['id', 'name'];
+      while (true) {
+        var context = {
+          'lang': 'es_ES',
+          "active_test": false,
+        };
+
+        var kwargs = {
+          'context': context,
+          'offset': offset,
+          'limit': limit,
+          'fields': fields
+        };
+
+        var domain = [];
+        var response = await odooClient.searchRead(modelName, domain, kwargs);
+        if (response.isEmpty) {
+          break;
+        }
+
+        for (var record in response) {
+          if (record.containsKey('id')) {
+            ids.add(record['id'] as int);
+          }
+        }
+
+        offset += limit;
+      }
+
+      return ids;
+    } catch (e) {
+      return [];
+    }
+  }
+
   @override
   Future<List<Map<String, dynamic>>> getAllForModel(String modelName, List<String> fields) async {
     try {

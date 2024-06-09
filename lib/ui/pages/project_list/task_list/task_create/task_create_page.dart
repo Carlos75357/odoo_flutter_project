@@ -1,18 +1,20 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_page.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_create/task_create_events.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_create/task_create_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_create/task_create_states.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 
-import '../task_list_page.dart';
+import '../../../../../domain/project/project.dart';
+import '../../pjt_list_page.dart';
 
 class TaskCreatePage extends StatefulWidget {
+  final Project project;
   final String projectName;
-  final int projectId;
-  const TaskCreatePage({Key? key, required this.projectName, required this.projectId}) : super(key: key);
+  const TaskCreatePage({Key? key, required this.projectName, required this.project}) : super(key: key);
 
   @override
   TaskCreatePageState createState() => TaskCreatePageState();
@@ -34,6 +36,7 @@ class TaskCreatePageState extends State<TaskCreatePage> {
   @override
   void initState() {
     super.initState();
+    configData();
     _nameController = TextEditingController();
     _descriptionController = TextEditingController();
     _assignedController = TextEditingController();
@@ -45,7 +48,6 @@ class TaskCreatePageState extends State<TaskCreatePage> {
     _remainingHoursController = TextEditingController();
     _priorityController = TextEditingController();
     _stageController = TextEditingController();
-    configData();
   }
 
   @override
@@ -64,18 +66,18 @@ class TaskCreatePageState extends State<TaskCreatePage> {
     super.dispose();
   }
 
-  Future<void> configData() async {
+  void configData() async {
     BlocProvider.of<TaskCreateBloc>(context).add(SetLoadingState());
 
     BlocProvider.of<TaskCreateBloc>(context).getFieldsOptions().then((options) {
+      setState(() {
+        fieldOptions = options;
+      });
       if (mounted) {
-        setState(() {
-          fieldOptions = options;
-        });
       }
     }).then((_) {
+      BlocProvider.of<TaskCreateBloc>(context).add(SetSuccessState());
       if (mounted) {
-        BlocProvider.of<TaskCreateBloc>(context).add(SetSuccessState());
       }
     });
   }
@@ -94,12 +96,20 @@ class TaskCreatePageState extends State<TaskCreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crear Tarea para el proyecto ${widget.projectName}'),
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            'Crear Tarea para el proyecto ${widget.projectName}',
+            style: const TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskListPage(projectId: widget.projectId, projectName: widget.projectName)));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProjectDetailPage(project: widget.project)));
           },
         ),
       ),
@@ -109,7 +119,7 @@ class TaskCreatePageState extends State<TaskCreatePage> {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Guardado con éxito"),
             ));
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskListPage(projectId: widget.projectId)));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProjectDetailPage(project: widget.project)));
           }
           if (state is TaskCreateError) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -159,19 +169,19 @@ class TaskCreatePageState extends State<TaskCreatePage> {
 
     switch (type) {
       case 'Text':
-        fieldWidget = _buildTextField(controller, title, type, caseType);
+        fieldWidget = _buildTextField(controller, title);
         break;
       case 'MultiSelect':
         fieldWidget = _MultiSelectDialog(controller, type.toLowerCase());
         break;
       case 'DropDown':
-        fieldWidget = _buildDropDownField(controller, title);
+        fieldWidget = _buildDropDownField(controller, caseType);
         break;
       case 'Description':
-        fieldWidget = _buildDescriptionField(controller, title);
+        fieldWidget = _buildDescriptionField(controller, caseType);
         break;
       default:
-        fieldWidget = _buildTextField(controller, title, type, caseType);
+        fieldWidget = _buildTextField(controller, title);
     }
 
     return Column(
@@ -190,7 +200,7 @@ class TaskCreatePageState extends State<TaskCreatePage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String title, String type, String caseType) {
+  Widget _buildTextField(TextEditingController controller, String title) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(

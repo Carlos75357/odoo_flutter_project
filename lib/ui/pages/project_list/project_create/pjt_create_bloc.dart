@@ -2,6 +2,7 @@ import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_crm_prove/data/odoo_config.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_states.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_create/pjt_create_states.dart';
 
 import '../../../../data/repository/crm/crm_repository.dart';
 import '../../../../data/repository/crm/crm_repository_response.dart';
@@ -20,27 +21,27 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
   late RepositoryCrm repository = RepositoryCrm(odooClient: odooClient);
   List<Lead> leads = [];
 
-  /// [setLoadingState] method to set the [CrmCreateStates] to [CrmCreateLoading].
-  setLoadingState(SetLoadingState event, Emitter<CrmCreateStates> emit) {
+  setLoadingState(SetLoadingState event, Emitter<ProjectCreateStates> emit) {
     try {
-      emit(CrmCreateLoading());
+      emit(ProjectCreateLoading());
     } catch (e) {
-      emit(CrmCreateError(e.toString()));
+      emit(ProjectCreateError(e.toString()));
     }
   }
 
-  /// [setSuccessState] method to set the [CrmCreateStates] to [CrmCreateSuccess].
-  setSuccessState(SetSuccessState event, Emitter<CrmCreateStates> emit) {
+  setSuccessState(SetSuccessState event, Emitter<ProjectCreateStates> emit) {
     try {
-      emit(CrmCreateSuccess());
+      emit(ProjectCreateSuccess());
     } catch (e) {
-      emit(CrmCreateError(e.toString()));
+      emit(ProjectCreateError(e.toString()));
     }
   }
+
+
 
   /// [createLead] method to create a new lead.
-  createLead(CreateEvents event, Emitter<CrmCreateStates> emit) async {
-    emit(CrmCreateLoading());
+  createLead(CreateEvents event, Emitter<ProjectCreateStates> emit) async {
+    emit(ProjectCreateLoading());
     Map<String, dynamic> data = event.values;
 
     dynamic ids = await Future.wait([
@@ -84,9 +85,9 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
     CreateResponse response = await repository.createLead('crm.lead', lead.toJson());
 
     if (response.success) {
-      emit(CrmCreateDone());
+      emit(ProjectCreateDone());
     } else {
-      emit(CrmCreateError('Failed to create lead'));
+      emit(ProjectCreateError('Failed to create lead'));
     }
   }
 

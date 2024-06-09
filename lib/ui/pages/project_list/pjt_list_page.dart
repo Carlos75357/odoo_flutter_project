@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_events.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_states.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_create/pjt_create_page.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_page.dart';
 import 'package:flutter_crm_prove/widgets/crm_list_page/button_new_lead.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
         actions: [
           IconButton(
             onPressed: () {
-              BlocProvider.of<PjtListBloc>(context).add(ReloadAll());
+              BlocProvider.of<PjtListBloc>(context).add(LoadAll());
             },
             icon: const Icon(Icons.refresh, color: Colors.white,),
           ),
@@ -67,7 +68,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => const Placeholder(),
+                builder: (context) => const ProjectCreatePage(),
               ),
             );
           } else if (state is PjtDetail) {
@@ -100,7 +101,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
                   buildButton(
                       context,
                     BlocProvider.of<PjtListBloc>(context),
-                    PjtNew()
+                    CreateNewPjt()
                   )
                 ],
               );

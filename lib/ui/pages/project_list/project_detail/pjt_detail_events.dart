@@ -1,5 +1,7 @@
 import 'package:flutter_crm_prove/domain/project/project.dart';
 
+import '../../../../domain/Task/task.dart';
+
 abstract class ProjectDetailEvents {}
 
 class LoadProject extends ProjectDetailEvents {
@@ -40,9 +42,15 @@ class ErrorEvent extends ProjectDetailEvents {
   ErrorEvent(this.message);
 }
 
-class NewProjectButtonPressed extends ProjectDetailEvents {}
+class NewTaskButtonPressed extends ProjectDetailEvents {}
 
 class ChangeFilter extends ProjectDetailEvents {
   final String filter;
   ChangeFilter(this.filter);
+}
+
+
+class TaskSelected extends ProjectDetailEvents {
+  final Task task;
+  TaskSelected({required this.task});
 }

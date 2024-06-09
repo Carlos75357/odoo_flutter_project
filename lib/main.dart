@@ -11,11 +11,11 @@ import 'package:flutter_crm_prove/ui/pages/login/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_crm_prove/ui/pages/login/select_module/select_module_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/pjt_list_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_create/pjt_create_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/project_edit/pjt_edit_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_create/task_create_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_detail/task_detail_bloc.dart';
-import 'package:flutter_crm_prove/ui/pages/project_list/task_list/task_list_bloc.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -64,15 +64,15 @@ class MyApp extends StatelessWidget {
         BlocProvider<ProjectEditBloc>(
           create: (context) => ProjectEditBloc(),
         ),
-        BlocProvider<TaskListBloc>(
-          create: (context) => TaskListBloc(),
-        ),
         BlocProvider<TaskCreateBloc>(
           create: (context) => TaskCreateBloc(),
         ),
-        // BlocProvider<TaskDetailBloc>(
-        //   create: (context) => TaskDetailBloc(),
-        // ),
+        BlocProvider<TaskDetailBloc>(
+          create: (context) => TaskDetailBloc(),
+        ),
+        BlocProvider<ProjectCreateBloc>(
+          create: (context) => ProjectCreateBloc(),
+        )
       ],
       child: MaterialApp(
         theme: Provider.of<ThemeProvider>(context).themeData,

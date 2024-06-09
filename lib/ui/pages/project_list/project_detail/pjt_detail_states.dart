@@ -1,3 +1,4 @@
+import '../../../../domain/Task/task.dart';
 import '../../../../domain/project/project.dart';
 
 abstract class ProjectDetailStates {
@@ -55,4 +56,10 @@ class ProjectReloaded extends ProjectDetailStates {
   ProjectReloaded(this.project);
 }
 
-class ProjectNew extends ProjectDetailStates {}
+class TaskNew extends ProjectDetailStates {}
+
+class TaskDetail extends ProjectDetailStates {
+  final Task task;
+  
+  TaskDetail(this.task);
+}

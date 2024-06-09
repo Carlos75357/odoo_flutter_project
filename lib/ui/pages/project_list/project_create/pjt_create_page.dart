@@ -2,15 +2,14 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/domain/crm/lead.dart';
-import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_bloc.dart';
-import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_events.dart';
-import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_states.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_create/pjt_create_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_create/pjt_create_events.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_create/pjt_create_states.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 
-import '../crm_list_page.dart';
+import '../pjt_list_page.dart';
 
-/// [CrmCreatePage] is a page that allows the user to create a new [Lead]
 class ProjectCreatePage extends StatefulWidget {
   const ProjectCreatePage({super.key});
 
@@ -20,10 +19,12 @@ class ProjectCreatePage extends StatefulWidget {
 
 class ProjectCreatePageState extends State<ProjectCreatePage> {
   late TextEditingController _nameController;
+  late TextEditingController _taskNameController;
   late TextEditingController _clientNameController;
-  late TextEditingController _companyController;
-  late TextEditingController _responsableController;
   late TextEditingController _tagsController;
+  late TextEditingController _responsableController;
+  late TextEditingController _companyController;
+  late TextEditingController _descriptionController;
   late TextEditingController _stagesController;
 
   Map<String, dynamic> changes = {
@@ -41,10 +42,12 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
   void initState() {
     super.initState();
     _nameController = TextEditingController();
+    _taskNameController = TextEditingController();
     _clientNameController = TextEditingController();
-    _companyController = TextEditingController();
     _tagsController = TextEditingController();
     _responsableController = TextEditingController();
+    _companyController = TextEditingController();
+    _descriptionController = TextEditingController();
     _stagesController = TextEditingController();
     configData();
   }
@@ -52,19 +55,20 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
   @override
   void dispose() {
     _nameController.dispose();
+    _taskNameController.dispose();
     _clientNameController.dispose();
-    _companyController.dispose();
     _tagsController.dispose();
     _responsableController.dispose();
+    _companyController.dispose();
+    _descriptionController.dispose();
     _stagesController.dispose();
     super.dispose();
   }
 
-  /// [configData] is the method to set the data of the page.
   Future<void> configData() async {
-    BlocProvider.of<CrmCreateBloc>(context).add(SetLoadingState());
+    BlocProvider.of<ProjectCreateBloc>(context).add(SetLoadingState());
 
-    BlocProvider.of<CrmCreateBloc>(context).getFieldsOptions().then((options) {
+    BlocProvider.of<ProjectCreateBloc>(context).getFieldsOptions().then((options) {
       if (mounted) {
         setState(() {
           fieldOptions = options;
@@ -72,41 +76,39 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
       }
     }).then((_) {
       if (mounted) {
-        BlocProvider.of<CrmCreateBloc>(context).add(SetSuccessState());
+        BlocProvider.of<ProjectCreateBloc>(context).add(SetSuccessState());
       }
     });
-
-    _createDateController.text = _creationDate.toString().substring(0, 10);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Crear Nuevo Lead'),
+        title: const Text('Crear Nuevo Proyecto'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: BlocListener<CrmCreateBloc, CrmCreateStates>(
+      body: BlocListener<ProjectCreateBloc, ProjectCreateStates>(
         listener: (context, state) {
-          if (state is CrmCreateDone) {
+          if (state is ProjectCreateDone) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Guardado con exito"),
             ));
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CrmListPage()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ProjectListPage()));
           }
-          if (state is CrmCreateError) {
+          if (state is ProjectCreateError) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Error al guardar"),
             ));
             FirebaseCrashlytics.instance.recordError(state, null, fatal: true);
           }
         },
-        child: BlocBuilder<CrmCreateBloc, CrmCreateStates>(
+        child: BlocBuilder<ProjectCreateBloc, ProjectCreateStates>(
           builder: (context, state) {
-            if (state is CrmCreateLoading) {
+            if (state is ProjectCreateLoading) {
               return const LinearProgressIndicator();
             }
-            if (state is CrmCreateSuccess) {
+            if (state is ProjectCreateSuccess) {
               return Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: SingleChildScrollView(
@@ -114,19 +116,13 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildField('Nombre', _nameController, 'Text', 'name'),
+                        _buildField('Nombre para las tareas', _taskNameController, 'Text', 'task_name'),
                         _buildField('Cliente', _clientNameController, 'Client', 'client'),
-                        _buildField('Email', _emailController, 'Text', 'email'),
-                        _buildField('Telefono', _phoneController, 'Text', 'phone'),
-                        _buildField('Fecha de Límite', _dateDeadLineController, 'Date', 'date_deadline'),
-                        _buildField('Fecha de Creacion', _createDateController, 'Text' , 'create_date'),
-                        _buildField('Compañia', _companyController, 'Company', 'company'),
-                        _buildField('Usuario', _userController, 'User', 'user'),
-                        _buildField('Etapa', _stageController, 'Stage', 'stage'),
-                        _buildField('Prioridad', _priorityController, 'Priority', 'priority'),
-                        _buildField('Probabilidad', _probabilityController, 'Text', 'probability'),
-                        _buildField('Ingreso esperado', _expectedRevenueController, 'Text', 'expected_revenue'),
                         _buildField('Etiquetas', _tagsController, 'Tags', 'tags'),
-                        _buildField('Equipo', _teamController, 'Team', 'team'),
+                        _buildField('Responsable', _responsableController, 'User', 'user'),
+                        _buildField('Compañia', _companyController, 'Company', 'company'),
+                        _buildField('Descripción', _descriptionController, 'Text', 'description'),
+                        _buildField('Stages', _stagesController, 'Stage', 'stages'),
                         const SizedBox(height: 8),
                         _buildButton(),
                         const SizedBox(height: 8),
@@ -157,8 +153,6 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
       case 'Tags' || 'Client' || 'Company' || 'User' || 'Stage' || 'Team':
         fieldWidget = _buildDropDownField(controller, type.toLowerCase());
         break;
-      case 'Priority':
-        fieldWidget = _buildPriorityField(title, controller);
       default:
         fieldWidget = _buildTextField(controller, title, type, caseType);
     }
@@ -186,10 +180,6 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
       isEnable = false;
     }
 
-    if (title.toLowerCase() == 'probabilidad') {
-      return _buildSlider();
-    } 
-
     return TextField(
       controller: controller,
       enabled: isEnable,
@@ -201,27 +191,6 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
           // addChanges(caseType, value);
         }
       }
-    );
-  }
-
-  /// [_buildSlider] method to create the slider.
-  Widget _buildSlider() {
-    return StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return Slider(
-          value: currentValue,
-          min: 0,
-          max: 100,
-          divisions: 100,
-          label: currentValue.round().toString(),
-          onChanged: (double value) {
-            setState(() {
-              currentValue = value;
-              // addChanges('probability', value);
-            });
-          },
-        );
-      },
     );
   }
 
@@ -282,7 +251,6 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
     }
   }
 
-  /// [_buildDatePickerField] method to create the date picker field.
   Widget _buildDatePickerField(TextEditingController controller) {
     return Container(
       decoration: BoxDecoration(
@@ -323,75 +291,34 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
     );
   }
 
-  /// [_buildPriorityField] method to create the priority field.
-  Widget _buildPriorityField(String label, TextEditingController controller) {
-    List<Widget> stars = List.generate(
-      3,
-          (index) => IconButton(
-        onPressed: () {
-          int newPriority = index + 1;
-          setState(() {
-            if (selectedPriority == newPriority) {
-              selectedPriority = 0;
-              controller.text = '';
-            } else {
-              selectedPriority = newPriority;
-              controller.text = '★' * selectedPriority;
-            }
-            // if (selectedPriority != newPriority) {
-            // }
-            // addChanges('priority', selectedPriority);
-          });
-        },
-        icon: Icon(
-          index < selectedPriority ? Icons.star : Icons.star_border,
-          color: Colors.yellow,
-          size: 20,
-        ),
-      ),
-    );
-
-    return Column(
-
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: stars,
-        ),
-      ],
-    );
-  }
-
-  /// [_buildButton] method to create the button.
   Widget _buildButton() {
     return ElevatedButton(
+
       onPressed: () {
         updateChangesIfNotEmpty('name', _nameController.text);
-        updateChangesIfNotEmpty('email', _emailController.text);
-        updateChangesIfNotEmpty('phone', _phoneController.text);
+        updateChangesIfNotEmpty('task_name', _taskNameController.text);
         updateChangesIfNotEmpty('client', _clientNameController.text);
-        updateChangesIfNotEmpty('priority', selectedPriority);
-        updateChangesIfNotEmpty('date_deadline', _dateDeadLineController.text);
-        updateChangesIfNotEmpty('create_date', _createDateController.text);
+        updateChangesIfNotEmpty('tags', _tagsController.text);
+        updateChangesIfNotEmpty('responsable', _responsableController.text);
         updateChangesIfNotEmpty('company', _companyController.text);
-        updateChangesIfNotEmpty('user', _userController.text);
-        updateChangesIfNotEmpty('stage', _stageController.text);
-        updateChangesIfNotEmpty('probability', currentValue);
-        updateChangesIfNotEmpty('expected_revenue', _expectedRevenueController.text);
+        updateChangesIfNotEmpty('description', _descriptionController.text);
+        updateChangesIfNotEmpty('stages', _stagesController.text);
 
         if (_tagsController.text.isNotEmpty) {
           changes['tags'] = _tagsController.text.split(',').map((tag) => tag.trim()).toList();
         }
 
-        updateChangesIfNotEmpty('team', _teamController.text);
+        if (_stagesController.text.isNotEmpty) {
+          changes['stages'] = _stagesController.text.split(',').map((stage) => stage.trim()).toList();
+        }
 
-        BlocProvider.of<CrmCreateBloc>(context).add(CreateEvents(values: changes));
+
+        BlocProvider.of<ProjectCreateBloc>(context).add(CreateEvents(values: changes));
       },
-      child: const Text('Crear Lead'),
+      child: const Text('Crear Proyecto'),
     );
   }
 
-  /// [updateChangesIfNotEmpty] method to update the changes if the value is not empty.
   void updateChangesIfNotEmpty(String key, dynamic value) {
     if (value.runtimeType == String) {
       if (value.isNotEmpty) {
@@ -404,7 +331,6 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
     }
   }
 
-  /// [addChanges] method add the changes to the [changes] map.
   void addChanges(String key, dynamic value) {
     for (dynamic value in changes.values) {
       if (value is List) {

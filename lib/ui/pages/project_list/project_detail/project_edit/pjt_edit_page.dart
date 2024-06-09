@@ -197,7 +197,6 @@ class _EditPopupPageState extends State<EditPopupPage> {
                         companyName: _companyController.text,
                         status: _projectStageValue,
                       );
-                      
                       BlocProvider.of<ProjectEditBloc>(context).add(UpdatePjt(projectF: updatedProject));
                     }
                         : null,

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crm_prove/ui/pages/project_list/project_detail/pjt_detail_events.dart';
 
 import '../../../domain/Task/task_formated.dart';
+import '../../../ui/pages/project_list/pjt_list_bloc.dart';
+import '../../../ui/pages/project_list/project_detail/pjt_detail_bloc.dart';
 
 class TaskWidget extends StatelessWidget {
   final TaskFormated task;
@@ -11,7 +15,7 @@ class TaskWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // BlocProvider.of<PjtListBloc>(context).add(PjtSelected(project: project));
+        BlocProvider.of<ProjectDetailBloc>(context).add(TaskSelected(task: task.taskFormatedToTask(task)));
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 5.0),

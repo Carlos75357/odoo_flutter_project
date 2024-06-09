@@ -8,13 +8,9 @@ class TaskDetailError extends TaskDetailEvents {
 
 class TaskDetailSuccess extends TaskDetailEvents {}
 
-class TaskDetailLoading extends TaskDetailEvents {}
+class TaskDetailLoadingEvent extends TaskDetailEvents {}
 
 class TaskDetailInit extends TaskDetailEvents {}
-
-class TaskDetailToggleEdit extends TaskDetailEvents {}
-
-class TaskDetailUpdateButtonPressed extends TaskDetailEvents {}
 
 class TaskDetailDeleteButtonPressed extends TaskDetailEvents {}
 

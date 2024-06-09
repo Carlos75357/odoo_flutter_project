@@ -6,11 +6,11 @@ class TaskDetailInitial extends TaskDetailStates {}
 
 class TaskDetailLoading extends TaskDetailStates {}
 
-class TaskDetailSuccess extends TaskDetailStates {}
+class TaskDetailSuccessState extends TaskDetailStates {}
 
-class TaskDetailError extends TaskDetailStates {
+class TaskDetailErrorState extends TaskDetailStates {
   final String error;
-  TaskDetailError(this.error);
+  TaskDetailErrorState(this.error);
 }
 
 class TaskDetailReload extends TaskDetailStates {}

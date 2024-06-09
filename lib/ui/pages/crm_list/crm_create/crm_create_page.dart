@@ -1,5 +1,6 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/domain/crm/lead.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_bloc.dart';
@@ -33,6 +34,7 @@ class CrmCreatePageState extends State<CrmCreatePage> {
   late TextEditingController _probabilityController;
   late TextEditingController _createDateController;
   late TextEditingController _stageController;
+  late int selectedCompanyId;
 
   late DateTime _creationDate;
   double currentValue = 0;
@@ -48,6 +50,8 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     'stage': [],
     'user': [],
     'company': [],
+    'comapny_id': [],
+    'client_company_id': [],
     'client': [],
     'tags': [],
     'team': [],
@@ -147,12 +151,12 @@ class CrmCreatePageState extends State<CrmCreatePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildField('Nombre', _nameController, 'Text', 'name'),
-                        _buildField('Cliente', _clientNameController, 'Client', 'client'),
                         _buildField('Email', _emailController, 'Text', 'email'),
                         _buildField('Telefono', _phoneController, 'Text', 'phone'),
                         _buildField('Fecha de Límite', _dateDeadLineController, 'Date', 'date_deadline'),
                         _buildField('Fecha de Creacion', _createDateController, 'Text' , 'create_date'),
                         _buildField('Compañia', _companyController, 'Company', 'company'),
+                        _buildField('Cliente', _clientNameController, 'Client', 'client'),
                         _buildField('Usuario', _userController, 'User', 'user'),
                         _buildField('Etapa', _stageController, 'Stage', 'stage'),
                         _buildField('Prioridad', _priorityController, 'Priority', 'priority'),
@@ -221,19 +225,19 @@ class CrmCreatePageState extends State<CrmCreatePage> {
 
     if (title.toLowerCase() == 'probabilidad') {
       return _buildSlider();
-    } 
+    }
 
     return TextField(
-      controller: controller,
       enabled: isEnable,
+      controller: controller,
+      onChanged: (value) {
+        // addChanges(type, value);
+      },
+      keyboardType: caseType.toLowerCase() == 'expected_revenue' ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.text,
+      inputFormatters: caseType.toLowerCase() == 'expected_revenue' ? [DecimalTextInputFormatter()] : [],
       decoration: InputDecoration(
         hintText: title,
       ),
-      onChanged: (value) {
-        if (title.toLowerCase() != 'probabilidad') {
-          // addChanges(caseType, value);
-        }
-      }
     );
   }
 
@@ -261,7 +265,16 @@ class CrmCreatePageState extends State<CrmCreatePage> {
   /// [_buildDropDownField] method to create the dropdown field.
   Widget _buildDropDownField(TextEditingController controller, String type) {
     List<String> list = fieldOptions[type] ?? [];
-    // print('Lista: ${list.length}');
+
+    for (int i = 0; i < list.length; i++) {
+      if (list.lastIndexOf(list[i]) != i) {
+        list.removeAt(i);
+      }
+    }
+
+    //if (type == 'company') {
+      //selectedCompanyId = BlocProvider.of<CrmCreateBloc>(context).getCompanyId(controller.text) as int;
+    //}
 
     if (type == 'tags') {
       return Container(
@@ -304,6 +317,7 @@ class CrmCreatePageState extends State<CrmCreatePage> {
               );
             }).toList(),
             value: (type == 'stage') ? 'Nuevo' : null,
+
             onChanged: (value) {
               setState(() {
                 controller.text = value.toString();
@@ -445,6 +459,18 @@ class CrmCreatePageState extends State<CrmCreatePage> {
           changes[key] = value;
         }
       }
+    }
+  }
+}
+
+class DecimalTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final regEx = RegExp(r'^\d+\.?\d{0,2}$');
+    if (regEx.hasMatch(newValue.text)) {
+      return newValue;
+    } else {
+      return oldValue;
     }
   }
 }

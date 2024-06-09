@@ -11,6 +11,8 @@ import '../../../../domain/Task/task.dart';
 import '../../../../widgets/crm_list_page/button_new_lead.dart';
 import '../../../../widgets/crm_list_page/menu.dart';
 import '../../../../widgets/project_list/project_detail/task_widget.dart';
+import '../task_list/task_create/task_create_page.dart';
+import '../task_list/task_detail/task_detail_page.dart';
 
 class ProjectDetailPage extends StatefulWidget {
   Project project;
@@ -52,6 +54,20 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
           if (state is ProjectDetailSuccess) {
             taskWidgets.clear();
             taskWidgets = _buildTaskWidget();
+          } else if (state is TaskNew) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TaskCreatePage(projectName: widget.project.name ?? 'Sin nombre', project: widget.project),
+              ),
+            );
+          } else if (state is TaskDetail) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TaskDetailPage(task: state.task, project: widget.project),
+              )
+            );
           } else if (state is ProjectReloaded) {
             widget.project = state.project;
             taskWidgets.clear();
@@ -94,9 +110,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
             if (state is ProjectDetailSuccess) {
               return Scaffold(
                 appBar: AppBar(
-                  title: const Text(
-                    'Proyecto',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
+                  title: Text(
+                    'Tareas de ${widget.project.name ?? 'Sin nombre'}',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Raleway'),
                   ),
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   bottom: PreferredSize(
@@ -143,7 +159,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                     buildButton(
                         context,
                         BlocProvider.of<ProjectDetailBloc>(context),
-                        NewProjectButtonPressed()
+                        NewTaskButtonPressed()
                     )
                   ],
                 ),

@@ -1,21 +1,15 @@
-/// [CrmCreateStates] is an abstract class that represents the various states of the [CrmCreatePage].
-abstract class CrmCreateStates {}
+abstract class ProjectCreateStates {}
 
-/// [CrmCreateInitial] is the initial state of the [CrmCreatePage].
-class CrmCreateInitial extends CrmCreateStates {}
+class ProjectCreateInitial extends ProjectCreateStates {}
 
-/// [CrmCreateLoading] represents the loading state of the [CrmCreatePage].
-class CrmCreateLoading extends CrmCreateStates {}
+class ProjectCreateLoading extends ProjectCreateStates {}
 
-/// [CrmCreateSuccess] represents the success state of the [CrmCreatePage].
-class CrmCreateSuccess extends CrmCreateStates {}
+class ProjectCreateSuccess extends ProjectCreateStates {}
 
-/// [CrmCreateError] represents the error state of the [CrmCreatePage].
-class CrmCreateError extends CrmCreateStates {
+class ProjectCreateError extends ProjectCreateStates {
   final String error;
 
-  CrmCreateError(this.error);
+  ProjectCreateError(this.error);
 }
 
-/// [CrmCreateDone] represents the done state of the [CrmCreatePage].
-class CrmCreateDone extends CrmCreateStates {}
+class ProjectCreateDone extends ProjectCreateStates {}

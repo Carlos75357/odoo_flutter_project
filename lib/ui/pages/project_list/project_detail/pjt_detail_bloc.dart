@@ -19,7 +19,8 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvents, ProjectDetailStates> {
     on<LoadProject>(loadProject);
     on<ReloadDetail>(reloadProject);
     on<SaveProjectButtonPressed>(updateProject);
-    on<NewProjectButtonPressed>(createProject);
+    on<NewTaskButtonPressed>(createTask);
+    on<TaskSelected>(selectTask);
     // on<DeleteProject>(deleteProject);
   }
 
@@ -57,6 +58,16 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvents, ProjectDetailStates> {
   setSuccessState(SetSuccessState event, Emitter<ProjectDetailStates> emit) {
     try {
       emit(ProjectDetailSuccess(project));
+    } catch (e) {
+      emit(ProjectDetailError());
+    }
+  }
+
+  selectTask(TaskSelected event, Emitter<ProjectDetailStates> emit) {
+    try {
+      emit(ProjectDetailLoading());
+
+      emit(TaskDetail(event.task));
     } catch (e) {
       emit(ProjectDetailError());
     }
@@ -104,10 +115,10 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvents, ProjectDetailStates> {
     }
   }
 
-  createProject(NewProjectButtonPressed event, Emitter<ProjectDetailStates> emit) async {
+  createTask(NewTaskButtonPressed event, Emitter<ProjectDetailStates> emit) async {
     try {
       emit(ProjectDetailLoading());
-      emit(ProjectNew());
+      emit(TaskNew());
     } catch (e) {
       emit(ProjectDetailError());
     }
