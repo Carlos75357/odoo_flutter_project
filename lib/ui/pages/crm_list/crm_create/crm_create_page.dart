@@ -11,7 +11,6 @@ import 'package:multi_select_flutter/util/multi_select_item.dart';
 
 import '../crm_list_page.dart';
 
-/// [CrmCreatePage] is a page that allows the user to create a new [Lead]
 class CrmCreatePage extends StatefulWidget {
   const CrmCreatePage({super.key});
 
@@ -34,37 +33,42 @@ class CrmCreatePageState extends State<CrmCreatePage> {
   late TextEditingController _probabilityController;
   late TextEditingController _createDateController;
   late TextEditingController _stageController;
-  late int selectedCompanyId;
+  late int? selectedCompanyId;
 
   late DateTime _creationDate;
   double currentValue = 0;
 
   int selectedPriority = 0;
 
-  /// [changes] is a map that contains the changes made by the user.
   Map<String, dynamic> changes = {
   };
 
-  /// [fieldOptions] is a map that contains the options of the fields.
   Map<String, List<String>> fieldOptions = {
     'stage': [],
     'user': [],
     'company': [],
-    'comapny_id': [],
-    'client_company_id': [],
     'client': [],
     'tags': [],
     'team': [],
+  };
+
+  Map<String, List<int>> fieldOptionsIds = {
+    'client_id': [],
+    'client_company_id': [],
+  };
+
+  Map<String, int> clients = {
+
   };
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController();
-    _clientNameController = TextEditingController();
     _phoneController = TextEditingController();
     _emailController = TextEditingController();
     _companyController = TextEditingController();
+    _clientNameController = TextEditingController();
     _userController = TextEditingController();
     _dateDeadLineController = TextEditingController();
     _teamController = TextEditingController();
@@ -97,7 +101,6 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     super.dispose();
   }
 
-  /// [configData] is the method to set the data of the page.
   Future<void> configData() async {
     BlocProvider.of<CrmCreateBloc>(context).add(SetLoadingState());
 
@@ -108,9 +111,25 @@ class CrmCreatePageState extends State<CrmCreatePage> {
         });
       }
     }).then((_) {
-      if (mounted) {
-        BlocProvider.of<CrmCreateBloc>(context).add(SetSuccessState());
-      }
+      BlocProvider.of<CrmCreateBloc>(context).getFieldsOptionsIds().then((options) {
+        if (mounted) {
+          setState(() {
+            fieldOptionsIds = options;
+          });
+        }
+      }).then((_) {
+        BlocProvider.of<CrmCreateBloc>(context).getClientsWithCompanyId().then((clientes) {
+          if (mounted) {
+            setState(() {
+              clients = clientes;
+            });
+          }
+        });
+      }).then((_) {
+        if (mounted) {
+          BlocProvider.of<CrmCreateBloc>(context).add(SetSuccessState());
+        }
+      });
     });
 
     _createDateController.text = _creationDate.toString().substring(0, 10);
@@ -180,7 +199,6 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
-  /// [_buildField] method to create each widget for each field.
   Widget _buildField(String title, TextEditingController controller, String type, String caseType) {
     Widget fieldWidget;
 
@@ -241,7 +259,6 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
-  /// [_buildSlider] method to create the slider.
   Widget _buildSlider() {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
@@ -262,19 +279,43 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
-  /// [_buildDropDownField] method to create the dropdown field.
   Widget _buildDropDownField(TextEditingController controller, String type) {
-    List<String> list = fieldOptions[type] ?? [];
+    List<String> list = [];
+
+    if (type == 'company') {
+      if (controller.text.isNotEmpty) {
+        int companyId = setCompanyId(controller.text, controller);
+        setState(() {
+          selectedCompanyId = companyId;
+        });
+      }
+    }
+
+    if (type == 'client') {
+      Map<int, List<String>> invertedClients = {};
+      if (selectedCompanyId == 0) {
+        clients.forEach((clientName, companyId) {
+          if (!invertedClients.containsKey(companyId)) {
+            invertedClients[companyId] = [];
+          }
+          invertedClients[companyId]?.add(clientName);
+        });
+
+        List<String>? clientsForSelectedCompany = invertedClients[selectedCompanyId];
+        if (clientsForSelectedCompany != null) {
+          list.addAll(clientsForSelectedCompany);
+        }
+      }
+    } else {
+      list = fieldOptions[type] ?? [];
+    }
+
 
     for (int i = 0; i < list.length; i++) {
       if (list.lastIndexOf(list[i]) != i) {
         list.removeAt(i);
       }
     }
-
-    //if (type == 'company') {
-      //selectedCompanyId = BlocProvider.of<CrmCreateBloc>(context).getCompanyId(controller.text) as int;
-    //}
 
     if (type == 'tags') {
       return Container(
@@ -329,7 +370,6 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     }
   }
 
-  /// [_buildDatePickerField] method to create the date picker field.
   Widget _buildDatePickerField(TextEditingController controller) {
     return Container(
       decoration: BoxDecoration(
@@ -370,7 +410,6 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
-  /// [_buildPriorityField] method to create the priority field.
   Widget _buildPriorityField(String label, TextEditingController controller) {
     List<Widget> stars = List.generate(
       3,
@@ -409,7 +448,6 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
-  /// [_buildButton] method to create the button.
   Widget _buildButton() {
     return ElevatedButton(
       onPressed: () {
@@ -438,7 +476,6 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     );
   }
 
-  /// [updateChangesIfNotEmpty] method to update the changes if the value is not empty.
   void updateChangesIfNotEmpty(String key, dynamic value) {
     if (value.runtimeType == String) {
       if (value.isNotEmpty) {
@@ -451,7 +488,6 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     }
   }
 
-  /// [addChanges] method add the changes to the [changes] map.
   void addChanges(String key, dynamic value) {
     for (dynamic value in changes.values) {
       if (value is List) {
@@ -461,6 +497,16 @@ class CrmCreatePageState extends State<CrmCreatePage> {
       }
     }
   }
+
+  int setCompanyId(String companyName, TextEditingController controller) {
+    int companyId = 0;
+    BlocProvider.of<CrmCreateBloc>(context).getCompanyId(controller.text)
+        .then((value) {
+      companyId = value;
+    });
+    return companyId;
+  }
+
 }
 
 class DecimalTextInputFormatter extends TextInputFormatter {

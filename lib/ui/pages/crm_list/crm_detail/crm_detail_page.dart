@@ -41,6 +41,11 @@ class _CrmDetailState extends State<CrmDetail> {
     'tags': [],
     'team': [],
   };
+
+  Map<String, int> clients = {
+
+  };
+
   Map<String, dynamic> changes = {};
   late LeadFormated leadFormated;
   late TextEditingController _nameController;
@@ -58,6 +63,7 @@ class _CrmDetailState extends State<CrmDetail> {
   late TextEditingController _createDateController;
   late TextEditingController _stageController;
   late Map<String, dynamic> initialData = {};
+  late int? selectedCompanyId;
 
   bool isEditEnabled = false;
   bool isDataChanged = false;
@@ -92,11 +98,16 @@ class _CrmDetailState extends State<CrmDetail> {
         fieldOptions = options;
       });
     }).then((_) {
-      BlocProvider.of<CrmDetailBloc>(context).add(LoadLead(widget.lead));
+      BlocProvider.of<CrmDetailBloc>(context).getClientsWithCompanyId().then((clientes) {
+        setState(() {
+          clients = clientes;
+        });
+      }).then((_) {
+        BlocProvider.of<CrmDetailBloc>(context).add(LoadLead(widget.lead));
+      });
     }).catchError((error) {
       BlocProvider.of<CrmDetailBloc>(context).add(ErrorEvent(error));
-      }
-    );
+    });
 
     try {
       _setText();
@@ -186,10 +197,10 @@ class _CrmDetailState extends State<CrmDetail> {
 
   void _setText() {
     _nameController = TextEditingController(text: widget.lead.name);
-    _clientNameController = TextEditingController();
     _phoneController = TextEditingController(text: widget.lead.phone);
     _emailController = TextEditingController(text: widget.lead.email);
     _companyController = TextEditingController();
+    _clientNameController = TextEditingController();
     _userController = TextEditingController();
     _dateDeadLineController = TextEditingController(text: widget.lead.dateDeadline);
     _teamController = TextEditingController();
@@ -320,11 +331,10 @@ class _CrmDetailState extends State<CrmDetail> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildField("Nombre", _nameController, 'Text', 'name'),
-            _buildField("Cliente", _clientNameController, 'Client', 'client'),
             _buildField("Teléfono", _phoneController, 'Text', 'phone'),
             _buildField("Email", _emailController, 'Text', 'email'),
-            _buildField('Fecha límite', _dateDeadLineController, 'Date', 'date_deadline'),
             _buildField('Compañía', _companyController, 'Company', 'company'),
+            _buildField("Cliente", _clientNameController, 'Client', 'client'),
             _buildField('Usuario', _userController, 'User', 'user'),
             _buildField('Equipo', _teamController, 'Team', 'team'),
             _buildField('Ingreso esperado', _expectedRevenueController, 'Text', 'expected_revenue'),
@@ -332,6 +342,7 @@ class _CrmDetailState extends State<CrmDetail> {
             _buildPriorityField('Prioridad', _priorityController, int.parse(widget.lead.priority as String)),
             _buildField('Probabilidad', _probabilityController, 'Text', 'probability'),
             _buildField('Fecha de creación', _createDateController, 'Text', 'create_date'),
+            _buildField('Fecha límite', _dateDeadLineController, 'Date', 'date_deadline'),
             _buildField('Etapa', _stageController, 'Stage', 'stage'),
           ],
         ),
@@ -443,7 +454,6 @@ class _CrmDetailState extends State<CrmDetail> {
     );
   }
 
-  /// [_buildDateTextField] method to create the date picker text field.
   Widget _buildDateTextField(TextEditingController controller) {
     return Container(
       decoration: BoxDecoration(
@@ -492,10 +502,38 @@ class _CrmDetailState extends State<CrmDetail> {
     );
   }
 
-  /// [_buildComboBoxFields] method to create the combo box, the [MultiSelectDialogField] and the [DropdownButtonFormField].
   Widget _buildComboBoxFields(TextEditingController editingController, String type) {
     fieldOptions[type]!.add('Ninguno');
-    List<String> list = fieldOptions[type] ?? [];
+    List<String> list = [];
+
+    if (type == 'company') {
+      if (editingController.text.isNotEmpty) {
+        int companyId = setCompanyId(editingController.text, editingController);
+        setState(() {
+          selectedCompanyId = companyId;
+        });
+      }
+    }
+
+    if (type == 'client') {
+      Map<int, List<String>> invertedClients = {};
+      if (selectedCompanyId == 0) {
+        clients.forEach((clientName, companyId) {
+          if (!invertedClients.containsKey(companyId)) {
+            invertedClients[companyId] = [];
+          }
+          invertedClients[companyId]?.add(clientName);
+        });
+
+        List<String>? clientsForSelectedCompany = invertedClients[selectedCompanyId];
+        if (clientsForSelectedCompany != null) {
+          list.addAll(clientsForSelectedCompany);
+        }
+      }
+    } else {
+      list = fieldOptions[type] ?? [];
+    }
+
     String? selectedValue;
 
     if (isEditEnabled) {
@@ -599,8 +637,6 @@ class _CrmDetailState extends State<CrmDetail> {
     }
   }
 
-  /// [_buildPriorityField] method to create the priority field, this widget creates 3 stars, if they are activated, they will be filled, if not, no,
-  /// they can be clicked to deactivate them and if the same one that is already activated is clicked, they are all removed.
   Widget _buildPriorityField(String label, TextEditingController controller, int initialPriority) {
     List<Widget> stars = List.generate(
       3,
@@ -668,9 +704,17 @@ class _CrmDetailState extends State<CrmDetail> {
       }
     }
   }
+
+  int setCompanyId(String companyName, TextEditingController controller) {
+    int companyId = 0;
+    BlocProvider.of<CrmDetailBloc>(context).getCompanyId(controller.text)
+        .then((value) {
+      companyId = value;
+    });
+    return companyId;
+  }
 }
 
-/// [DecimalTextInputFormatter] class to format the decimal input.
 class DecimalTextInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {

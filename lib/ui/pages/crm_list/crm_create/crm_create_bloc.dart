@@ -9,7 +9,6 @@ import '../../../../domain/crm/lead.dart';
 import '../../../../domain/crm/lead_formated.dart';
 import 'crm_create_events.dart';
 
-/// [CrmCreateBloc] is a bloc class, works with [CrmCreateEvents] and [CrmCreateStates],
 class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
   CrmCreateBloc() : super(CrmCreateInitial()) {
     odooClient.setSettings(OdooConfig.getBaseUrl(), OdooConfig.getSessionId());
@@ -21,7 +20,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
   late RepositoryCrm repository = RepositoryCrm(odooClient: odooClient);
   List<Lead> leads = [];
 
-  /// [setLoadingState] method to set the [CrmCreateStates] to [CrmCreateLoading].
   setLoadingState(SetLoadingState event, Emitter<CrmCreateStates> emit) {
     try {
       emit(CrmCreateLoading());
@@ -30,7 +28,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  /// [setSuccessState] method to set the [CrmCreateStates] to [CrmCreateSuccess].
   setSuccessState(SetSuccessState event, Emitter<CrmCreateStates> emit) {
     try {
       emit(CrmCreateSuccess());
@@ -39,7 +36,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  /// [createLead] method to create a new lead.
   createLead(CreateEvents event, Emitter<CrmCreateStates> emit) async {
     emit(CrmCreateLoading());
     Map<String, dynamic> data = event.values;
@@ -91,14 +87,12 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  /// [getIdByName] method to get id by name.
   Future<int?> _getIdByNameOrNull(String objectType, String? name) async {
     if (name == null) return null;
     if (name == 'Ninguno') return null;
     return repository.getIdByName(objectType, name);
   }
 
-  /// [getIdsByNames] method to get ids by names.
   Future<List<int>> _getIdsByNames(String objectType, List<String>? names) async {
     if (names == null) return [];
     if (names.contains('Ninguno')) return [];
@@ -106,7 +100,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     return ids;
   }
 
-  /// [getLeadFormated] method to get lead formated.
   Future<LeadFormated> getLeadFormated(Lead lead) async {
     try {
       String? stageName = await translateStage(lead.stageId);
@@ -140,7 +133,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  /// [getFieldsOptions] method to get fields options.
   Future<Map<String, List<String>>> getFieldsOptions() async {
     try {
       List<String> tagNames = await getNames('crm.tag');
@@ -167,11 +159,40 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  //Future<Map<String, int>> getClientsWithCompanyId() {
-    //List<int> clientCompanyIds = await repository.getIdsByNames('res.partner', ['company_id']);
-  //}
+  Future<Map<String, List<int>>> getFieldsOptionsIds() async {
+    try {
+      List<int> clientCompanyIds = await repository.getIdsByNames('res.partner', ['company_id']);
+      List<int> clientsIds = await repository.getIdsByNames('res.partner', ['parent_id']);
 
-  /// [getNames] method to get names.
+      Map<String, List<int>> fieldsOptions = {
+        'client': clientsIds,
+        'client_company_id': clientCompanyIds,
+      };
+
+      return fieldsOptions;
+    } catch (e) {
+      throw Exception('Failed to get field options: $e');
+    }
+  }
+
+  Future<Map<String, int>> getClientsWithCompanyId() async {
+    try {
+      List<Map<String, dynamic>> data = await repository.getAll('res.partner');
+      Map<String, int> clientsWithCompanyId = {};
+      for (var i = 0; i < data.length; i++) {
+        var element = data[i];
+        if (element['company_id'] != null && element['company_id'] is List && element['company_id'].length >= 1) {
+          int companyId = element['company_id'][0];
+          clientsWithCompanyId[element['name']] = companyId;
+        }
+      }
+
+      return clientsWithCompanyId;
+    } catch (e) {
+      throw Exception('Failed to get field options: $e');
+    }
+  }
+
   Future<List<String>> getNames(String modelName) async {
     try {
       List<String> records = await repository.getAllNames(modelName, ['name']);
@@ -181,7 +202,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  /// [getIdByName] method to get id by name.
   Future<int> getIdByName(String modelName, String name) async {
     try {
       return await repository.getIdByName(modelName, name);
@@ -190,7 +210,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  /// [getIdsByNames] method to get ids by names.
   Future<List<int>> getIdsByNames(String modelName, List<String> names) async {
     try {
       return await repository.getIdsByNames(modelName, names);
@@ -208,7 +227,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  /// [translateStage] method to translate stage.
   Future<String?> translateStage(int? stageId) async {
     if (stageId == null) return null;
 
@@ -226,7 +244,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  /// [translateTeam] method to translate team.
   Future<String?> translateTeam(int? teamId) async {
     if (teamId == null) return null;
 
@@ -245,7 +262,6 @@ class CrmCreateBloc extends Bloc<CrmCreateEvents, CrmCreateStates> {
     }
   }
 
-  /// [translateTags] method to translate tags.
   Future<List<String>> translateTags(List<int>? tagIds) async {
     if (tagIds == null || tagIds.isEmpty) return [];
 

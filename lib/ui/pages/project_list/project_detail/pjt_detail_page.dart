@@ -70,6 +70,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
             );
           } else if (state is ProjectReloaded) {
             widget.project = state.project;
+            configData();
             taskWidgets.clear();
             taskWidgets = _buildTaskWidget();
           } else if (state is ProjectDetailLoaded) {

@@ -76,7 +76,6 @@ class TaskCreateBloc extends Bloc<TaskCreateEvents, TaskCreateStates> {
       data.remove('stage_names');
     }
 
-
     TaskFormated taskFormated = TaskFormated.fromJson(data);
 
     Task task = taskFormated.taskFormatedToTask(taskFormated);

@@ -32,8 +32,6 @@ class _EditPopupPageState extends State<EditPopupPage> {
   late TextEditingController _companyController;
   late TextEditingController _responsibleController;
   late TextEditingController _projectStageController;
-  late String _responsibleValue;
-  late String _projectStageValue;
   late ValueNotifier<bool> _isEdited;
   late ProjectFormated projectFormated;
   late Map<String, dynamic> initialData = {};
@@ -67,8 +65,6 @@ class _EditPopupPageState extends State<EditPopupPage> {
     _companyController = TextEditingController();
     _responsibleController = TextEditingController();
     _projectStageController = TextEditingController();
-    _responsibleValue = '';
-    _projectStageValue = '';
     _isEdited = ValueNotifier<bool>(true);
 
     _nameController.addListener(_updateEdited);
@@ -136,8 +132,8 @@ class _EditPopupPageState extends State<EditPopupPage> {
         _companyController.text.isNotEmpty ||
         _responsibleController.text.isNotEmpty ||
         _projectStageController.text.isNotEmpty ||
-        _responsibleValue.isNotEmpty ||
-        _projectStageValue.isNotEmpty;
+        _responsibleController.text.isNotEmpty ||
+        _projectStageController.text.isNotEmpty;
   }
 
   @override
@@ -193,9 +189,9 @@ class _EditPopupPageState extends State<EditPopupPage> {
                         taskName: _taskNameController.text,
                         partnerName: _clientController.text,
                         tagNames: _tagsController.text.split(',').map((tag) => tag.toString()).toList(),
-                        userName: _responsibleValue,
+                        userName: _responsibleController.text,
                         companyName: _companyController.text,
-                        status: _projectStageValue,
+                        status: _projectStageController.text,
                       );
                       BlocProvider.of<ProjectEditBloc>(context).add(UpdatePjt(projectF: updatedProject));
                     }

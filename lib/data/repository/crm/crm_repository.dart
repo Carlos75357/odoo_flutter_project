@@ -297,4 +297,18 @@ class RepositoryCrm extends RepositoryDataSource {
       throw Exception('Failed to get names: $e');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getAll(String model) async {
+    try {
+      var response = await odooClient.searchRead(model, [], {});
+
+      if (response == null || response.isEmpty) {
+        return [];
+      }
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      throw Exception('Failed to get records: $e');
+    }
+  }
 }

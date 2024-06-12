@@ -13,14 +13,12 @@ class RepositoryTest {
 void main() {
   group('Repository test', () {
     late RepositoryCrm repository;
-    late RepositoryProject repositoryProject;
     late OdooClient odooClient;
     int id = 47;
 
     setUpAll(() async {
       odooClient = OdooClient();
       repository = RepositoryCrm(odooClient: odooClient);
-      repositoryProject = RepositoryProject(odooClient: odooClient);
       await repository.login('https://demos15.aurestic.com', 'admin', 'admin', 'demos_demos15');
     });
 
@@ -163,6 +161,41 @@ void main() {
       int teamId = await repository.getIdByName('crm.team', 'Pre-Sales');
       if (kDebugMode) {
         print('Team: $teamId');
+      }
+    });
+
+    test('get clients with company id - test', () async {
+      List<Map<String, dynamic>> data = await repository.getAll('res.partner');
+      Map<String, int> clientsWithCompanyId = {};
+      for (var i = 0; i < data.length; i++) {
+        var element = data[i];
+        if (element['company_id'] != null && element['company_id'] is List && element['company_id'].length >= 1) {
+          int companyId = element['company_id'][0];
+          clientsWithCompanyId[element['name']] = companyId;
+        }
+      }
+
+      if (kDebugMode) {
+        print(clientsWithCompanyId);
+      }
+
+      List<String> list = [];
+
+      Map<int, List<String>> invertedClients = {};
+      clientsWithCompanyId.forEach((clientName, companyId) {
+        if (!invertedClients.containsKey(companyId)) {
+          invertedClients[companyId] = [];
+        }
+        invertedClients[companyId]?.add(clientName);
+      });
+
+      List<String>? clientsForSelectedCompany = invertedClients[1];
+      if (clientsForSelectedCompany != null) {
+        list.addAll(clientsForSelectedCompany);
+      }
+
+      if (kDebugMode) {
+        print(list);
       }
     });
 

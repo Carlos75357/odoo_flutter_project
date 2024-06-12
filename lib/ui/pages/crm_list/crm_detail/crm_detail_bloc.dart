@@ -9,7 +9,6 @@ import '../../../../domain/crm/lead_formated.dart';
 import 'crm_detail_events.dart';
 import 'crm_detail_states.dart';
 
-/// [CrmDetailBloc] is a bloc class, works with [CrmDetailEvents] and [CrmDetailStates],
 class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
   CrmDetailBloc() : super(CrmDetailInitial()) {
     odooClient.setSettings(OdooConfig.getBaseUrl(), OdooConfig.getSessionId());
@@ -27,7 +26,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
   Lead lead = Lead(id: 0, name: '');
   bool isEditing = false;
 
-  /// [setState] method to set the [CrmDetailLoading]
   setState(SetState event, Emitter<CrmDetailStates> emit) {
     try {
       emit(CrmDetailLoading());
@@ -40,7 +38,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     emit(CrmDetailError(event.message));
   }
 
-  /// [loadDetails] method to load the details of a lead
   loadDetails(LoadLead event, Emitter<CrmDetailStates> emit) async {
     try {
       emit(CrmDetailLoading());
@@ -53,7 +50,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [reloadDetails] method to reload the details of a lead
   reloadDetails(ReloadDetail event, Emitter<CrmDetailStates> emit) async {
     try {
       emit(CrmDetailLoading());
@@ -66,7 +62,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [updateLead] method to update a lead
   updateLead(SaveLeadButtonPressed event, Emitter<CrmDetailStates> emit) async {
     try {
       emit(CrmDetailLoading());
@@ -103,7 +98,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [unlinkLead] method to unlink a lead
   unlinkLead(UnlinkLeadButtonPressed event, Emitter<CrmDetailStates> emit) async {
     try {
       emit(CrmDetailLoading());
@@ -116,21 +110,18 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [getIdByName] method to get the id of an object by its name
   Future<int?> _getIdByNameOrNull(String objectType, String? name) async {
     if (name == null) return null;
     if (name == 'Ninguno') return null;
     return repository.getIdByName(objectType, name);
   }
 
-  /// [getIdsByNames] method to get the ids of objects by their names
   Future<List<int>> _getIdsByNames(String objectType, List<String>? names) async {
     if (names == null) return [];
     if (names.contains('Ninguno')) return [];
     var ids = await Future.wait(names.map((name) => repository.getIdByName(objectType, name)));
     return ids;
   }
-  /// [toggleEditLead] method to toggle the edit mode
   toggleEditLead(ToggleEditButtonPressed event, Emitter<CrmDetailStates> emit) async {
     try {
       emit(CrmDetailLoading());
@@ -143,7 +134,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [getList] method to get the list of objects
   Future<Map<String, List<String>>> getList() async {
     try {
       Map<String, List<String>> dataList = {};
@@ -160,7 +150,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [getDataString] method to get the data of an object
   Future<String> getDataString(int value, String modelName) async {
     try {
       switch (modelName) {
@@ -182,7 +171,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [getDataList] method to get the data of an object
   Future<List<String>> getDataList(List<int> value, String modelName) async {
    try {
      List<String> data = [];
@@ -198,7 +186,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
    }
   }
 
-  /// [getFieldsOptions] method to get the fields options
   Future<Map<String, List<String>>> getFieldsOptions() async {
     try {
       List<String> tagNames = await getNames('crm.tag');
@@ -223,7 +210,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [getNames] method to get the names of objects
   Future<List<String>> getNames(String modelName) async {
     try {
       List<String> records = await repository.getAllNames(modelName, ['name']);
@@ -236,7 +222,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [getIdByName] method to get the id of an object by its name
   Future<int> getIdByName(String modelName, String name) async {
     try {
       final response = await repository.getIdByName(modelName, name);
@@ -246,7 +231,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [getSelectedItems] method to get the selected items
   Future<Map<String, List<String>>> getSelectedItems(Map<String, List<int>> allIds) async {
     try {
       List<String> tagNames = await repository.getNamesByIds('crm.tag', allIds['tags']);
@@ -269,7 +253,33 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [getLeadFormated] method to get the lead formated
+  Future<Map<String, int>> getClientsWithCompanyId() async {
+    try {
+      List<Map<String, dynamic>> data = await repository.getAll('res.partner');
+      Map<String, int> clientsWithCompanyId = {};
+      for (var i = 0; i < data.length; i++) {
+        var element = data[i];
+        if (element['company_id'] != null && element['company_id'] is List && element['company_id'].length >= 1) {
+          int companyId = element['company_id'][0];
+          clientsWithCompanyId[element['name']] = companyId;
+        }
+      }
+
+      return clientsWithCompanyId;
+    } catch (e) {
+      throw Exception('Failed to get field options: $e');
+    }
+  }
+
+  Future<int> getCompanyId(String? name) async {
+    try {
+      if (name == 'Ninguno' || name == null) return 0;
+      return await repository.getIdByName('res.company', name);
+    } catch (e) {
+      throw Exception('Failed to get id by name: $e');
+    }
+  }
+
   Future<LeadFormated> getLeadFormated(Lead lead) async {
     try {
       // print(lead.toString());
@@ -307,7 +317,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [translateStage] method to translate the stage
   Future<String?> translateStage(int? stageId) async {
     if (stageId == null) return null;
 
@@ -325,7 +334,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [translateTeam] method to translate the team
   Future<String?> translateTeam(int? teamId) async {
     if (teamId == null) return null;
 
@@ -343,7 +351,6 @@ class CrmDetailBloc extends Bloc<CrmDetailEvents, CrmDetailStates> {
     }
   }
 
-  /// [translateTags] method to translate the tags
   Future<List<String>> translateTags(List<int>? tagIds) async {
     if (tagIds == null || tagIds.isEmpty) return [];
 

@@ -32,6 +32,7 @@ class TaskCreatePageState extends State<TaskCreatePage> {
   late TextEditingController _remainingHoursController;
   late TextEditingController _priorityController;
   late TextEditingController _stageController;
+  int selectedPriority = 0;
 
   @override
   void initState() {
@@ -145,7 +146,7 @@ class TaskCreatePageState extends State<TaskCreatePage> {
                       _buildField('Cliente', _clientController, 'DropDown', 'client_name'),
                       _buildField('Etiquetas', _tagsController, 'MultiSelect', 'tag_names'),
                       _buildField('Compañías', _companyController, 'DropDown', 'company_names'),
-                      _buildField('Prioridad', _priorityController, 'Text', 'priority'),
+                      _buildField('Prioridad', _priorityController, 'Priority', 'priority'),
                       _buildField('Etapa', _stageController, 'DropDown', 'stage_names'),
                       _buildField('Horas Planificadas', _plannedHoursController, 'Text', 'planned_hours'),
                       _buildField('Horas Totales', _totalHoursSpentController, 'Text', 'total_hours'),
@@ -180,6 +181,8 @@ class TaskCreatePageState extends State<TaskCreatePage> {
       case 'Description':
         fieldWidget = _buildDescriptionField(controller, caseType);
         break;
+      case 'Priority':
+        fieldWidget = _buildPriorityField(controller, caseType);
       default:
         fieldWidget = _buildTextField(controller, title);
     }
@@ -299,7 +302,7 @@ class TaskCreatePageState extends State<TaskCreatePage> {
         _updateChangesIfNotEmpty('company_names', _companyController.text);
         _updateChangesIfNotEmpty('remaining_hours', _remainingHoursController.text);
         _updateChangesIfNotEmpty('stage_names', _stageController.text);
-        _updateChangesIfNotEmpty('priority', _priorityController.text);
+        _updateChangesIfNotEmpty('priority', selectedPriority);
 
         if (_tagsController.text.isNotEmpty) {
           changes['tag_names'] = _tagsController.text.split(',').map((tag) => tag.trim()).toList();
@@ -308,6 +311,44 @@ class TaskCreatePageState extends State<TaskCreatePage> {
         BlocProvider.of<TaskCreateBloc>(context).add(CreateEvent(values: changes));
       },
       child: const Text('Crear Tarea'),
+    );
+  }
+
+  Widget _buildPriorityField(TextEditingController controller, String label) {
+    List<Widget> stars = List.generate(
+      1,
+          (index) => IconButton(
+        onPressed: () {
+          int newPriority = index + 1;
+          setState(() {
+            if (selectedPriority == newPriority) {
+              selectedPriority = 0;
+              controller.text = '';
+            } else {
+              selectedPriority = newPriority;
+              controller.text = '★' * selectedPriority;
+            }
+            // if (selectedPriority != newPriority) {
+            // }
+            // addChanges('priority', selectedPriority);
+          });
+        },
+        icon: Icon(
+          index < selectedPriority ? Icons.star : Icons.star_border,
+          color: Colors.yellow,
+          size: 20,
+        ),
+      ),
+    );
+
+    return Column(
+
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: stars,
+        ),
+      ],
     );
   }
 
