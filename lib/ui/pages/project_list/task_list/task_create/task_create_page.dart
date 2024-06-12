@@ -232,6 +232,11 @@ class TaskCreatePageState extends State<TaskCreatePage> {
 
   Widget _MultiSelectDialog(TextEditingController controller, String type) {
     List<String> options = fieldOptions[type] ?? [];
+    for (int i = 0; i < options.length; i++) {
+      if (options.lastIndexOf(options[i]) != i) {
+        options.removeAt(i);
+      }
+    }
     print('FieldOptions: $options');
 
     return Container(
@@ -261,6 +266,11 @@ class TaskCreatePageState extends State<TaskCreatePage> {
     fieldOptions[type]!.add('Ninguno');
 
     List<String> options = fieldOptions[type] ?? [];
+    for (int i = 0; i < options.length; i++) {
+      if (options.lastIndexOf(options[i]) != i) {
+        options.removeAt(i);
+      }
+    }
     print('FieldOptions: $options');
 
     return Container(

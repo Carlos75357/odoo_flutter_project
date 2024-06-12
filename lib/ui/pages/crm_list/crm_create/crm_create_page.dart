@@ -2,7 +2,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_crm_prove/domain/crm/lead.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_bloc.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_events.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_states.dart';
@@ -33,7 +32,7 @@ class CrmCreatePageState extends State<CrmCreatePage> {
   late TextEditingController _probabilityController;
   late TextEditingController _createDateController;
   late TextEditingController _stageController;
-  late int? selectedCompanyId;
+  late int? selectedCompanyId = 0;
 
   late DateTime _creationDate;
   double currentValue = 0;
@@ -280,20 +279,12 @@ class CrmCreatePageState extends State<CrmCreatePage> {
   }
 
   Widget _buildDropDownField(TextEditingController controller, String type) {
-    List<String> list = [];
-
-    if (type == 'company') {
-      if (controller.text.isNotEmpty) {
-        int companyId = setCompanyId(controller.text, controller);
-        setState(() {
-          selectedCompanyId = companyId;
-        });
-      }
-    }
+    List<String> list =  [];
 
     if (type == 'client') {
+      controller.clear();
       Map<int, List<String>> invertedClients = {};
-      if (selectedCompanyId == 0) {
+      if (selectedCompanyId != 0 || selectedCompanyId == null) {
         clients.forEach((clientName, companyId) {
           if (!invertedClients.containsKey(companyId)) {
             invertedClients[companyId] = [];
@@ -309,7 +300,6 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     } else {
       list = fieldOptions[type] ?? [];
     }
-
 
     for (int i = 0; i < list.length; i++) {
       if (list.lastIndexOf(list[i]) != i) {
@@ -359,10 +349,16 @@ class CrmCreatePageState extends State<CrmCreatePage> {
             }).toList(),
             value: (type == 'stage') ? 'Nuevo' : null,
 
-            onChanged: (value) {
+            onChanged: (value) async {
               setState(() {
                 controller.text = value.toString();
               });
+              if (controller.text.isNotEmpty && type == 'company') {
+                int companyId = await setCompanyId(controller.text, controller);
+                setState(() {
+                  selectedCompanyId = companyId;
+                });
+              }
             },
           ),
         )
@@ -498,10 +494,9 @@ class CrmCreatePageState extends State<CrmCreatePage> {
     }
   }
 
-  int setCompanyId(String companyName, TextEditingController controller) {
+  Future<int> setCompanyId(String companyName, TextEditingController controller) async {
     int companyId = 0;
-    BlocProvider.of<CrmCreateBloc>(context).getCompanyId(controller.text)
-        .then((value) {
+    await BlocProvider.of<CrmCreateBloc>(context).getCompanyId(controller.text).then((value) {
       companyId = value;
     });
     return companyId;

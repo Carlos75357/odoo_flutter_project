@@ -506,33 +506,7 @@ class _CrmDetailState extends State<CrmDetail> {
     fieldOptions[type]!.add('Ninguno');
     List<String> list = [];
 
-    if (type == 'company') {
-      if (editingController.text.isNotEmpty) {
-        int companyId = setCompanyId(editingController.text, editingController);
-        setState(() {
-          selectedCompanyId = companyId;
-        });
-      }
-    }
-
-    if (type == 'client') {
-      Map<int, List<String>> invertedClients = {};
-      if (selectedCompanyId == 0) {
-        clients.forEach((clientName, companyId) {
-          if (!invertedClients.containsKey(companyId)) {
-            invertedClients[companyId] = [];
-          }
-          invertedClients[companyId]?.add(clientName);
-        });
-
-        List<String>? clientsForSelectedCompany = invertedClients[selectedCompanyId];
-        if (clientsForSelectedCompany != null) {
-          list.addAll(clientsForSelectedCompany);
-        }
-      }
-    } else {
-      list = fieldOptions[type] ?? [];
-    }
+    list = fieldOptions[type] ?? [];
 
     String? selectedValue;
 
@@ -683,7 +657,6 @@ class _CrmDetailState extends State<CrmDetail> {
     );
   }
 
-  /// [addChanges] method add the changes to the [changes] map.
   void addChanges(String key, dynamic value) {
     if (initialData[key] is List) {
       if (value is List && !listEquals(value, initialData[key])) {

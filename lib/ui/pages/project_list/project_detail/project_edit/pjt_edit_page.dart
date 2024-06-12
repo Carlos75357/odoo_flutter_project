@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crm_prove/domain/project/project_formated.dart';
@@ -54,6 +55,8 @@ class _EditPopupPageState extends State<EditPopupPage> {
     'company': [],
   };
   String? stageTr;
+
+  Map<String, dynamic> changes = {};
 
   @override
   void initState() {
@@ -185,13 +188,14 @@ class _EditPopupPageState extends State<EditPopupPage> {
                         ? () {
                       final updatedProject = ProjectFormated(
                         id: widget.project.id,
-                        name: _nameController.text,
-                        taskName: _taskNameController.text,
-                        partnerName: _clientController.text,
-                        tagNames: _tagsController.text.split(',').map((tag) => tag.toString()).toList(),
-                        userName: _responsibleController.text,
-                        companyName: _companyController.text,
-                        status: _projectStageController.text,
+                        name: changes['name'] ?? null,
+                        taskName: changes['task_name'] ?? null,
+                        partnerName: changes['client'] ?? null,
+                        tagNames: changes['tags'] ?? null,
+                        userName: changes['responsible'] ?? null,
+                        companyName: changes['company_name'] ?? null,
+                        stageName: changes['project_stage'] ?? null,
+
                       );
                       BlocProvider.of<ProjectEditBloc>(context).add(UpdatePjt(projectF: updatedProject));
                     }
@@ -218,7 +222,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
         fieldWidget = _buildMultiSelectField(controller, caseType.toLowerCase(), type);
         break;
       default:
-        fieldWidget = _buildTextField(controller, label);
+        fieldWidget = _buildTextField(controller, label, type);
     }
 
     return Column(
@@ -237,7 +241,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label) {
+  Widget _buildTextField(TextEditingController controller, String label, String type) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -255,6 +259,9 @@ class _EditPopupPageState extends State<EditPopupPage> {
               labelText: label,
               border: InputBorder.none,
             ),
+            onChanged: (value) {
+              addChanges(type, value);
+            },
           )
       ),
     );
@@ -282,6 +289,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
                 buttonIcon: const Icon(Icons.arrow_drop_down),
                 buttonText: Text('Select $label'),
                 onConfirm: (results) {
+                  addChanges(type, results.map((result) => result.toString()).toList());
                   setState(() {
                     selectedItems[type] = results.map((result) => result.toString()).toList();
                   });
@@ -344,6 +352,7 @@ class _EditPopupPageState extends State<EditPopupPage> {
           }).toList(),
           value: selectedValue,
           onChanged: (value) {
+            addChanges(type, value);
             setState(() {
               selectedItems[type] = [value.toString()];
             });
@@ -351,5 +360,23 @@ class _EditPopupPageState extends State<EditPopupPage> {
         ),
       ),
     );
+  }
+
+  void addChanges(String key, dynamic value) {
+    if (initialData[key] is List) {
+      if (value is List && !listEquals(value, initialData[key])) {
+        changes[key] = value;
+      } else if (value is! List) {
+        throw Exception("Error: se esperaba una lista para la llave $key, pero se recibió un ${value.runtimeType}");
+      } else {
+        changes.remove(key);
+      }
+    } else {
+      if (value != initialData[key]) {
+        changes[key] = value;
+      } else {
+        changes.remove(key);
+      }
+    }
   }
 }

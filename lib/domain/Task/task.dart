@@ -50,12 +50,12 @@ class Task {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final Map<String, dynamic> data = {
       'id': id,
       'name': name,
       'description': description,
-      'assigned_ids': assignedIds,
-      'client': clientId,
+      'manager_id': assignedIds,
+      'partner_id': clientId,
       'date_end': dateEnd,
       'tag_ids': tagIds,
       'company_id': companyId,
@@ -65,5 +65,9 @@ class Task {
       'total_hours_spent': totalHoursSpent,
       'remaining_hours': remainingHours
     };
+
+    data.removeWhere((key, value) => value == null);
+    return data;
   }
+
 }

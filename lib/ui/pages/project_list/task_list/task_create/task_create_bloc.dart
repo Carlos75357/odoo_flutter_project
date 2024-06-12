@@ -44,11 +44,11 @@ class TaskCreateBloc extends Bloc<TaskCreateEvents, TaskCreateStates> {
     Map<String, dynamic> data = event.values;
 
     dynamic ids = await Future.wait([
-      _getIdsByNames('res.users', data['assigned_name']),
-      _getIdsByNames('res.company', data['company_names']),
-      _getIdsByNames('res.partner', data['client_name']),
+      _getIdByNameOrNull('res.users', data['assigned_name']),
+      _getIdByNameOrNull('res.company', data['company_names']),
+      _getIdByNameOrNull('res.partner', data['client_name']),
       _getIdsByNames('project.tags', data['tag_names']),
-      _getIdsByNames('project.task.type', data['stage_names'])
+      _getIdByNameOrNull('project.task.type', data['stage_names'])
     ]);
 
     data['assigned_ids'] = ids[0];

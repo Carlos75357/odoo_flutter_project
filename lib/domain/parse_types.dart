@@ -1,4 +1,7 @@
 dynamic parseStringField(dynamic value) {
+  if (value is int) {
+    return value.toString();
+  }
   if (value is List) {
     for (var item in value) {
       if (item is String) {
@@ -67,6 +70,9 @@ int? parseListToInt(dynamic list) {
 }
 
 List<int>? parseListInt(dynamic list) {
+  if (list is int) {
+    return [list];
+  }
   final List<dynamic>? listJson = list;
   List<int>? parse;
   if (listJson != null) {
@@ -81,3 +87,4 @@ List<int>? parseListInt(dynamic list) {
   }
   return parse;
 }
+
