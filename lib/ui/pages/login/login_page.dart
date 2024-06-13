@@ -27,10 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     // datos para inciar sesión en demos16
     // TODO: tengo que crear una base de dats en local porque la base de datos no es accesible desde fuera, mentira si es
-    urlController.text = "https://demos15.aurestic.com";
-    usernameController.text = "admin";
-    passwordController.text = "admin";
-    databaseController.text = "demos_demos15";
+    urlController.text = "https://";
     // datos para iniciar en coimasa
     // Aqui no funciona el search para usuario cliente y equipo, en equipo se la
     // razón del error, el resto no se porque
