@@ -84,25 +84,28 @@ class TaskFormated {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'assigned_id': assignedIds,
-      'assigned_name': assignedNames,
-      'client_id': clientId,
-      'client_name': clientName,
-      'date_end': dateEnd,
-      'tag_ids': tagIds,
-      'tag_names': tagNames,
-      'company_id': companyId,
-      'company_name': companyName,
-      'planned_hours': plannedHours,
-      'stage_id': stageId,
-      'stage_name': stageName,
-      'priority': priority,
-      'total_hours_spent': totalHoursSpent,
-      'remaining_hours': remainingHours
-    };
+    final Map<String, dynamic> data = <String, dynamic>{};
+
+    if (id != null) data['id'] = id;
+    if (name != null) data['name'] = name;
+    if (description != null) data['description'] = description;
+    if (assignedIds != null) data['assigned_id'] = assignedIds;
+    if (assignedNames != null) data['assigned_name'] = assignedNames;
+    if (clientId != null) data['client_id'] = clientId;
+    if (clientName != null) data['client_name'] = clientName;
+    if (dateEnd != null) data['date_end'] = dateEnd;
+    if (tagIds != null) data['tag_ids'] = tagIds;
+    if (tagNames != null) data['tag_names'] = tagNames;
+    if (companyId != null) data['company_id'] = companyId;
+    if (companyName != null) data['company_name'] = companyName;
+    if (plannedHours != null) data['planned_hours'] = plannedHours;
+    if (stageId != null) data['stage_id'] = stageId;
+    if (stageName != null) data['stage_name'] = stageName;
+    if (priority != null) data['priority'] = priority;
+    if (totalHoursSpent != null) data['total_hours_spent'] = totalHoursSpent;
+    if (remainingHours != null) data['remaining_hours'] = remainingHours;
+
+    return data;
   }
+
 }

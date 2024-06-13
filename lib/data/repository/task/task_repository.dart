@@ -31,8 +31,9 @@ class TaskRepository extends TaskRepositoryDataSource {
   }
 
   @override
-  Future<CreateResponse> createTask(String model, Map<String, dynamic> values) async {
+  Future<CreateResponse> createTask(String model, Map<String, dynamic> values, int id) async {
     try {
+      values['project_id'] = id;
       var response = await odooClient.create(model, values);
 
       if (response['result'] == null) {

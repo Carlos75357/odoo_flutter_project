@@ -318,7 +318,7 @@ class TaskCreatePageState extends State<TaskCreatePage> {
           changes['tag_names'] = _tagsController.text.split(',').map((tag) => tag.trim()).toList();
         }
 
-        BlocProvider.of<TaskCreateBloc>(context).add(CreateEvent(values: changes));
+        BlocProvider.of<TaskCreateBloc>(context).add(CreateEvent(values: changes, projectId: widget.project.id));
       },
       child: const Text('Crear Tarea'),
     );

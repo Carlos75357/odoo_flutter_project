@@ -45,10 +45,10 @@ class ProjectWidget extends StatelessWidget {
                   'Responsable: ${projectFormated.userId ?? 'Sin responsable'}',
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
-                Text(
-                  'Fecha de creación: ${projectFormated.dateStart != null ? projectFormated.dateStart! : 'Sin fecha'}',
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
-                ),
+                //Text(
+                  //'Fecha de creación: ${projectFormated.dateStart != null ? projectFormated.dateStart! : 'Sin fecha'}',
+                  //style: const TextStyle(color: Colors.white, fontSize: 12),
+                //),
                 Text(
                   'Fecha límite: ${projectFormated.date != null ? projectFormated.date! : 'Sin fecha'}',
                   style: const TextStyle(color: Colors.white, fontSize: 12),

@@ -47,7 +47,7 @@ abstract class ProjectRepositoryDataSource {
 abstract class TaskRepositoryDataSource {
   Future<List<Task>> listTasks(String modelName, List<dynamic> domain, Map<String, dynamic> kwargs);
   Future<Task> listTask(String modelName, int id);
-  Future<CreateResponse> createTask(String model, Map<String, dynamic> values);
+  Future<CreateResponse> createTask(String model, Map<String, dynamic> values, int id);
   Future<WriteResponse> updateTask(String model, int id, Task values);
   Future<UnlinkResponse> unlinkTask(String model, int id);
   Future<int> getIdByName(String modelName, String name);

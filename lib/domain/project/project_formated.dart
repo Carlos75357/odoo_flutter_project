@@ -19,6 +19,7 @@ class ProjectFormated {
   String? dateStart;
   String? date;
   List<int>? tasks;
+  List<int>? tasksStageId;
   // String? createdUser;
 
   ProjectFormated({
@@ -40,6 +41,7 @@ class ProjectFormated {
     this.dateStart,
     this.date,
     this.tasks,
+    this.tasksStageId,
     // this.createdUser,
   });
 
@@ -58,12 +60,13 @@ class ProjectFormated {
         dateStart: projectFormated.dateStart,
         date: projectFormated.date,
         tasks: projectFormated.tasks,
+        tasksStageId: projectFormated.tasksStageId
     );
   }
 
   factory ProjectFormated.fromJson(Map<String, dynamic> json) {
     return ProjectFormated(
-      id: json['id'],
+      id: json['id'] ?? 0,
       name: json['name'],
       taskName: json['task_name'],
       partnerId: json['partner_id'],
@@ -81,30 +84,33 @@ class ProjectFormated {
       dateStart: json['create_date'],
       date: json['date_deadline'],
       tasks: json['tasks'],
+      tasksStageId: json['stages_id'],
       // createdUser: json['created_user'],
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['name'] = name;
-    data['task_name'] = taskName;
-    data['partner_id'] = partnerId;
-    data['partner_name'] = partnerName;
-    data['type_ids'] = typeIds;
-    data['company_id'] = companyId;
-    data['company_name'] = companyName;
-    data['user_id'] = userId;
-    data['user_name'] = userName;
-    data['tag_ids'] = tagIds;
-    data['tag_names'] = tagNames;
-    data['last_update_status'] = status;
-    data['stage_id'] = stageId;
-    data['stage_name'] = stageName;
-    data['create_date'] = dateStart;
-    data['date_deadline'] = date;
-    data['tasks'] = tasks;
+    if (id != null) data['id'] = id;
+    if (name != null) data['name'] = name;
+    if (taskName != null) data['task_name'] = taskName;
+    if (partnerId != null) data['partner_id'] = partnerId;
+    if (partnerName != null) data['partner_name'] = partnerName;
+    if (typeIds != null) data['type_ids'] = typeIds;
+    if (companyId != null) data['company_id'] = companyId;
+    if (companyName != null) data['company_name'] = companyName;
+    if (userId != null) data['user_id'] = userId;
+    if (userName != null) data['user_name'] = userName;
+    if (tagIds != null) data['tag_ids'] = tagIds;
+    if (tagNames != null) data['tag_names'] = tagNames;
+    if (status != null) data['last_update_status'] = status;
+    if (stageId != null) data['stage_id'] = stageId;
+    if (stageName != null) data['stage_name'] = stageName;
+    if (dateStart != null) data['create_date'] = dateStart;
+    if (date != null) data['date_deadline'] = date;
+    if (tasks != null) data['tasks'] = tasks;
+    if (tasksStageId != null) data['tasks_stage_id'] = tasksStageId;
+
     return data;
   }
 }

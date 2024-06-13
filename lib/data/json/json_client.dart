@@ -51,9 +51,28 @@ class JsonRpcClient {
       }
 
       if (response.statusCode == 200) {
-        final responseToMap = jsonDecode(response.body);
-        print(responseToMap);
-        return responseToMap;
+        final Map<String, dynamic> responseToMap = jsonDecode(response.body);
+
+        if (responseToMap.containsKey("result")) {
+          dynamic resultValue = responseToMap["result"];
+
+          if (resultValue is bool) {
+            bool resultAsBool = resultValue;
+            print("Valor de 'result' como booleano: $resultAsBool");
+          } else {
+            if (resultValue is int) {
+              int resultAsInt = resultValue;
+            } else if (resultValue is String) {
+              String resultAsString = resultValue.toString();
+            } else {
+              print("Tipo no esperado: ${resultValue.runtimeType}");
+            }
+          }
+
+          return responseToMap;
+        } else {
+          throw Exception('Clave no esperada.');
+        }
       } else {
         FirebaseCrashlytics.instance.recordError(Exception('Ha habido un error con el servidor, número del error: ${response.statusCode}'), null, fatal: true);
         throw Exception('Failed to call remote API with status code ${response.statusCode}');

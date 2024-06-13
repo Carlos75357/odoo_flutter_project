@@ -10,8 +10,9 @@ class CreateButtonPressed extends TaskCreateEvents {
 
 class CreateEvent extends TaskCreateEvents {
   Map<String, dynamic> values;
+  int projectId;
 
-  CreateEvent({required this.values});
+  CreateEvent({required this.values, required this.projectId});
 }
 
 class SetLoadingState extends TaskCreateEvents {

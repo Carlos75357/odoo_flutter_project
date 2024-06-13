@@ -1,6 +1,8 @@
 import 'package:flutter_crm_prove/data/json/odoo_client.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_crm_prove/data/odoo_config.dart';
+import 'package:flutter_crm_prove/data/repository/project/pjt_repository.dart';
+import 'package:flutter_crm_prove/domain/project/project_formated.dart';
 import 'package:flutter_crm_prove/ui/pages/crm_list/crm_create/crm_create_states.dart';
 import 'package:flutter_crm_prove/ui/pages/project_list/project_create/pjt_create_states.dart';
 
@@ -8,6 +10,7 @@ import '../../../../data/repository/crm/crm_repository.dart';
 import '../../../../data/repository/crm/crm_repository_response.dart';
 import '../../../../domain/crm/lead.dart';
 import '../../../../domain/crm/lead_formated.dart';
+import '../../../../domain/project/project.dart';
 import 'pjt_create_events.dart';
 
 class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
@@ -18,7 +21,7 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
     on<SetLoadingState>(setLoadingState);
   }
   OdooClient odooClient = OdooClient();
-  late RepositoryCrm repository = RepositoryCrm(odooClient: odooClient);
+  late RepositoryProject repository = RepositoryProject(odooClient: odooClient);
   List<Lead> leads = [];
 
   setLoadingState(SetLoadingState event, Emitter<ProjectCreateStates> emit) {
@@ -37,68 +40,42 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
     }
   }
 
-
-
-  /// [createLead] method to create a new lead.
   createLead(CreateEvents event, Emitter<ProjectCreateStates> emit) async {
     emit(ProjectCreateLoading());
     Map<String, dynamic> data = event.values;
 
     dynamic ids = await Future.wait([
-      _getIdByNameOrNull('res.partner', data['client']),
-      _getIdByNameOrNull('res.company', data['company']),
-      _getIdByNameOrNull('res.users', data['user']),
-      _getIdByNameOrNull('crm.stage', data['stage']),
-      _getIdByNameOrNull('crm.team', data['team']),
-      _getIdsByNames('crm.tag', data['tags']),
+      _getIdsByNames('project.task.type', data['stages']),
     ]);
 
-    if (data.containsKey('client')) {
-      data['client_id'] = ids[0];
-      data.remove('client');
-    }
-    if (data.containsKey('company')) {
-      data['company_id'] = ids[1];
-      data.remove('company');
-    }
-    if (data.containsKey('user')) {
-      data['user_id'] = ids[2];
-      data.remove('user');
-    }
-    if (data.containsKey('stage')) {
-      data['stage_id'] = ids[3];
-      data.remove('stage');
-    }
-    if (data.containsKey('team')) {
-      data['team_id'] = ids[4];
-      data.remove('team');
-    }
-    if (data.containsKey('tags')) {
-      data['tags_id'] = ids[5];
-      data.remove('tags');
+    if (data.containsKey('stages')) {
+      data['stages_id'] = ids[0];
+      data.remove('stages');
     }
 
-    LeadFormated leadFormated = LeadFormated.fromJson(data);
+    ProjectFormated projectFormated = ProjectFormated.fromJson(data);
 
-    Lead lead = leadFormated.leadFormatedToLead(leadFormated);
+    Project project = projectFormated.projectFormatedToProject(projectFormated);
 
-    CreateResponse response = await repository.createLead('crm.lead', lead.toJson());
+    CreateResponse responseC = await repository.createProject('project.project', project.toJson());
+    Map<String, dynamic> values = {
+      'tasks_stage_id': project.tasksStageId,
+    };
+    WriteResponse responseW = await repository.updateStage('project.project', project.id, values);
 
-    if (response.success) {
+    if (responseC.success && responseW.success) {
       emit(ProjectCreateDone());
     } else {
       emit(ProjectCreateError('Failed to create lead'));
     }
   }
 
-  /// [getIdByName] method to get id by name.
   Future<int?> _getIdByNameOrNull(String objectType, String? name) async {
     if (name == null) return null;
     if (name == 'Ninguno') return null;
     return repository.getIdByName(objectType, name);
   }
 
-  /// [getIdsByNames] method to get ids by names.
   Future<List<int>> _getIdsByNames(String objectType, List<String>? names) async {
     if (names == null) return [];
     if (names.contains('Ninguno')) return [];
@@ -106,7 +83,6 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
     return ids;
   }
 
-  /// [getLeadFormated] method to get lead formated.
   Future<LeadFormated> getLeadFormated(Lead lead) async {
     try {
       String? stageName = await translateStage(lead.stageId);
@@ -140,23 +116,12 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
     }
   }
 
-  /// [getFieldsOptions] method to get fields options.
   Future<Map<String, List<String>>> getFieldsOptions() async {
     try {
-      List<String> tagNames = await getNames('crm.tag');
-      List<String> stageNames = await getNames('crm.stage');
-      List<String> userNames = await getNames('res.users');
-      List<String> companyNames = await getNames('res.company');
-      List<String> clientNames = await getNames('res.partner');
-      List<String> teamNames = await getNames('crm.team');
+      List<String> stagesNames = await getNames('project.task.type');
 
       Map<String, List<String>> fieldsOptions = {
-        'stage': stageNames,
-        'user': userNames,
-        'company': companyNames,
-        'client': clientNames,
-        'tags': tagNames,
-        'team': teamNames
+        'stage': stagesNames,
       };
 
       return fieldsOptions;
@@ -165,7 +130,6 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
     }
   }
 
-  /// [getNames] method to get names.
   Future<List<String>> getNames(String modelName) async {
     try {
       List<String> records = await repository.getAllNames(modelName, ['name']);
@@ -175,7 +139,6 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
     }
   }
 
-  /// [getIdByName] method to get id by name.
   Future<int> getIdByName(String modelName, String name) async {
     try {
       return await repository.getIdByName(modelName, name);
@@ -184,16 +147,14 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
     }
   }
 
-  /// [getIdsByNames] method to get ids by names.
   Future<List<int>> getIdsByNames(String modelName, List<String> names) async {
     try {
-      return await repository.getIdsByNames(modelName, names);
+      return await repository.getIdsByName(modelName, names);
     } catch (e) {
       throw Exception('Failed to get ids by names: $e');
     }
   }
 
-  /// [translateStage] method to translate stage.
   Future<String?> translateStage(int? stageId) async {
     if (stageId == null) return null;
 
@@ -211,7 +172,6 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
     }
   }
 
-  /// [translateTeam] method to translate team.
   Future<String?> translateTeam(int? teamId) async {
     if (teamId == null) return null;
 
@@ -230,7 +190,6 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvents, ProjectCreateStates> {
     }
   }
 
-  /// [translateTags] method to translate tags.
   Future<List<String>> translateTags(List<int>? tagIds) async {
     if (tagIds == null || tagIds.isEmpty) return [];
 

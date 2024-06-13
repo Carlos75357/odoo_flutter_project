@@ -80,7 +80,7 @@ class TaskCreateBloc extends Bloc<TaskCreateEvents, TaskCreateStates> {
 
     Task task = taskFormated.taskFormatedToTask(taskFormated);
 
-    CreateResponse response = await repository.createTask('project.task', task.toJson());
+    CreateResponse response = await repository.createTask('project.task', task.toJson(), event.projectId);
 
     if (response.success) {
       emit(TaskCreateSuccess());

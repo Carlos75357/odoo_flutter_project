@@ -16,6 +16,7 @@ class Project {
   // final int? objectives;
   // final int? objectivesDone;
   List<int>? tasks;
+  List<int>? tasksStageId;
   // final String? createdUser;
 
   Project({
@@ -34,6 +35,7 @@ class Project {
     // this.objectives,
     // this.objectivesDone,
     this.tasks,
+    this.tasksStageId,
     // this.createdUser
   });
 
@@ -55,6 +57,12 @@ class Project {
     if (typeIdsJson != null) {
       typeIds = typeIdsJson.map<int>((dynamic id) => id as int).toList();
     }
+
+    final List<dynamic>? tasksStageIdJson = json['stages_id'];
+    List<int>? tasksStageId;
+    if (tasksStageIdJson != null) {
+      tasksStageId = tasksStageIdJson.map<int>((dynamic id) => id as int).toList();
+    }
     
     return Project(
       id: json['id'] ?? 0,
@@ -70,6 +78,7 @@ class Project {
       dateStart: parseStringField(json['date_start']),
       date: parseStringField(json['date']),
       tasks: tasks,
+      tasksStageId: tasksStageId,
       // objectives: parseIntField(json['objectives']),
       // objectivesDone: parseIntField(json['objectives_done']),
       // createdUser: parseStringField(json['create_uid']),
@@ -92,6 +101,7 @@ class Project {
     // if (objectives != null) data['objectives'] = objectives;
     // if (objectivesDone != null) data['objectives_done'] = objectivesDone;
     if (tasks != null) data['tasks'] = tasks;
+    // if (tasksStageId != null) data['stages_id'] = tasksStageId;
     // if (createdUser != null) data['created_user'] = createdUser;
     return data;
   }

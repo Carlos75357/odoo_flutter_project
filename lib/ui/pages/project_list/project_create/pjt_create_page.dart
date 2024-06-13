@@ -19,12 +19,6 @@ class ProjectCreatePage extends StatefulWidget {
 
 class ProjectCreatePageState extends State<ProjectCreatePage> {
   late TextEditingController _nameController;
-  late TextEditingController _taskNameController;
-  late TextEditingController _clientNameController;
-  late TextEditingController _tagsController;
-  late TextEditingController _responsableController;
-  late TextEditingController _companyController;
-  late TextEditingController _descriptionController;
   late TextEditingController _stagesController;
 
   Map<String, dynamic> changes = {
@@ -42,12 +36,6 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
   void initState() {
     super.initState();
     _nameController = TextEditingController();
-    _taskNameController = TextEditingController();
-    _clientNameController = TextEditingController();
-    _tagsController = TextEditingController();
-    _responsableController = TextEditingController();
-    _companyController = TextEditingController();
-    _descriptionController = TextEditingController();
     _stagesController = TextEditingController();
     configData();
   }
@@ -55,12 +43,6 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
   @override
   void dispose() {
     _nameController.dispose();
-    _taskNameController.dispose();
-    _clientNameController.dispose();
-    _tagsController.dispose();
-    _responsableController.dispose();
-    _companyController.dispose();
-    _descriptionController.dispose();
     _stagesController.dispose();
     super.dispose();
   }
@@ -115,13 +97,7 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildField('Nombre', _nameController, 'Text', 'name'),
-                        _buildField('Nombre para las tareas', _taskNameController, 'Text', 'task_name'),
-                        _buildField('Cliente', _clientNameController, 'Client', 'client'),
-                        _buildField('Etiquetas', _tagsController, 'Tags', 'tags'),
-                        _buildField('Responsable', _responsableController, 'User', 'user'),
-                        _buildField('Compañia', _companyController, 'Company', 'company'),
-                        _buildField('Descripción', _descriptionController, 'Text', 'description'),
+                        _buildField('Nombre del proyecto', _nameController, 'Text', 'name'),
                         _buildField('Stages', _stagesController, 'Stage', 'stages'),
                         const SizedBox(height: 8),
                         _buildButton(),
@@ -147,10 +123,7 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
       case 'Text':
         fieldWidget = _buildTextField(controller, title, type, caseType);
         break;
-      case 'Date':
-        fieldWidget = _buildDatePickerField(controller);
-        break;
-      case 'Tags' || 'Client' || 'Company' || 'User' || 'Stage' || 'Team':
+      case 'Stage':
         fieldWidget = _buildDropDownField(controller, type.toLowerCase());
         break;
       default:
@@ -198,96 +171,25 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
   Widget _buildDropDownField(TextEditingController controller, String type) {
     List<String> list = fieldOptions[type] ?? [];
     // print('Lista: ${list.length}');
-
-    if (type == 'tags') {
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Theme.of(context).colorScheme.primary,
-            width: 1,
-          )
-        ),
-        child: Padding(
-         padding: const EdgeInsets.all(8.0),
-         child: MultiSelectDialogField(
-           title: const Text('Etiquetas'),
-           items: list.map((e) => MultiSelectItem(e, e)).toList(),
-           onConfirm: (results) {
-             setState(() {
-               controller.text = results.map((e) => e.toString()).join(', ');
-             });
-           },
-         ),
-        )
-      );
-    } else {
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Theme.of(context).colorScheme.primary,
-            width: 1,
-          )
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: DropdownButtonFormField(
-            isExpanded: true,
-            hint: const Text('Etiquetas'),
-            items: list.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            value: (type == 'stage') ? 'Nuevo' : null,
-            onChanged: (value) {
-              setState(() {
-                controller.text = value.toString();
-              });
-            },
-          ),
-        )
-      );
-    }
-  }
-
-  Widget _buildDatePickerField(TextEditingController controller) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Colors.grey[400]!,
-          width: 1.5,
-        ),
+          color: Theme.of(context).colorScheme.primary,
+          width: 1,
+        )
       ),
       child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: InkWell(
-            onTap: () {
-              showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              ).then((selectedDate) {
-                if (selectedDate != null) {
-                  setState(() {
-                    controller.text = selectedDate.toString();
-                    // addChanges('create_date', selectedDate);
-                  });
-                }
-              });
-            },
-            child: IgnorePointer(
-              child: TextField(
-                controller: controller,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-          )
-      ),
+       padding: const EdgeInsets.all(8.0),
+       child: MultiSelectDialogField(
+         title: const Text('Etiquetas'),
+         items: list.map((e) => MultiSelectItem(e, e)).toList(),
+         onConfirm: (results) {
+           setState(() {
+             controller.text = results.map((e) => e.toString()).join(', ');
+           });
+         },
+       ),
+      )
     );
   }
 
@@ -296,17 +198,7 @@ class ProjectCreatePageState extends State<ProjectCreatePage> {
 
       onPressed: () {
         updateChangesIfNotEmpty('name', _nameController.text);
-        updateChangesIfNotEmpty('task_name', _taskNameController.text);
-        updateChangesIfNotEmpty('client', _clientNameController.text);
-        updateChangesIfNotEmpty('tags', _tagsController.text);
-        updateChangesIfNotEmpty('responsable', _responsableController.text);
-        updateChangesIfNotEmpty('company', _companyController.text);
-        updateChangesIfNotEmpty('description', _descriptionController.text);
         updateChangesIfNotEmpty('stages', _stagesController.text);
-
-        if (_tagsController.text.isNotEmpty) {
-          changes['tags'] = _tagsController.text.split(',').map((tag) => tag.trim()).toList();
-        }
 
         if (_stagesController.text.isNotEmpty) {
           changes['stages'] = _stagesController.text.split(',').map((stage) => stage.trim()).toList();

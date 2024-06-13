@@ -36,11 +36,11 @@ class RepositoryProject extends ProjectRepositoryDataSource {
       var response = await odooClient.create(model, values);
 
       if (response['result'] == null) {
-        throw Exception('Failed to create lead');
+        throw Exception('Failed to create project');
       }
       return CreateResponse(success: true);
     } catch (e) {
-      throw Exception('Failed to create lead: $e');
+      throw Exception('Failed to create project: $e');
     }
   }
 
@@ -63,6 +63,37 @@ class RepositoryProject extends ProjectRepositoryDataSource {
       return WriteResponse(success: response);
     } catch (e) {
       throw Exception('Failed to update lead: $e');
+    }
+  }
+
+  Future<WriteResponse> updateStage(String model, int id, Map<String, dynamic> values) async {
+    try {
+      var response = await odooClient.write(model, id, values);
+
+      return WriteResponse(success: response);
+    } catch (e) {
+      throw Exception('Failed to update lead: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getAllForModel(String modelName, List<String> fields) async {
+    try {
+      var response = await odooClient.searchRead(modelName, [], {
+        'fields': fields,
+      });
+
+      if (response == null || response.isEmpty) {
+        return [];
+      }
+
+      return response.map<Map<String, dynamic>>((record) {
+        return {
+          'id': record['id'] ?? 0,
+          'name': record['name'] ?? 'Unknown',
+        };
+      }).toList();
+    } catch (e) {
+      throw Exception('Failed to get records: $e');
     }
   }
 
@@ -143,9 +174,11 @@ class RepositoryProject extends ProjectRepositoryDataSource {
           return 0;
         }
 
-        var record = response.firstWhere(
-                (record) => record['name'] == name
-        );
+        var record;
+
+        if (response.length > 1) {
+          record = response[0];
+        }
 
         if (record != null) {
           return record['id'] as int;

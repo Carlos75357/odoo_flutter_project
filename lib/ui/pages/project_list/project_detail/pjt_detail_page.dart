@@ -147,6 +147,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                   ],
                 ),
                 body: Stack(
+                  fit: StackFit.expand,
                   children: [
                     Container(
                       color: Theme.of(context).colorScheme.background,
